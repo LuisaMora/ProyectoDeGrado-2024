@@ -18,7 +18,7 @@
     display: inline-block;
     height: 35px;
     width: 100px;
-    background-color: #9A1912;
+    background-color:#9A1912;
     color: #fff;
     cursor: pointer;
     border: none;
@@ -32,4 +32,11 @@
     background-color: #f7f7f7;
     color: black;
 }
+textarea {
+    height: 150px;
+    width: 100%;
+    resize: none;
+    //border: solid 2px #640707;
+}
+
 

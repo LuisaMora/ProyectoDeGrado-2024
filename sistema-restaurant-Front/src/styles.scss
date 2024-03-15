@@ -1,4 +1,7 @@
 //Todos los estilos globales en este archivo 
+body{
+    background-color: rgb(255, 255, 255);
+}
 .titulo{
    margin-top: 15px;
    text-align: center;
@@ -7,4 +10,10 @@
     background-color: #9A1912;
     color:white;
 }
+.custom-navbar-color {
+    background-color: #9A1912;
+    color: white;
+}
 
+
+ 
