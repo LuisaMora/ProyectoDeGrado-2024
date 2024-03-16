@@ -1,0 +1,21 @@
+/* styles.css */
+
+.content {
+    min-height: calc(100vh - 100px); /* Ajusta el contenido para que el footer quede siempre abajo */
+  }
+.body{
+    background-image: url('../assets/green-4530473_1920.jpg'); /* Ruta a tu imagen de fondo */
+    background-size: cover; /* Ajustar el tamaño de la imagen al contenedor */
+    background-position: center; /* Posición de la imagen centrada */
+    background-repeat: no-repeat; /* No repetir la imagen */
+    /* Otros estilos según tus necesidades */
+  }
+  .footer {
+    background-color: #9e1111;
+    color: #fff;
+    padding: 20px 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+  
