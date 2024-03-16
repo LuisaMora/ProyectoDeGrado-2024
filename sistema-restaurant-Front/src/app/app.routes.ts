@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 //import { ListaComponent } from './modulos/menu/lista/lista.component';
 import { FormRegistroComponent } from './modulos/form-registro/form-registro.component';
 import { LoginComponent } from './modulos/login/login.component';
+import { HomeComponent } from './modulos/home/home.component';
 export const routes: Routes = [
     {
         path:'login',
@@ -12,6 +13,11 @@ export const routes: Routes = [
     {
         path:'formulario-registro',
         component:FormRegistroComponent
+        
+    } ,
+    {
+        path:'home',
+        component:HomeComponent
         
     } 
 ];

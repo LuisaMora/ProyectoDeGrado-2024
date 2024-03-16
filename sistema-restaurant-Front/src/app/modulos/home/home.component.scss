@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('../../../assets/Fondo1.jpg'); /* Ruta a tu imagen de fondo */
+    background-size: cover;
+    background-position: center;
+    height: 100vh; /* Establece la altura del body al 100% del viewport height */
+  }
+h1{
+  font-size: 50px;
+}
+  
+  .container {
+    text-align: center;
+    backdrop-filter: blur(10px);
+    position: absolute;
+    font-size: 50px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    color: white; /* Cambiar el color del texto si es necesario para que sea legible en la imagen de fondo */
+  }
+  
+  .animated-heading, .animated-text {
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
