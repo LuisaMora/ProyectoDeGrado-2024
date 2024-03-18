@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('propietarios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_user')->constrained('users')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreignId('id_usuario')->constrained('usuarios')->onDelete('restrict')->onUpdate('restrict');
             $table->foreignId('id_administrador')->nullable()->constrained('administradores')->onDelete('restrict')->onUpdate('restrict');
             $table->foreignId('id_restaurante')->nullable()->constrained('restaurantes')->onDelete('restrict')->onUpdate('restrict');
             $table->integer('ci')->nullable();

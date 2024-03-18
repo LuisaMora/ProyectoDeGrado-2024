@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('empleados', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_user')->constrained('users')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreignId('id_usuario')->constrained('usuarios')->onDelete('restrict')->onUpdate('restrict');
             $table->foreignId('id_rol')->constrained('rol_empleados')->onDelete('restrict')->onUpdate('restrict');
             $table->foreignId('id_propietario')->nullable()->constrained('propietarios')->onDelete('restrict')->onUpdate('restrict');
             $table->date('fecha_nacimiento')->nullable();
