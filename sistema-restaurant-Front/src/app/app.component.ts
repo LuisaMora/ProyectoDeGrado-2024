@@ -11,5 +11,6 @@ import { HomeComponent } from './modulos/home/home.component';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
+  show = true;
   title = 'sistema-restaurant-Front';
 }
