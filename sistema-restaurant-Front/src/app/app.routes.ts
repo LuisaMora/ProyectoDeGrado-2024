@@ -1,23 +1,17 @@
 import { Routes } from '@angular/router';
-//import { RegistrarComponent } from './modulos/menu/registrar/registrar.component';
-//import { ListaComponent } from './modulos/menu/lista/lista.component';
-import { FormRegistroComponent } from './modulos/form-registro/form-registro.component';
-import { LoginComponent } from './modulos/login/login.component';
 import { HomeComponent } from './modulos/home/home.component';
+import { RegistrarComponent } from './modulos/registro/registrar-platillo/registrar.component';
 export const routes: Routes = [
     {
-        path:'login',
-        component:LoginComponent
-        
-    } ,
+        path:'usuario',
+        loadChildren:()=>import('../app/modulos/auth/auth.routes').then(m=>m.AUTH_ROUTES)
+    },
     {
-        path:'formulario-registro',
-        component:FormRegistroComponent
-        
-    } ,
-    {
-        path:'home',
+        path:'',
         component:HomeComponent
-        
-    } 
+    },
+    { 
+        path:'registro',
+        component:RegistrarComponent
+    }
 ];
