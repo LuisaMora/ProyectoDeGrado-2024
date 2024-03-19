@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Administrador;
 use Illuminate\Database\Seeder;
 
 class AdministradorSeeder extends Seeder
@@ -12,6 +12,8 @@ class AdministradorSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        //crear un administrador
+        Administrador::factory()->asignarDatosSesion('admin', 'admin@gmail.com')->create();
+        Administrador::factory()->asignarDatosSesion('admin_2', 'admin2@gmail.com')->create();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Propietario;
 use Illuminate\Database\Seeder;
 
 class PropietarioSeeder extends Seeder
@@ -12,6 +12,6 @@ class PropietarioSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Propietario::factory(3)->create();
     }
 }

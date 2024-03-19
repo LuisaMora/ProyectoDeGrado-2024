@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); // Columna autoincrementable para la clave primaria
             $table->unsignedBigInteger('menu_id')->nullable();
             $table->string('nombre', 100);
-            $table->integer('nit');
+            $table->bigInteger('nit');
             $table->string('direccion', 100);
             $table->integer('telefono');
             $table->string('correo', 100);

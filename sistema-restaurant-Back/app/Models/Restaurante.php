@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Restaurante extends Model
 {
+    use HasFactory;
     protected $table = 'restaurantes'; // Nombre de la tabla
     protected $primaryKey = 'id'; // Nombre de la clave primaria
     public $timestamps = true;
@@ -19,7 +20,6 @@ class Restaurante extends Model
         'telefono',
         'correo',
         'licencia_funcionamiento',
-        // Agrega más columnas si es necesario
     ];
 
     public function menu()
