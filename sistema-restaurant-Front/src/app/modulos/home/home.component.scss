@@ -1,16 +1,14 @@
 .paginaInicial{
     margin: 0;
     padding: 0;
-    background-image: url('../../../assets/Fondo1.jpg'); /* Ruta a tu imagen de fondo */
+    background-image: url('../../../assets/Fondo1.jpg'); 
     background-size: cover;
     background-position: center;
-    height: 100vh;
+    height: 90vh;
   }
-
 h1{
-  font-size: 50px;
+  font-size: 4vw;
 }
-  
   .container {
     text-align: center;
     backdrop-filter: blur(10px);
@@ -20,14 +18,12 @@ h1{
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
-    color: white; /* Cambiar el color del texto si es necesario para que sea legible en la imagen de fondo */
+    color: white; 
   }
-  
   .animated-heading, .animated-text {
     opacity: 0;
     animation: fadeIn 2s forwards;
   }
-  
   @keyframes fadeIn {
     from {
       opacity: 0;

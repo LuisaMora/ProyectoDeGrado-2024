@@ -1,35 +1,34 @@
-<head>
-  <style>
-    .bg{
-      background-image: url(../../../../assets/loginImg.jpg);
-      background-position: center;
-    }
-  </style>
-</head>
-<body>
-<div class="container w-75 bg-primary mt-5 rounded shadow">
-  <div class="row align-items-stretch">
-    <div class="col bg d-none d-lg-block col-md-5 col-lg-5 col xl-6">
-    </div>
-    <div class="col bg-white p-5">
-      <div class="text-end">
-        <img src="" width="120px" alt="">
+<body class="fond">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-sm-8 col-xs-10">
+        <div class="card">
+          <div class="card-header ">
+            Iniciar Sesión
+            <div class="contenedor-icono">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+              </svg>
+            </div>
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="mb-3">
+                <label for="email" class="form-label">Nombre</label>
+                <input class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" >
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-block" >Iniciar Sesión</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-      <h2>Bienvenido</h2>
-      <form action="#">
-        <div class="mb-4">
-          <label class="form-label">Usuario</label>
-          <input type="text" class="form-control">
-        </div>
-        <div class="mb-4">
-          <label for="password" class="form-label">Contraseña</label>
-          <input type="password" class="form-control">
-        </div>
-        <div class="d-grid">
-          <button type="submit" class="btn" (click)="Propietario()" >Iniciar Sesion</button>
-        </div>
-      </form>
     </div>
   </div>
-</div> 
 </body>
