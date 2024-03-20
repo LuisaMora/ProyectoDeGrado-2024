@@ -19,11 +19,11 @@ class AdministradorFactory extends Factory
      public function asignarDatosSesion($nickname, $correo){
         if($nickname && $correo)
         return $this->state( [
-            'usuario_id' => Usuario::factory()->asignarNicknameCorreo($nickname, $correo),
+            'id_usuario' => Usuario::factory()->asignarNicknameCorreo($nickname, $correo),
         ]);
         else
         return $this->state( [
-            'usuario_id' => Usuario::factory(),
+            'id_usuario' => Usuario::factory(),
         ]); 
      }
 
