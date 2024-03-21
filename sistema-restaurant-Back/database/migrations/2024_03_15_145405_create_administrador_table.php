@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('administradores', function (Blueprint $table) {
                 $table->id(); 
-                $table->unsignedBigInteger('usuario_id')->nullable(); 
+                $table->unsignedBigInteger('id_usuario')->nullable(); 
                 $table->char('token', 200)->nullable();
                 $table->timestamps();
     
                 // Claves foráneas
-                $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('restrict')->onUpdate('restrict');
+                $table->foreign('id_usuario')->references('id')->on('usuarios')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 
