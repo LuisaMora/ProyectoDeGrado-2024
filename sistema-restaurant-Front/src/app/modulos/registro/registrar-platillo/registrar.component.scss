@@ -1,5 +1,11 @@
 .container{
-    padding:10px 50px 0px 50px;
+    padding:10px 50px 20px 50px;
+    margin-top: 90px;
+    background-color: #ff0000;
+}
+.img-thumbnail{
+    width: 600px;
+    height: 150px;
 }
 .cargar-img{
     padding-top: 20px;
@@ -18,7 +24,7 @@
     display: inline-block;
     height: 35px;
     width: 100px;
-    background-color:#9A1912;
+    background-color:#be534e;
     color: #fff;
     cursor: pointer;
     border: none;
@@ -29,8 +35,8 @@
     text-align: center;
 }
 .btn-img:hover {
-    background-color: #f7f7f7;
-    color: black;
+    background-color: #ff0000;
+    color: rgb(255, 255, 255);
 }
 textarea {
     height: 150px;

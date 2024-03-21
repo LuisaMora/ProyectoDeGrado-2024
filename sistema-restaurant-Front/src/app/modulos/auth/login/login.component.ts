@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-//import { RegistrarComponent } from '../../registro/registrar-platillo/registrar.component';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-login',
@@ -13,6 +12,6 @@ export class LoginComponent
   constructor(private router: Router) {}
 
   Propietario() {
-    this.router.navigate(['/registro']);
+    this.router.navigate(['/home-restaurant']); 
     }
   }
