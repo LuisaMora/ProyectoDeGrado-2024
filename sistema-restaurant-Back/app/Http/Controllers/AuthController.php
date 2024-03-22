@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Administrador;
+use App\Models\Empleado;
+use App\Models\Propietario;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -28,30 +31,33 @@ class AuthController extends Controller
             ], 422);
         }
 
-        if (!Auth::attempt(['correo' => $request->usuario,'password' => $request->input('password')])
-         || !Auth::attempt(['nickname' => $request->usuario,'password' => $request->input('password')])) {
+        $user = Usuario::where('correo', $request->input('usuario'))
+        ->orWhere('nickname', $request->input('usuario'))
+        ->first();
+
+        if ($user == null || !Auth::attempt(['correo' => $user->correo,
+         'password' => $request->input('password')])) {
             return response()->json([
                 'message' => 'Credenciales invalidas'
             ], 401);
         }
 
-        $user = Usuario::where('correo', $request->input('usuario'))
-            ->orWhere('nickname', $request->input('usuario'))
-            ->first();
-        $nameofclass = $this->determinarTipoUsuario($user);
+        $datosPersonales = $this->getDatosPersonales($user);
 
+        if(!$datosPersonales) return response()->json(['message' => 'No se encontro el tipo de usuario'], 404);
+       
+        $datosPersonales-> usuario = $user;
         $token = $user->createToken('api-token', ['*'], now()->addHours(24))->plainTextToken;
         return response()->json([
-            'user' => $user,
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'type_user' => $nameofclass
+            'data' => $datosPersonales,
+            'token_acceso' => $token,
+            'token_tipo' => 'Bearer',
         ]);
     }
 
-    private function determinarTipoUsuario($user)
+    private function getDatosPersonales($user)
     {
-        return Usuario::selectRaw("
+        $nameoftype = Usuario::selectRaw("
         CASE 
             WHEN EXISTS (SELECT * FROM administradores WHERE id_usuario = usuarios.id) THEN 'Administrador'
             WHEN EXISTS (SELECT * FROM propietarios WHERE id_usuario = usuarios.id) THEN 'Propietario'
@@ -60,5 +66,29 @@ class AuthController extends Controller
         END AS type_user")
             ->where('id', $user->id)
             ->value('type_user');
+            
+        switch ($nameoftype) {
+            case 'Administrador':
+                $user_data = Administrador::where('id_usuario', $user->id)->first();
+                break;
+            case 'Propietario':
+                $user_data = Propietario::where('id_usuario', $user->id)->first();
+                break;
+            case 'Empleado':
+                $user_data = Empleado::where('id_usuario', $user->id)->first();
+                break;
+            default:
+                return null;
+                break;
+        }
+        $user_data->tipo = $nameoftype;
+        return $user_data;
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Sesion cerrada'], 200);
+    }
+
 }
