@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cuenta extends Model
 {
+    use HasFactory;
     protected $table = 'cuentas'; // Nombre de la tabla
     protected $primaryKey = 'id'; // Nombre de la clave primaria
     public $timestamps = true;

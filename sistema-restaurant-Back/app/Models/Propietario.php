@@ -14,6 +14,9 @@ class Propietario extends Model
     public $timestamps = true;
     
     protected $fillable = [
+        'id_administrador',
+        'id_restaurante',
+        'id_usuario',
         'ci',
         'fecha_registro',
         'pais',

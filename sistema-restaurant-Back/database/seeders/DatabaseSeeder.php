@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-
+use App\Models\Categoria;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             RolEmpleadoSeeder::class,
             PropietarioSeeder::class,
             EmpleadoSeeder::class,
+            CategoriaSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

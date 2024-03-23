@@ -24,8 +24,7 @@ Route::middleware('auth:administrador')->group(function () {
     // Rutas para el administrador
 });
 
-Route::middleware('auth:propietario')->group(function () {
-    // Rutas para el propietario
+Route::middleware('propietario')->group(function () {
 });
 
 Route::middleware('auth:empleado')->group(function () {
@@ -35,7 +34,12 @@ Route::middleware('auth:empleado')->group(function () {
 Route::get('example', function () {
     return 'Hello World';
 });
+Route::get('menu/platillo', 'App\Http\Controllers\menu\PlatilloController@index');
 
+Route::post('/menu/platillo', 'App\Http\Controllers\menu\PlatilloController@store');
 Route::post('/login', AuthController::class . '@login');
 Route::post('/register', AuthController::class . '@register');
+Route::get('forbiden', function () {
+    return response()->json(['error' => 'Acceso no autorizado'], 403);
+})->name('forbiden');
 

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('menus', function (Blueprint $table) {
             $table->id(); // Columna autoincrementable para la clave primaria
             $table->string('portada', 100)->nullable();
-            $table->integer('tema')->nullable();
+            $table->string('tema')->nullable();
             $table->string('qr', 100)->nullable();
             $table->timestamps();
         });

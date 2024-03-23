@@ -13,7 +13,7 @@ class Restaurante extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'menu_id',
+        'id_menu',
         'nombre',
         'nit',
         'direccion',
