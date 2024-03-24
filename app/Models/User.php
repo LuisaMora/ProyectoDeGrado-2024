@@ -19,11 +19,24 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    // $table->string('nombre', 50);
+    //         $table->string('apellido_paterno', 100);
+    //         $table->string('apellido_materno', 100)->nullable();
+    //         $table->string('correo', 100)->unique();
+    //         $table->string('nickname', 100)->unique();
+    //         $table->string('foto_perfil', 150)->nullable();
+    //         $table->timestamp('email_verified_at')->nullable();
+    //         $table->string('password');
     protected $table = 'usuarios';
     protected $fillable = [
-        'name',
-        'email',
+        'nombre',
+        'correo',
         'password',
+        'nickname',
+        'foto_perfil',
+        'apellido_paterno',
+        'apellido_materno',
+
     ];
 
     /**
@@ -76,5 +89,18 @@ class User extends Authenticatable
         END AS es_emp
         ")->where('id', $this->id)->first();
         return $esEmp->es_emp;
+    }
+
+    public function getTipoUsuario(): string
+    {
+        $nameoftype = User::selectRaw("
+        CASE 
+            WHEN EXISTS (SELECT * FROM administradores WHERE id_usuario = usuarios.id) THEN 'Administrador'
+            WHEN EXISTS (SELECT * FROM propietarios WHERE id_usuario = usuarios.id) THEN 'Propietario'
+            WHEN EXISTS (SELECT * FROM empleados WHERE id_usuario = usuarios.id) THEN 'Empleado'
+            ELSE ''
+        END AS type_user
+        ")->where('id', $this->id)->value('type_user');
+        return $nameoftype;
     }
 }
