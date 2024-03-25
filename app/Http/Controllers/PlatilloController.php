@@ -14,7 +14,6 @@ class PlatilloController extends Controller
 {
     public function index()
     {
-        return response()->json(['auth' => auth()->user()], 200);
 
         $platillo = Platillo::all();
         return response()->json(['status' => 'success', 'platillo' => $platillo], 200);

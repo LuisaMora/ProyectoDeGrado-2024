@@ -26,19 +26,18 @@ class AuthController extends Controller
                 'errors' => $validarDatos->errors()
             ], 422);
         }
-        $user = User::where('correo', $request->input('usuario'))
-            ->orWhere('nickname', $request->input('usuario'))
-            ->first();
-
+        //$user es de tipo User y no mixed
+        $user = User::where('correo', $request->input('usuario'))->first();
         if ($user != null || Auth::attempt([
             'correo' => $user->correo,
             'password' => $request->input('password')
         ])) {
-            
-            $token = $user->createToken('authToken')->plainTextToken;
-            $datosPersonales = $this->getDatosPersonales($user);
-            $datosPersonales->usuario = $user;
-
+            if ($user instanceof User) {
+                // el token expira en 12 horas
+                    $token = $user->createToken('personal-token',expiresAt:now()->addHours(12))->plainTextToken;
+                    $datosPersonales = $this->getDatosPersonales($user);
+                    $datosPersonales->usuario = $user;
+            }
             return response()->json([
                 'token' => $token,
                 'user' => $datosPersonales,
