@@ -14,7 +14,7 @@ class RolEmpleadoSeeder extends Seeder
     public function run(): void
     {
         DB::table('rol_empleados')->insert([
-            'nombre' => 'Administrador',
+            'nombre' => 'Mesero',
         ]);
         DB::table('rol_empleados')->insert([
             'nombre' => 'Cajero',

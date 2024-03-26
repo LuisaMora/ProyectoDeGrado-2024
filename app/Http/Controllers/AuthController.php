@@ -27,7 +27,9 @@ class AuthController extends Controller
             ], 422);
         }
         //$user es de tipo User y no mixed
-        $user = User::where('correo', $request->input('usuario'))->first();
+        $user = User::where('correo', $request->input('usuario'))->orWhere(
+            'nickname', $request->input('usuario')
+        )->first();
         if ($user != null || Auth::attempt([
             'correo' => $user->correo,
             'password' => $request->input('password')
