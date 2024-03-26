@@ -15,6 +15,7 @@ class Platillo extends Model
         'imagen',
         'descripcion',
         'id_categoria',
+        'disponible'
     ];
 
     public function menu()
@@ -25,5 +26,11 @@ class Platillo extends Model
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'id_categoria');
+    }
+
+    public function delete()
+    {
+        $this->disponible = false;
+        $this->save(); 
     }
 }

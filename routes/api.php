@@ -20,7 +20,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('propietario')->group(function () {
         Route::get('/menu/platillo', 'App\Http\Controllers\PlatilloController@index');
         Route::post('/menu/platillo', 'App\Http\Controllers\PlatilloController@store');
-    
+        Route::post('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@update');
+        Route::get('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@show');
+        Route::delete('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@destroy'); // Corregido el nombre de la ruta
     });
     
     Route::middleware('administrador')->group(function () {
