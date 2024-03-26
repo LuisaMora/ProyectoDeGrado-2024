@@ -71,8 +71,6 @@ class PlatilloController extends Controller
             $platillo->imagen = Storage::url($path);
         }
         $platillo->save();
-        return response()->json(['platillo' => $platillo, 'id' => $id], 200);
-
         return response()->json(['status' => 'success'], 200);
     }
     public function destroy($id)
