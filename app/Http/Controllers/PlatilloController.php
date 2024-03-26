@@ -15,7 +15,7 @@ class PlatilloController extends Controller
     public function index()
     {
 
-        $platillo = Platillo::with('categoria')->get();
+        $platillo = Platillo::with('categoria')->where('disponible', true)->get();
         return response()->json(['status' => 'success', 'platillo' => $platillo], 200);
     }
     public function store(Request $request)
@@ -75,6 +75,15 @@ class PlatilloController extends Controller
     }
     public function destroy($id)
     {
+        $platillo = Platillo::find($id);
+        if ($platillo == null) {
+            return response()->json(['message' => 'Platillo no encontrado.'], 404);
+        }
+        $platillo->delete();
+        //borrar imagen del storage
+        $imagen = $platillo->imagen;
+        $imagen = str_replace('storage', 'public', $imagen);
+        Storage::delete($imagen);
         return response()->json(['status' => 'success'], 200);
     }
 }

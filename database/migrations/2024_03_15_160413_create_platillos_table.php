@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('imagen', 300)->nullable();
             $table->string('descripcion', 500)->nullable();
             $table->unsignedBigInteger('id_categoria')->nullable();
+            $table->boolean('disponible')->default(true);
             $table->timestamps();
 
             $table->foreign('id_menu')->references('id')->on('menus')->onDelete('restrict')->onUpdate('restrict');
