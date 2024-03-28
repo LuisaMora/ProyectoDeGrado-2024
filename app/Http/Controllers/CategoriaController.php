@@ -16,7 +16,6 @@ class CategoriaController extends Controller
     function store(Request $request) {
         $request->validate([
             'nombre' => 'required|max:100',
-            'descripcion' => 'required|max:255',
         ]);
 
         $categoria = Categoria::create($request->all());
