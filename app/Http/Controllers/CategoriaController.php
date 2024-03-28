@@ -28,6 +28,7 @@ class CategoriaController extends Controller
         if ($categoria == null) {
             return response()->json(['message' => 'Categoria no encontrada.'], 404);
         }
+    
         return response()->json(['status' => 'success', 'categoria' => $categoria], 200);
     }
 
