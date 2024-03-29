@@ -30,7 +30,7 @@ class AuthController extends Controller
         $user = User::where('correo', $request->input('usuario'))->orWhere(
             'nickname', $request->input('usuario')
         )->first();
-        if ($user != null || Auth::attempt([
+        if ($user != null && Auth::attempt([
             'correo' => $user->correo,
             'password' => $request->input('password')
         ])) {
