@@ -17,6 +17,7 @@ class CategoriaController extends Controller
     function store(Request $request) {
         $request->validate([
             'nombre' => 'required|max:100',
+            'imagen' => 'required|image',
         ]);
 
         $imagen = $request->file('imagen');
@@ -48,6 +49,7 @@ class CategoriaController extends Controller
 
         $request->validate([
             'nombre' => 'required|max:100',
+            'imagen' => 'required|image',
             'descripcion' => 'required|max:255',
         ]);
 
