@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoriaController extends Controller
 {
@@ -18,7 +19,15 @@ class CategoriaController extends Controller
             'nombre' => 'required|max:100',
         ]);
 
+        $imagen = $request->file('imagen');
+        $categoriaImg = md5_file($imagen->getRealPath()) .'.'. $imagen->getClientOriginalExtension();
+        $path = $imagen->storeAs('public/categoria', $categoriaImg);
+
         $categoria = Categoria::create($request->all());
+        $categoria->imagen=Storage::url($path);
+        $categoria->save();
+        
+    
         return response()->json(['status' => 'success', 'categoria' => $categoria], 201);
     }
 
