@@ -22,9 +22,9 @@ class Empleado extends Model
         'direccion',
     ];
 
-    public function usuario()
+    public function User()
     {
-        return $this->belongsTo(Usuario::class, 'id_user');
+        return $this->belongsTo(User::class, 'id_usuario');
     }
 
     public function rol()
