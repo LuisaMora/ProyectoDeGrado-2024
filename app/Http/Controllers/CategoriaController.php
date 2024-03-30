@@ -47,12 +47,6 @@ class CategoriaController extends Controller
             return response()->json(['message' => 'Categoria no encontrada.'], 404);
         }
 
-        $request->validate([
-            'nombre' => 'required|max:100',
-            'imagen' => 'required|image',
-            'descripcion' => 'required|max:255',
-        ]);
-
         $categoria->update($request->all());
         $imagen=$request->file('imagen');
         if ($imagen != null) {

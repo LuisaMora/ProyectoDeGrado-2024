@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@update');
         Route::get('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@show');
         Route::delete('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@destroy');
+
     });
     
     Route::middleware('administrador')->group(function () {
