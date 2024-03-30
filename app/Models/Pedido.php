@@ -7,19 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
 {
-    use HasFactory;
-    protected $table = 'pedidos'; // Nombre de la tabla
-    protected $primaryKey = 'id'; // Nombre de la clave primaria
-    public $timestamps = true;
-
     protected $fillable = [
-        'detalle',
-        'cantidad',
-        'estado',
+        'id_cuenta',
+        'tipo',
         'id_mesa',
         'id_empleado',
-        'fecha',
+        'fecha_hora_pedido',
     ];
+
+    public function cuenta()
+    {
+        return $this->belongsTo(Cuenta::class, 'id_cuenta');
+    }
 
     public function mesa()
     {
@@ -29,5 +28,11 @@ class Pedido extends Model
     public function empleado()
     {
         return $this->belongsTo(Empleado::class, 'id_empleado');
+    }
+
+    public function platos()
+    {
+        return $this->belongsToMany(Platillo::class, 'plato_pedido', 'id_pedido', 'id_platillo')
+            ->withPivot('id_estado', 'detalle', 'cantidad');
     }
 }

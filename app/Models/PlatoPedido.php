@@ -14,6 +14,8 @@ class PlatoPedido extends Model
         'id_platillo',
         'id_pedido',
         'id_estado',
+        'cantidad',
+        'detalle',
     ];
 
     public function platillo()
