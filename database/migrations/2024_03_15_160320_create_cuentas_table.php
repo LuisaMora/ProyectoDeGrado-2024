@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('cuentas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('mesa_id')->nullable();
-            $table->string('nombre_razon_social', 100)->nullable();
+            $table->unsignedBigInteger('id_mesa');
+            $table->string('nombre_razon_social', 100)->default('Anónimo');
             $table->integer('monto_total');
             $table->timestamps();
-            $table->foreign('mesa_id')->references('id')->on('mesas')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreign('id_mesa')->references('id')->on('mesas')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 

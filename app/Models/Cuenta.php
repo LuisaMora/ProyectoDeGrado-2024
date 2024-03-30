@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cuenta extends Model
 {
     protected $fillable = [
-        'mesa_id',
+        'id_mesa',
         'nombre_razon_social',
         'monto_total',
     ];
@@ -23,7 +23,7 @@ class Cuenta extends Model
 
     public function mesa()
     {
-        return $this->belongsTo(Mesa::class, 'mesa_id');
+        return $this->belongsTo(Mesa::class, 'id_mesa');
     }
 
 }

@@ -14,5 +14,6 @@ class Mesa extends Model
 
     protected $fillable = [
         'nombre',
+        'id_restaurante',
     ];
 }

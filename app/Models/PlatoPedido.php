@@ -18,6 +18,19 @@ class PlatoPedido extends Model
         'detalle',
     ];
 
+    public function guardarPlatillos($platillos, $pedido_id)
+    {
+        foreach($platillos as $platillo) {
+        PlatoPedido::create([
+            'id_platillo' => $platillo['id_platillo'],
+            'id_pedido' => $pedido_id,
+            'id_estado' => 1,// por defecto en espera
+            'cantidad' => $platillo['cantidad'],
+            'detalle' => $platillo['detalle'],
+        ]);
+        }
+    }
+
     public function platillo()
     {
         return $this->belongsTo(Platillo::class, 'id_platillo');

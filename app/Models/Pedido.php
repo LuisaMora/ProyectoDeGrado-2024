@@ -10,7 +10,6 @@ class Pedido extends Model
     protected $fillable = [
         'id_cuenta',
         'tipo',
-        'id_mesa',
         'id_empleado',
         'fecha_hora_pedido',
     ];
@@ -18,11 +17,6 @@ class Pedido extends Model
     public function cuenta()
     {
         return $this->belongsTo(Cuenta::class, 'id_cuenta');
-    }
-
-    public function mesa()
-    {
-        return $this->belongsTo(Mesa::class, 'id_mesa');
     }
 
     public function empleado()

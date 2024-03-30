@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_pedido');
             $table->unsignedBigInteger('id_estado');
             $table->text('detalle')->nullable();
-            $table->integer('cantidad')->nullable();
+            $table->integer('cantidad');
             $table->timestamps();
 
             $table->foreign('id_platillo')->references('id')->on('platillos')->onDelete('restrict')->onUpdate('restrict');

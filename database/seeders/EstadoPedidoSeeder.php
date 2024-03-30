@@ -12,6 +12,16 @@ class EstadoPedidoSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $estados = [
+            ['nombre' => 'En espera'],
+            ['nombre' => 'En preparación'],
+            ['nombre' => 'Listo para servir'],
+            ['nombre' => 'Servido'],
+            ['nombre' => 'Cancelado'],
+        ];
+
+        foreach ($estados as $estado) {
+            \App\Models\EstadoPedido::create($estado);
+        }
     }
 }
