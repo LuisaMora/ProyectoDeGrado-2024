@@ -12,14 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cuentas', function (Blueprint $table) {
-            $table->id(); // Columna autoincrementable para la clave primaria
-            $table->unsignedBigInteger('pedido_id')->nullable();
+            $table->id();
             $table->unsignedBigInteger('mesa_id')->nullable();
-            $table->integer('monto_total')->nullable();
+            $table->string('nombre_razon_social', 100)->nullable();
+            $table->integer('monto_total');
             $table->timestamps();
-
-            // Claves foráneas
-            $table->foreign('pedido_id')->references('id')->on('pedidos')->onDelete('restrict')->onUpdate('restrict');
             $table->foreign('mesa_id')->references('id')->on('mesas')->onDelete('restrict')->onUpdate('restrict');
         });
     }
