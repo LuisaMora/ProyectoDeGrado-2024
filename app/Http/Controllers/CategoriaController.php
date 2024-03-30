@@ -54,6 +54,13 @@ class CategoriaController extends Controller
         ]);
 
         $categoria->update($request->all());
+        $imagen=$request->file('imagen');
+        if ($imagen != null) {
+            $categoriaImg = md5_file($imagen->getRealPath()) .'.'. $imagen->getClientOriginalExtension();
+            $path = $imagen->storeAs('public/categorias', $categoriaImg);
+            $categoria->imagen = Storage::url($path);
+        }
+        $categoria->save(); 
         return response()->json(['status' => 'success', 'categoria' => $categoria], 200);
     }
 
