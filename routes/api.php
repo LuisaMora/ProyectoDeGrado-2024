@@ -18,7 +18,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', 'App\Http\Controllers\AuthController@logout');
 
     Route::middleware('propietario')->group(function () {
-        Route::get('/menu/platillo', 'App\Http\Controllers\PlatilloController@index');
         Route::post('/menu/platillo', 'App\Http\Controllers\PlatilloController@store');
         Route::post('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@update');
         Route::get('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@show');
@@ -41,6 +40,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
         });
+    });
+
+    Route::middleware('propietarioOempleado')->group(function () {
+        Route::get('/menu/platillo', 'App\Http\Controllers\PlatilloController@index');
     });
     
 });
