@@ -51,7 +51,7 @@ class PedidoController extends Controller
         $fecha_resta_dos_horas = now()->subHours(2)->format('Y-m-d H:i:s');
         $cuenta = Cuenta::where('id_mesa', $request->id_mesa)
             ->whereNotIn('estado', ['Cancelada', 'Pagada'])
-            ->orwhere('created_at', '>=', $fecha_resta_dos_horas)
+            ->where('created_at', '>=', $fecha_resta_dos_horas)
             ->first();
 
         if ($cuenta == null) {
