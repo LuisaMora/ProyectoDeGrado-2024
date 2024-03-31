@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             CategoriaSeeder::class,
             MesaSeeder::class,
             EstadoPedidoSeeder::class,
+            EstadoCuentaSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

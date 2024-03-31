@@ -17,9 +17,6 @@ class PedidoController extends Controller
     }
 
     function store(Request $request) {
-        // lista de id de platillos con la cantidad
-        // numero de mesa
-        // id de empleado
 
         $validarDatos = Validator::make($request->all(), [
             'id_mesa' => 'required|integer',
@@ -32,17 +29,25 @@ class PedidoController extends Controller
         if($validarDatos->fails()) {
             return response()->json(['status' => 'error', 'error' => $validarDatos->errors()], 400);
         }
-        // return response()->json(['status' => 'success', 'empleados' => $request->all()], 200);
-        $cuenta = Cuenta::where('id_mesa', $request->mesa_id)->first();
+        //Aqui es donde se crea la cuenta si no existe, si en algun nomenot se requiere dividir la cuenta, se debe hacer en otro metodo
+        //y se debe especificar en que cuenta se va a registrar el pedido.
+        $fecha_resta_dos_horas = now()->subHours(2)->format('Y-m-d H:i:s');
+        $cuenta = $cuenta = Cuenta::where('id_mesa', $request->id_mesa)
+        ->whereNotIn('estado', ['Cancelada', 'Pagada'])
+        ->where('created_at', '>=', $fecha_resta_dos_horas)
+        ->first();
+
         if($cuenta == null) {
             $cuenta = new Cuenta();
             $cuenta->id_mesa = $request->id_mesa;
-            $cuenta->nombre_razon_social = 'Anónimo';
             $cuenta->monto_total = 0;
-            $cuenta->save();
-        }
+            $cuenta->save();// se crea con un estado de abierta (1)
+            //'estado IN ("Abierta", "Candelada", "PagoPendiente", "Pagada")'
+        }        
+        // return response()->json(['status' => 'success', 'cuenta' =>$cuenta], 200); 
+
         $pedido = new Pedido();
-        $pedido->id_cuenta = $request->id_cuenta;
+        $pedido->id_cuenta = $cuenta->id;
         $pedido->tipo = $request->tipo;
         $pedido->id_empleado = $request->id_empleado;
         $pedido->fecha_hora_pedido = now();

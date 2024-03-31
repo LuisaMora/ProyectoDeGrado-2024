@@ -10,6 +10,7 @@ class Cuenta extends Model
         'id_mesa',
         'nombre_razon_social',
         'monto_total',
+        'estado',
     ];
 
     public function pedidos()

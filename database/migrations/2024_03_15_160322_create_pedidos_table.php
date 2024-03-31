@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_cuenta')->nullable();
-            $table->string('tipo',50);// "local", "llevar"
+            $table->enum('tipo', ['local', 'llevar'])->default('local');
             $table->unsignedBigInteger('id_empleado')->nullable();
             $table->dateTime('fecha_hora_pedido')->nullable();
             $table->timestamps();

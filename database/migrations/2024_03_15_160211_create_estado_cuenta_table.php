@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('estado_cuentas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cuenta_id');
-            $table->string('estado', 50);
-            // "Abierta", "Cerrada", "Pendiente de Pago", "Pagada"
-            $table->timestamp('fecha_hora')->default(now());
-            $table->foreign('cuenta_id')->references('id')->on('cuentas')->onDelete('cascade');
+            // $table->unsignedBigInteger('cuenta_id');
+            // $table->string('estado', 50)->nullable()->change();
+            $table->enum('estado', ['Abierta', 'Cancelada', 'PagoPendiente', 'Pagada']);
+            // $table->foreign('cuenta_id')->references('id')->on('cuentas')->onDelete('cascade');
             $table->timestamps();
         });
     }
