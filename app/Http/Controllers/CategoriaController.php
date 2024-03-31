@@ -47,13 +47,14 @@ class CategoriaController extends Controller
             return response()->json(['message' => 'Categoria no encontrada.'], 404);
         }
 
-        $request->validate([
-            'nombre' => 'required|max:100',
-            'imagen' => 'required|image',
-            'descripcion' => 'required|max:255',
-        ]);
-
         $categoria->update($request->all());
+        $imagen=$request->file('imagen');
+        if ($imagen != null) {
+            $categoriaImg = md5_file($imagen->getRealPath()) .'.'. $imagen->getClientOriginalExtension();
+            $path = $imagen->storeAs('public/categorias', $categoriaImg);
+            $categoria->imagen = Storage::url($path);
+        }
+        $categoria->save(); 
         return response()->json(['status' => 'success', 'categoria' => $categoria], 200);
     }
 
