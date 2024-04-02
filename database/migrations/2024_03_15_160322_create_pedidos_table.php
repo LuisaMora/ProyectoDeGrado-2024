@@ -13,15 +13,12 @@ return new class extends Migration
     {
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
-            $table->text('detalle')->nullable();
-            $table->integer('cantidad')->nullable();
-            $table->string('estado', 250)->nullable();
-            $table->unsignedBigInteger('id_mesa')->nullable();
+            $table->unsignedBigInteger('id_cuenta')->nullable();
+            $table->enum('tipo', ['local', 'llevar'])->default('local');
             $table->unsignedBigInteger('id_empleado')->nullable();
-            $table->date('fecha')->nullable();
+            $table->dateTime('fecha_hora_pedido')->nullable();
             $table->timestamps();
-
-            $table->foreign('id_mesa')->references('id')->on('mesas')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreign('id_cuenta')->references('id')->on('cuentas')->onDelete('restrict')->onUpdate('restrict');
             $table->foreign('id_empleado')->references('id')->on('empleados')->onDelete('restrict')->onUpdate('restrict');
         });
     }

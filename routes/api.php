@@ -29,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@show');
         Route::delete('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@destroy');
 
+        Route::get('/menu', 'App\Http\Controllers\MenuController@index');
+        Route::post('/menu', 'App\Http\Controllers\MenuController@storeMenu');
+
     });
     
     Route::middleware('administrador')->group(function () {
@@ -38,6 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     
     Route::middleware('empleado')->group(function () {
+        Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
+        Route::post('/pedido', 'App\Http\Controllers\PedidoController@store');
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
         });

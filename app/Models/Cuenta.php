@@ -2,30 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Cuenta extends Model
 {
-    use HasFactory;
-    protected $table = 'cuentas'; // Nombre de la tabla
-    protected $primaryKey = 'id'; // Nombre de la clave primaria
-    public $timestamps = true;
-
     protected $fillable = [
-        'pedido_id',
-        'mesa_id',
+        'id_mesa',
+        'nombre_razon_social',
         'monto_total',
+        'estado',
     ];
 
-    public function pedido()
+    public function pedidos()
     {
-        return $this->belongsTo(Pedido::class, 'pedido_id');
+        return $this->hasMany(Pedido::class, 'cuenta_id');
+    }
+    public function estadoCuentas()
+    {
+        return $this->hasMany(EstadoCuenta::class, 'cuenta_id');
     }
 
     public function mesa()
     {
-        return $this->belongsTo(Mesa::class, 'mesa_id');
+        return $this->belongsTo(Mesa::class, 'id_mesa');
     }
 
 }

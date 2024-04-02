@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('mesas', function (Blueprint $table) {
             $table->id(); // Columna autoincrementable para la clave primaria
+            $table->unsignedBigInteger('id_restaurante');
             $table->string('nombre', 15)->nullable();
             $table->timestamps();
+
+            $table->foreign('id_restaurante')->references('id')->on('restaurantes')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 

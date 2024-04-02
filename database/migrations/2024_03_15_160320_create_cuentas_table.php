@@ -12,15 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cuentas', function (Blueprint $table) {
-            $table->id(); // Columna autoincrementable para la clave primaria
-            $table->unsignedBigInteger('pedido_id')->nullable();
-            $table->unsignedBigInteger('mesa_id')->nullable();
-            $table->integer('monto_total')->nullable();
+            $table->id();
+            $table->unsignedBigInteger('id_mesa');
+            $table->enum('estado', ['Abierta', 'Cancelada', 'PagoPendiente', 'Pagada'])->default('Abierta');
+            $table->string('nombre_razon_social', 100)->default('Anónimo');
+            $table->integer('monto_total');
             $table->timestamps();
-
-            // Claves foráneas
-            $table->foreign('pedido_id')->references('id')->on('pedidos')->onDelete('restrict')->onUpdate('restrict');
-            $table->foreign('mesa_id')->references('id')->on('mesas')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreign('id_mesa')->references('id')->on('mesas')->onDelete('restrict')->onUpdate('restrict');
+            // $table->foreign('id_estado_cuenta')->references('id')->on('estado_cuentas')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 
