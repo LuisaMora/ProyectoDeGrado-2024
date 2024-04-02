@@ -28,9 +28,8 @@ class MenuController extends Controller
     {
         $validarDatos = Validator::make($request->all(), [
             'id_menu' => 'required|numeric',
-            'portada' => 'required|image',
             'tema' => 'required|max:100',
-            'platillos' => 'required|array|min:1',
+            'platillos' => 'required|string',
         ]);
         if ($validarDatos->fails()) {
             return response()->json([
@@ -38,19 +37,27 @@ class MenuController extends Controller
                 'errors' => $validarDatos->errors()
             ], 422);
         }
-
+        $platillos = json_decode($request->platillos, true);
         $menu = Menu::find($request->id_menu);
         if ($menu == null) {
             return response()->json(['message' => 'Menu no encontrado.'], 404);
         }
+        
         $imagen = $request->file('portada');
-        $platilloImg = md5_file($imagen->getRealPath()) . '.' . $imagen->getClientOriginalExtension();
-        $path = $imagen->storeAs('public/portadas', $platilloImg);
-
-        $menu->imagen = Storage::url($path);
+        if($imagen != null){
+            $platilloImg = md5_file($imagen->getRealPath()) . '.' . $imagen->getClientOriginalExtension();
+            $path = $imagen->storeAs('public/portadas', $platilloImg);
+    
+            $menu->portada = Storage::url($path);
+        }
         $menu->tema = $request->tema;
         $menu->qr = $request->qr;
         $menu->save();
+        foreach ($platillos as $platilloMenu) {
+            $platillo = Platillo::find($platilloMenu['id']);
+            $platillo->plato_disponible = $platilloMenu['plato_disponible'];
+            $platillo->update();
+        }
         return response()->json(['status' => 'success', 'menu' => $menu], 200);
     }
 }
