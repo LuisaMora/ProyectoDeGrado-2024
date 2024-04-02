@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('descripcion', 500)->nullable();
             $table->unsignedBigInteger('id_categoria')->nullable();
             $table->boolean('disponible')->default(true);
-            $table->boolean('plato_disponible')->default(true);
+            $table->boolean('plato_disponible_menu')->default(true);
             $table->timestamps();
 
             $table->foreign('id_menu')->references('id')->on('menus')->onDelete('restrict')->onUpdate('restrict');

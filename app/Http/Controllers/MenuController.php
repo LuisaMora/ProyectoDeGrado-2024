@@ -55,7 +55,7 @@ class MenuController extends Controller
         $menu->save();
         foreach ($platillos as $platilloMenu) {
             $platillo = Platillo::find($platilloMenu['id']);
-            $platillo->plato_disponible = $platilloMenu['plato_disponible'];
+            $platillo->plato_disponible_menu = $platilloMenu['plato_disponible_menu'];
             $platillo->update();
         }
         return response()->json(['status' => 'success', 'menu' => $menu], 200);
