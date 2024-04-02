@@ -17,8 +17,8 @@ class MenuFactory extends Factory
     public function definition(): array
     {
         return [
-            'portada' => $this->faker->imageUrl(),
-            'tema' => $this->faker->word(),
+            'portada' => '',
+            'tema' => 'light-theme',
             'qr' => $this->faker->imageUrl(),
         ];
     }

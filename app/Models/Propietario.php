@@ -22,4 +22,14 @@ class Propietario extends Model
         'pais',
         'departamento',
     ];
+
+    public function administrador()
+    {
+        return $this->belongsTo(Administrador::class, 'id_administrador');
+    }
+
+    public function restaurante()
+    {
+        return $this->belongsTo(Restaurante::class, 'id_restaurante');
+    }
 }
