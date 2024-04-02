@@ -15,7 +15,8 @@ class Platillo extends Model
         'imagen',
         'descripcion',
         'id_categoria',
-        'disponible'
+        'disponible',
+        'plato_disponible'
     ];
 
     public function menu()
