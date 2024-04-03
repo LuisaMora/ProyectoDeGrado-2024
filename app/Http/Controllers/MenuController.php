@@ -6,9 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\Platillo;
 use App\Models\Propietario;
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Label\Label;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\PngWriter;
 
 class MenuController extends Controller
 {
@@ -59,5 +66,55 @@ class MenuController extends Controller
             $platillo->update();
         }
         return response()->json(['status' => 'success', 'menu' => $menu], 200);
+    }
+
+    function generateQr(Request $request){
+        $validate = Validator::make($request->all(), [
+            'direccion_url_menu' => 'required|url',
+        ]);
+        if ($validate->fails()) {
+            return response()->json(['status' => 'error', 'error' => $validate->errors()], 400);
+        }
+        $id_usuario = auth()->user()->id;
+        $propietario = Propietario::where('id_usuario', $id_usuario)->first();
+        if ($propietario) {
+            $menu = $propietario->restaurante->menu;
+            $path = public_path('storage/codigos_qr/qr_'.time() . '.png');
+            $writer = new PngWriter();
+            $qrCode = QrCode::create('Life is too short to be generating QR codes')
+            ->setEncoding(new Encoding('UTF-8'))
+            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
+            ->setSize(300)
+            ->setMargin(10)
+            ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
+            ->setForegroundColor(new Color(0, 0, 0))
+            ->setBackgroundColor(new Color(255, 255, 255));
+            $label = Label::create('Label')
+            ->setTextColor(new Color(255, 0, 0));
+            $result = $writer->write($qrCode,null,$label);
+            $result->saveToFile($path);
+            $url_codigo_qr = Storage::url($path);
+            // $menu->qr = $url_codigo_qr;
+            // $menu->save();
+            return response()->json(['status' => 'success', 'qr' => $url_codigo_qr], 200);
+
+        }else{
+            return response()->json(['message' => 'Usuario no encontrado.'], 404);
+        }
+
+    }
+
+    function qr(){
+        $id_usuario = auth()->user()->id;
+        $propietario = Propietario::where('id_usuario', $id_usuario)->first();
+        if ($propietario) {
+            $menu = $propietario->restaurante->menu;
+            if ($menu->url_menu == '') {
+                return response()->json(['message' => 'No se ha generado el QR'], 404);
+            }
+            return response()->json(['status' => 'success', 'qr' => '$qr'], 200);
+        }else{
+            return response()->json(['message' => 'Usuario no encontrado.'], 404);
+        }
     }
 }

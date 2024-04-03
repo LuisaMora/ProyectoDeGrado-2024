@@ -19,7 +19,7 @@ class MenuFactory extends Factory
         return [
             'portada' => '',
             'tema' => 'light-theme',
-            'qr' => $this->faker->imageUrl(),
+            'qr' => '',
         ];
     }
 }
