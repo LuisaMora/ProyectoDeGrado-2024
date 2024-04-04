@@ -79,7 +79,8 @@ class MenuController extends Controller
         $propietario = Propietario::where('id_usuario', $id_usuario)->first();
         if ($propietario) {
             $menu = $propietario->restaurante->menu;
-            $path = public_path('storage/codigos_qr/qr_'.time() . '.png');
+            $tiempo = time().'_'.$menu->id;
+            $path = storage_path('app\public\codigos_qr\qr_'.$tiempo . '.png');
             $writer = new PngWriter();
             $qrCode = QrCode::create('Life is too short to be generating QR codes')
             ->setEncoding(new Encoding('UTF-8'))
@@ -93,9 +94,9 @@ class MenuController extends Controller
             ->setTextColor(new Color(255, 0, 0));
             $result = $writer->write($qrCode,null,$label);
             $result->saveToFile($path);
-            $url_codigo_qr = Storage::url($path);
-            // $menu->qr = $url_codigo_qr;
-            // $menu->save();
+            $url_codigo_qr = '/storage/codigos_qr/qr_'.$tiempo. '.png';
+            $menu->qr = $url_codigo_qr;
+            $menu->save();
             return response()->json(['status' => 'success', 'qr' => $url_codigo_qr], 200);
 
         }else{
