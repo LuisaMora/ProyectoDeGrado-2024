@@ -82,16 +82,16 @@ class MenuController extends Controller
             $tiempo = time().'_'.$menu->id;
             $path = storage_path('app\public\codigos_qr\qr_'.$tiempo . '.png');
             $writer = new PngWriter();
-            $qrCode = QrCode::create('Life is too short to be generating QR codes')
+            $qrCode = QrCode::create($request->direccion_url_menu)
             ->setEncoding(new Encoding('UTF-8'))
             ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
             ->setSize(300)
             ->setMargin(10)
             ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
-            ->setForegroundColor(new Color(0, 0, 0))
+            ->setForegroundColor(new Color(186, 50, 23))
             ->setBackgroundColor(new Color(255, 255, 255));
-            $label = Label::create('Label')
-            ->setTextColor(new Color(255, 0, 0));
+            $label = Label::create('Escanee el código QR')
+            ->setTextColor(new Color(186, 50, 23));
             $result = $writer->write($qrCode,null,$label);
             $result->saveToFile($path);
             $url_codigo_qr = '/storage/codigos_qr/qr_'.$tiempo. '.png';
