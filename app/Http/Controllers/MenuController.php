@@ -30,7 +30,17 @@ class MenuController extends Controller
             $platillos = Platillo::with('categoria')->where('id_menu', $menu->id)->where('disponible',true)->get();
             return response()->json(['status' => 'success', 'menu' => $menu, 'platillos' => $platillos], 200);
         }
-        return view('menu.index');
+        return response()->json(['message' => 'Usuario no encontrado.'], 404);
+    }
+
+    public function show($id)
+    {
+        $menu = Menu::find($id);
+        if ($menu == null) {
+            return response()->json(['message' => 'Menu no encontrado.'], 404);
+        }
+        $platillos = Platillo::with('categoria')->where('id_menu', $menu->id)->get();
+        return response()->json(['status' => 'success', 'menu' => $menu, 'platillos' => $platillos], 200);
     }
     public function storeMenu(Request $request)
     {
@@ -112,7 +122,7 @@ class MenuController extends Controller
         $propietario = Propietario::where('id_usuario', $id_usuario)->first();
         if ($propietario) {
             $menu = $propietario->restaurante->menu;
-            if ($menu->url_menu == '') {
+            if ($menu->qr == '') {
                 return response()->json(['message' => 'No se ha generado el QR'], 404);
             }
             return response()->json(['status' => 'success', 'qr' => '$qr'], 200);
