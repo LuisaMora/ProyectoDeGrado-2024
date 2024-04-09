@@ -50,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('propietarioOempleado')->group(function () {
         Route::get('/menu/platillo', 'App\Http\Controllers\PlatilloController@index');
+        Route::get('/restaurante/mesas', 'App\Http\Controllers\MesasController@index');
     });
     
 });
