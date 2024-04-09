@@ -10,6 +10,7 @@ use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\Label\Label;
+use Endroid\QrCode\Logo\Logo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -88,11 +89,12 @@ class MenuController extends Controller
             ->setSize(300)
             ->setMargin(10)
             ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
-            ->setForegroundColor(new Color(186, 50, 23))
-            ->setBackgroundColor(new Color(255, 255, 255));
+            ->setForegroundColor(new Color(0, 0, 0))
+            ->setBackgroundColor(new Color(255, 255, 255)   );
             $label = Label::create('Escanee el código QR')
             ->setTextColor(new Color(186, 50, 23));
-            $result = $writer->write($qrCode,null,$label);
+            $logo = Logo::create(public_path('storage\codigos_qr\logo (3).png'));
+            $result = $writer->write($qrCode,$logo,$label);
             $result->saveToFile($path);
             $url_codigo_qr = '/storage/codigos_qr/qr_'.$tiempo. '.png';
             $menu->qr = $url_codigo_qr;
