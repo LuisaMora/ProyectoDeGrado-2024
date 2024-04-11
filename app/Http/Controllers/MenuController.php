@@ -103,8 +103,8 @@ class MenuController extends Controller
             ->setBackgroundColor(new Color(255, 255, 255)   );
             $label = Label::create('Escanee el código QR')
             ->setTextColor(new Color(186, 50, 23));
-            $logo = Logo::create(public_path('storage\codigos_qr\logo (3).png'));
-            $result = $writer->write($qrCode,$logo,$label);
+            // $logo = Logo::create(public_path('storage\codigos_qr\logo.png'));
+            $result = $writer->write($qrCode,null,$label);
             $result->saveToFile($path);
             $url_codigo_qr = '/storage/codigos_qr/qr_'.$tiempo. '.png';
             $menu->qr = $url_codigo_qr;
