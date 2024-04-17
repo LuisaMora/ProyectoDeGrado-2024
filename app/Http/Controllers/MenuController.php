@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\Platillo;
 use App\Models\Propietario;
+use App\Models\Restaurante;
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
@@ -35,12 +36,15 @@ class MenuController extends Controller
 
     public function show($id)
     {
-        $menu = Menu::find($id);
+        $nombreRestaurante = Restaurante::select('nombre')->where('id_menu', $id)->first();
+        $menu = Menu::select('portada', 'tema', 'qr')->find($id);
         if ($menu == null) {
             return response()->json(['message' => 'Menu no encontrado.'], 404);
         }
-        $platillos = Platillo::with('categoria')->where('id_menu', $menu->id)->get();
-        return response()->json(['status' => 'success', 'menu' => $menu, 'platillos' => $platillos], 200);
+        // platillos sin los campos: disponible , plato_disponible_menu, created_at, updated_at, id_menu, id
+        $platillos = Platillo::select('nombre', 'descripcion', 'precio', 'imagen', 'id_categoria')->with('categoria')->where('id_menu', $id)->get();
+
+        return response()->json(['status' => 'success', 'menu' => $menu, 'platillos' => $platillos, 'nombre_restaurante' => $nombreRestaurante], 200);
     }
     public function storeMenu(Request $request)
     {

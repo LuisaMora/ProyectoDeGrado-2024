@@ -57,6 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
 });
 
+Route::get('/menu/{id}', 'App\Http\Controllers\MenuController@show');
 
 Route::post('/login', 'App\Http\Controllers\AuthController@login');
 
