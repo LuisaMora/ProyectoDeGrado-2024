@@ -23,7 +23,7 @@ class PedidoController extends Controller
         $validarDatos = Validator::make($request->all(), [
             'id_mesa' => 'required|integer',
             'id_empleado' => 'required|integer',
-            'platillos' => 'required|array',
+            'platillos' => 'required|string',
             'tipo' => 'required|string|in:local,llevar'
         ], [
             'tipo.in' => 'El campo tipo debe ser "local" o "llevar".',
@@ -31,7 +31,7 @@ class PedidoController extends Controller
         if ($validarDatos->fails()) {
             return response()->json(['status' => 'error', 'error' => $validarDatos->errors()], 400);
         }
-
+        $platillos_decode = json_decode($request->platillos, true);
         $cuenta = $this->obtenerOCrearCuenta($request);
 
         $pedido = $pedido = new Pedido();
@@ -41,7 +41,7 @@ class PedidoController extends Controller
         $pedido->fecha_hora_pedido = now();
         $pedido->save();
 
-        $this->crearPlatillosPedido($request->platillos, $pedido);
+        $this->crearPlatillosPedido($platillos_decode, $pedido);
 
         return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
     }

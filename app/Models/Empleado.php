@@ -31,4 +31,9 @@ class Empleado extends Model
     {
         return $this->belongsTo(RolEmpleado::class, 'id_rol');
     }
+
+    public function propietario()
+    {
+        return $this->belongsTo(Propietario::class, 'id_propietario');
+    }
 }
