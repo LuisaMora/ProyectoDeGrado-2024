@@ -18,6 +18,7 @@ class EstadoPedidoSeeder extends Seeder
             ['nombre' => 'Listo para servir'],
             ['nombre' => 'Servido'],
             ['nombre' => 'Cancelado'],
+            ['nombre' => 'Modificado']
         ];
 
         foreach ($estados as $estado) {

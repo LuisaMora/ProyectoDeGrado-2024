@@ -32,6 +32,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu', 'App\Http\Controllers\MenuController@index');
         Route::post('/menu', 'App\Http\Controllers\MenuController@storeMenu');
 
+        Route::post('/menu/generar/qr', 'App\Http\Controllers\MenuController@generateQr');
+        
+        Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
     });
     
     Route::middleware('administrador')->group(function () {
@@ -56,6 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
 });
 
+Route::get('/menu/{id}', 'App\Http\Controllers\MenuController@show');
 
 Route::post('/login', 'App\Http\Controllers\AuthController@login');
 
