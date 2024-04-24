@@ -42,7 +42,8 @@ class MenuController extends Controller
             return response()->json(['message' => 'Menu no encontrado.'], 404);
         }
         // platillos sin los campos: disponible , plato_disponible_menu, created_at, updated_at, id_menu, id
-        $platillos = Platillo::select('nombre', 'descripcion', 'precio', 'imagen', 'id_categoria')->with('categoria')->where('id_menu', $id)->get();
+        $platillos = Platillo::select('nombre', 'descripcion', 'precio', 'imagen', 'id_categoria')->with('categoria')
+        ->where('id_menu', $id)->where('plato_disponible_menu',true)->get();
 
         return response()->json(['status' => 'success', 'menu' => $menu, 'platillos' => $platillos, 'nombre_restaurante' => $nombreRestaurante], 200);
     }
@@ -73,7 +74,6 @@ class MenuController extends Controller
             $menu->portada = Storage::url($path);
         }
         $menu->tema = $request->tema;
-        $menu->qr = $request->qr;
         $menu->save();
         foreach ($platillos as $platilloMenu) {
             $platillo = Platillo::find($platilloMenu['id']);
