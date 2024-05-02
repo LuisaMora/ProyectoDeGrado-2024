@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id(); // Columna autoincrementable para la clave primaria
             $table->string('nombre', 250)->nullable();
             $table->string('imagen', 100)->nullable();
+            $table->boolean('estado')->default(true);
             $table->timestamps();
         });
     }

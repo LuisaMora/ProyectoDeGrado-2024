@@ -12,6 +12,7 @@ class CategoriaSeeder extends Seeder
     public function run(): void
     {
         $categorias = [
+            'Otros',
             'Desayunos',
             'Comida',
             'Cena',
