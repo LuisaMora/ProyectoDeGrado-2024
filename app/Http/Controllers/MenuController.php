@@ -43,7 +43,7 @@ class MenuController extends Controller
         }
         // platillos sin los campos: disponible , plato_disponible_menu, created_at, updated_at, id_menu, id
         $platillos = Platillo::select('nombre', 'descripcion', 'precio', 'imagen', 'id_categoria')->with('categoria')
-        ->where('id_menu', $id)->where('plato_disponible_menu',true)->get();
+        ->where('id_menu', $id)->where('disponible', true)->where('plato_disponible_menu',true)->get();
 
         return response()->json(['status' => 'success', 'menu' => $menu, 'platillos' => $platillos, 'nombre_restaurante' => $nombreRestaurante], 200);
     }
