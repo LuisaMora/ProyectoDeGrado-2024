@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/logout', 'App\Http\Controllers\AuthController@logout');
+    Route::get('/logout', 'App\Http\Controllers\Auth\AuthController@logout');
 
     Route::middleware('propietario')->group(function () {
         Route::post('/menu/platillo', 'App\Http\Controllers\PlatilloController@store');
@@ -61,7 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/menu/{id}', 'App\Http\Controllers\MenuController@show');
 
-Route::post('/login', 'App\Http\Controllers\AuthController@login');
+Route::post('/login', 'App\Http\Controllers\Auth\AuthController@login');
 
 Route::get('/prohibido', function () {
     return response()->json([
