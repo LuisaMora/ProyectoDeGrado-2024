@@ -9,13 +9,25 @@ use App\Models\Propietario;
 use App\Models\User;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Mockery\Undefined;
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request)
+    public function login(Request $request)
     {
+        $validarDatos = Validator::make($request->all(), [
+            'usuario' => 'required|max:100|min:2',
+            'password' => 'required|max:100|min:2',
+        ]);
+
+        if ($validarDatos->fails()) {
+            return response()->json([
+                'message' => 'Datos invalidos',
+                'errors' => $validarDatos->errors()
+            ], 422);
+        }
         //$user es de tipo User y no mixed
         $user = $this->attemptLogin($request->usuario, $request->password);
         if ($user) {
