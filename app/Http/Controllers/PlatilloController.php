@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use SebastianBergmann\Type\TrueType;
 
 class PlatilloController extends Controller
 {
@@ -16,6 +17,11 @@ class PlatilloController extends Controller
     {
 
         $platillo = Platillo::with('categoria')->where('disponible', true)->get();
+        return response()->json(['status' => 'success', 'platillo' => $platillo], 200);
+    }
+    public function platillosDisponibles()
+    {
+        $platillo = Platillo::with('categoria')->where('disponible', true)->where('plato_disponible_menu', true)->get();
         return response()->json(['status' => 'success', 'platillo' => $platillo], 200);
     }
     public function store(Request $request)

@@ -51,7 +51,7 @@ class MenuController extends Controller
     {
         $validarDatos = Validator::make($request->all(), [
             'id_menu' => 'required|numeric',
-            'tema' => 'required|max:100',
+            'tema' => 'required|max:100|min:2',
             'platillos' => 'required|string',
         ]);
         if ($validarDatos->fails()) {

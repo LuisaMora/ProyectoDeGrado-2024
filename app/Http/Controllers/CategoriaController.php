@@ -18,7 +18,7 @@ class CategoriaController extends Controller
 
     function store(Request $request) {
         $validarDatos = Validator::make($request->all(), [
-            'nombre' => 'required|max:100',
+            'nombre' => 'required|max:100|min:2',
             'imagen' => 'required|image',
         ]);
         if ($validarDatos->fails()) {
