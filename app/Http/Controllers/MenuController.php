@@ -77,6 +77,7 @@ class MenuController extends Controller
         $menu->save();
         foreach ($platillos as $platilloMenu) {
             $platillo = Platillo::find($platilloMenu['id']);
+            // $platillo = Platillo::find($platilloMenu['id'])->where('disponible', true);
             $platillo->plato_disponible_menu = $platilloMenu['plato_disponible_menu'];
             $platillo->update();
         }

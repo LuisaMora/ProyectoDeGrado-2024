@@ -51,7 +51,7 @@ class PlatilloController extends Controller
     }
     public function show($id)
     {
-        $platillo = Platillo::with('categoria')->find($id);
+        $platillo = Platillo::with('categoria')->where('disponible', true)->find($id);
         if ($platillo == null) {
             return response()->json(['message' => 'Platillo no encontrado.'], 404);
         }
@@ -71,7 +71,7 @@ class PlatilloController extends Controller
             $platillo->imagen = Storage::url($path);
         }
         $platillo->save();
-        return response()->json(['status' => 'success'], 200);
+        return response()->json(['status' => 'success', 'platillo' => $platillo], 200);
     }
     public function destroy($id)
     {
