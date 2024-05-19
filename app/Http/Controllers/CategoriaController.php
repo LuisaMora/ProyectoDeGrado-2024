@@ -62,10 +62,11 @@ class CategoriaController extends Controller
         if ($request->imagen != null) {
             //$categoria->imagen = '/storage/categorias/05bc509bb2added0a71009299593455a1715808837.jpeg'
             $res = ImageHandler::eliminarImagenes([$rutaImagen]);
-            if (!$res) {
-                DB::rollBack();
-                return response()->json(['message' => 'Error al eliminar la imagen.'], 500);
-            }
+            // if (!$res) {
+                // DB::rollBack();
+                // return response()->json(['message' => 'Error al eliminar la imagen.'], 500);
+
+            // }
             $imagen = ImageHandler::guardarImagen($request->file('imagen'), 'categorias');
             $categoria->imagen = $imagen;
         }
