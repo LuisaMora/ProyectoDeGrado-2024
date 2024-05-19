@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pedido\Pedido;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
@@ -82,5 +82,6 @@ class PedidoController extends Controller
 
         $pedido->cuenta->monto_total += $monto_total;
         $pedido->cuenta->save();
-    }
+    } 
 }
+

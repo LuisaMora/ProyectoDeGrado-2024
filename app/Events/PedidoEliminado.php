@@ -10,16 +10,18 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CrearPedido implements ShouldBroadcast
+class PedidoEliminado implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $message;
+    public $idPedido;
+    public $idRestaurante;
     /**
      * Create a new event instance.
      */
-    public function __construct($message)
+    public function __construct(int $idPedido, int $idRestaurante)
     {
-        $this->message = $message;  
+        $this->idPedido = $idPedido;
+        $this->idRestaurante = $idRestaurante;
     }
 
     /**
@@ -30,12 +32,12 @@ class CrearPedido implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('pedido'),
+            new Channel('pedido'.$this->idRestaurante)
         ];
     }
 
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
-        return 'CrearPedido';
+        return 'PedidoEliminado';
     }
 }

@@ -45,7 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::middleware('empleado')->group(function () {
         Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
-        Route::post('/pedido', 'App\Http\Controllers\PedidoController@store');
+        Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
         });

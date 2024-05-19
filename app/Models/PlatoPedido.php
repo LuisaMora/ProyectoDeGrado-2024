@@ -18,7 +18,7 @@ class PlatoPedido extends Model
         'detalle',
     ];
 
-    public function guardarPlatillos($platillos, $pedido_id)
+    public function guardarPlatillos(array $platillos, $pedido_id)
     {
         foreach($platillos as $platillo) {
         PlatoPedido::create([
