@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Pedido\Pedido;
+namespace App\Http\Controllers\Pedido;
 
+use App\Events\PedidoCreado;
 use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
 use App\Models\Pedido;
@@ -24,6 +25,7 @@ class PedidoController extends Controller
             'id_mesa' => 'required|integer',
             'id_empleado' => 'required|integer',
             'platillos' => 'required|string',
+            'id_restaurante' => 'required|integer',
             'tipo' => 'required|string|in:local,llevar'
         ], [
             'tipo.in' => 'El campo tipo debe ser "local" o "llevar".',
@@ -42,6 +44,7 @@ class PedidoController extends Controller
         $pedido->save();
 
         $this->crearPlatillosPedido($platillos_decode, $pedido);
+        PedidoCreado::dispatch($request->id_restaurante, $pedido->id);
 
         return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
     }

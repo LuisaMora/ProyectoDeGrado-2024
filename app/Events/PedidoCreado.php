@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CrearPedido implements ShouldBroadcast
+class PedidoCreado implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $idPedido;
@@ -18,7 +18,7 @@ class CrearPedido implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct($idRestaurante, int $idPedido)
+    public function __construct( $idRestaurante, $idPedido)
     {
         $this->idRestaurante = $idRestaurante;  
         $this->idPedido = $idPedido;

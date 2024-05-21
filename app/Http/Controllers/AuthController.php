@@ -64,6 +64,7 @@ class AuthController extends Controller
                 break;
             case 'Empleado':
                 $user_data = Empleado::where('id_usuario', $user->id)->first();
+                $user_data->id_restaurante = Propietario::select('id_restaurante')->where('id', $user_data->id_propietario)->first()->id_restaurante;
                 break;
             default:
                 return null;
