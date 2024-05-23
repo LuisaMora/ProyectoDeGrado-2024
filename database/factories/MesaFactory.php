@@ -15,7 +15,8 @@ class MesaFactory extends Factory
      *
      * @return array<string, mixed>
      */
-
+    protected static $numeroMesa = 1;
+    
      public function registrar_a_restaurante($restaurante_id)
     {
         return$this->state([
@@ -25,8 +26,10 @@ class MesaFactory extends Factory
 
     public function definition(): array
     {
+        $nombreMesa = 'Mesa ' . static::$numeroMesa++;
+
         return [
-            'nombre' => $this->faker->word(),
+            'nombre' => $nombreMesa,
         ];
     }
 }

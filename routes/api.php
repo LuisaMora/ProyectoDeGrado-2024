@@ -15,9 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/logout', 'App\Http\Controllers\AuthController@logout');
+    Route::get('/logout', 'App\Http\Controllers\Auth\AuthController@logout');
 
     Route::middleware('propietario')->group(function () {
+        Route::get('/menu/platillo', 'App\Http\Controllers\PlatilloController@index');
         Route::post('/menu/platillo', 'App\Http\Controllers\PlatilloController@store');
         Route::post('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@update');
         Route::get('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@show');
@@ -45,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::middleware('empleado')->group(function () {
         Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
+        Route::get('/menu/pedido/platillos', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
         Route::post('/pedido', 'App\Http\Controllers\PedidoController@store');
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
@@ -52,7 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('propietarioOempleado')->group(function () {
-        Route::get('/menu/platillo', 'App\Http\Controllers\PlatilloController@index');
+        
         Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/restaurante/mesas', 'App\Http\Controllers\MesaController@index');
     });
@@ -61,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/menu/{id}', 'App\Http\Controllers\MenuController@show');
 
-Route::post('/login', 'App\Http\Controllers\AuthController@login');
+Route::post('/login', 'App\Http\Controllers\Auth\AuthController@login');
 
 Route::get('/prohibido', function () {
     return response()->json([

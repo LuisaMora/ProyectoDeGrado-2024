@@ -43,7 +43,7 @@ class MenuController extends Controller
         }
         // platillos sin los campos: disponible , plato_disponible_menu, created_at, updated_at, id_menu, id
         $platillos = Platillo::select('nombre', 'descripcion', 'precio', 'imagen', 'id_categoria')->with('categoria')
-        ->where('id_menu', $id)->where('plato_disponible_menu',true)->get();
+        ->where('id_menu', $id)->where('disponible', true)->where('plato_disponible_menu',true)->get();
 
         return response()->json(['status' => 'success', 'menu' => $menu, 'platillos' => $platillos, 'nombre_restaurante' => $nombreRestaurante], 200);
     }
@@ -51,7 +51,7 @@ class MenuController extends Controller
     {
         $validarDatos = Validator::make($request->all(), [
             'id_menu' => 'required|numeric',
-            'tema' => 'required|max:100',
+            'tema' => 'required|max:100|min:2',
             'platillos' => 'required|string',
         ]);
         if ($validarDatos->fails()) {
@@ -77,6 +77,7 @@ class MenuController extends Controller
         $menu->save();
         foreach ($platillos as $platilloMenu) {
             $platillo = Platillo::find($platilloMenu['id']);
+            // $platillo = Platillo::find($platilloMenu['id'])->where('disponible', true);
             $platillo->plato_disponible_menu = $platilloMenu['plato_disponible_menu'];
             $platillo->update();
         }
