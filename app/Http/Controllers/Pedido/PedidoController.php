@@ -22,8 +22,8 @@ class PedidoController extends Controller
     {
 
         $validarDatos = Validator::make($request->all(), [
-            'id_mesa' => 'required|integer',
-            'id_empleado' => 'required|integer',
+            'id_mesa' => 'required|integer|min:1',
+            'id_empleado' => 'required|integer:min:1',
             'platillos' => 'required|string',
             'id_restaurante' => 'required|integer',
             'tipo' => 'required|string|in:local,llevar'
@@ -34,6 +34,10 @@ class PedidoController extends Controller
             return response()->json(['status' => 'error', 'error' => $validarDatos->errors()], 400);
         }
         $platillos_decode = json_decode($request->platillos, true);
+        //verificar que no es un objeto vacio
+        if (empty($platillos_decode)) {
+            return response()->json(['status' => 'error', 'error' => 'El campo platillos no puede estar vacío.'], 400);
+        }
         $cuenta = $this->obtenerOCrearCuenta($request);
 
         $pedido = $pedido = new Pedido();

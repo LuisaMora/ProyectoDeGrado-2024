@@ -1,23 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Administrador;
 use App\Models\Empleado;
 use App\Models\Propietario;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Mockery\Undefined;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
         $validarDatos = Validator::make($request->all(), [
-            'usuario' => 'required|max:100',
-            'password' => 'required',
+            'usuario' => 'required|max:100|min:2',
+            'password' => 'required|max:100|min:2',
         ]);
 
         if ($validarDatos->fails()) {
@@ -27,19 +29,12 @@ class AuthController extends Controller
             ], 422);
         }
         //$user es de tipo User y no mixed
-        $user = User::where('correo', $request->input('usuario'))->orWhere(
-            'nickname', $request->input('usuario')
-        )->first();
-        if ($user != null && Auth::attempt([
-            'correo' => $user->correo,
-            'password' => $request->input('password')
-        ])) {
-            if ($user instanceof User) {
-                // el token expira en 12 horas
-                    $token = $user->createToken('personal-token',expiresAt:now()->addHours(12))->plainTextToken;
-                    $datosPersonales = $this->getDatosPersonales($user);
-                    $datosPersonales->usuario = $user;
-            }
+        $user = $this->attemptLogin($request->usuario, $request->password);
+        if ($user) {
+            // el token expira en 12 horas - probar
+            $token = $user->createToken('personal-token', expiresAt: now()->addHours(12))->plainTextToken;
+            $datosPersonales = $this->getDatosPersonales($user);
+            $datosPersonales->usuario = $user;
             return response()->json([
                 'token' => $token,
                 'user' => $datosPersonales,
@@ -74,10 +69,19 @@ class AuthController extends Controller
         return $user_data;
     }
 
-
-    public function logout(Request $request)
+    private function attemptLogin($userCredential, $password): User | null
     {
-        $user = Auth::user();
+        $user = User::where('correo', $userCredential)->orWhere(
+            'nickname', $userCredential)->first();
+        if ($user != null && Auth::attempt(['correo' => $user->correo, 'password' => $password])) {
+            return $user;
+        }
+        return null;
+    }
+
+    public function logout()
+    {
+        $user = auth()->user();
         // Revisa si el usuario está autenticado
         if ($user) {
             // Revoca todos los tokens del usuario
