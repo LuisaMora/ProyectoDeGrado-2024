@@ -4,18 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
-use App\Models\Pedido;
+use App\Models\Pedido; 
 use App\Models\PlatoPedido;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PedidoController extends Controller
 {
-    function index()
-    {
-        $pedidos = Pedido::all();
-        return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
-    }
+    public function index()
+{
+    $pedidos = Pedido::with(['cuenta.mesa','platos'])->get();
+    return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
+}
 
     function store(Request $request)
     {
