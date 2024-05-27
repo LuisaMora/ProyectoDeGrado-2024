@@ -27,13 +27,12 @@ class CambiaEstadosPedidoController extends Controller
         return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
     }
 
-    function cambiarEstadoPlatoPedido(Request $request)
+    function update(Request $request)
     {
         $validate = Validator::make($request->all(), [
             'id_pedido' => 'required|integer',
-            'estado' => 'required|string|in:en_espera,en_preparacion,preparado,entregado',
-        ], [
-            'estado.in' => 'El campo estado debe ser "en_espera", "en_preparacion", "preparado" o "entregado".',
+            'estado' => 'required|integer|min:1|max:4',
+            'id_restaurante' => 'required|integer|min:1',
         ]);
         if ($validate->fails()) {
             return response()->json(['status' => 'error', 'error' => $validate->errors()], 400);

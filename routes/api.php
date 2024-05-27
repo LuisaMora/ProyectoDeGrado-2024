@@ -43,15 +43,23 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['message' => 'Bienvenido administrador']);
         });
     });
-    
-    Route::middleware('empleado')->group(function () {
-        Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
+    //por ahora solo existe mesero , cocinero y cajero
+    Route::middleware('empleado:mesero')->group(function () {
         Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
         Route::get('/menu/pedido/platillos', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
-        Route::get('/prueba_empleado', function () {
-            return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
-        });
+
     });
+
+    Route::middleware('empleado:mesero,cocinero')->group(function () {
+        Route::put('/plato-peido', 'App\Http\Controllers\Pedido\CambiarEstadoPlatoController@update');
+    });
+
+    Route::middleware('empleado:cajero,mesero,cocinero')->group(function () {
+        Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
+    });
+
+
+
 
     Route::middleware('propietarioOempleado')->group(function () {
         
