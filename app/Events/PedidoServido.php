@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use DeepCopy\f013\C;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PedidoEnPreparacion implements ShouldBroadcast
+class PedidoServido implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $idPedido;
@@ -33,12 +32,12 @@ class PedidoEnPreparacion implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('pedido'.$this->idRestaurante)
+            new Channel('pedido'.$this->idRestaurante),
         ];
     }
 
     public function broadcastAs(): string
     {
-        return 'PedidoEnPreparacion';
+        return 'PedidoServido';
     }
 }

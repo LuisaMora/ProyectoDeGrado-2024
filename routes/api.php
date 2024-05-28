@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('empleado:mesero,cocinero')->group(function () {
-        Route::put('/plato-peido', 'App\Http\Controllers\Pedido\CambiarEstadoPlatoController@update');
+        Route::put('/plato-pedido/estado', 'App\Http\Controllers\Pedido\CambiarEstadoController@update');
     });
 
     Route::middleware('empleado:cajero,mesero,cocinero')->group(function () {
