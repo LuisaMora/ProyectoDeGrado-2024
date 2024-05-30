@@ -42,7 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/prueba_admin', function () {
             return response()->json(['message' => 'Bienvenido administrador']);
         });
-    });
+    }); 
     
     Route::middleware('empleado')->group(function () {
         Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
@@ -51,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
         });
+        Route::get('/pedidos', 'App\Http\Controllers\PedidoController@index');
     });
 
     Route::middleware('propietarioOempleado')->group(function () {
