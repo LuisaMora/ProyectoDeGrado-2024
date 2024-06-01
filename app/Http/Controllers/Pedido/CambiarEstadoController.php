@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Pedido;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cuenta;
+use App\Models\Mesa;
 use App\Models\Pedido;
 use App\Models\PlatoPedido;
 use App\Utils\NotificacionHandler;
@@ -54,16 +56,17 @@ class CambiarEstadoController extends Controller
         if ($platosPedidos->isEmpty()) {
             return response()->json(['status' => 'error', 'message' => 'Platos no encontrados'], 404);
         }
+        $nombreMesa= Mesa::where('id_restaurante', $idRestaurante)->first()->nombre;
         foreach ($platosPedidos as $platoPedido) {
             $platoPedido->id_estado = $idEstado;
             $platoPedido->save();
         }
-        $this->enviarNotificacion($idPedido, $idEstado, $idRestaurante);
+        $this->enviarNotificacion($idPedido, $idEstado, $idRestaurante, $nombreMesa);
         return response()->json(['status' => 'success', 'platosPedidos' => $platosPedidos], 200);
     }
 
-    function enviarNotificacion($idPedido, $idEstado, $idRestaurante)
+    function enviarNotificacion($idPedido, $idEstado, $idRestaurante, $nombreMesa)
     {
-        $this->notificacionHandler->enviarNotificacion($idPedido, $idEstado, $idRestaurante);
+        $this->notificacionHandler->enviarNotificacion($idPedido, $idEstado, $idRestaurante, $nombreMesa);
     }
 }
