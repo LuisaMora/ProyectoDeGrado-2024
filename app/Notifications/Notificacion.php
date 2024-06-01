@@ -3,12 +3,10 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\BroadcastMessage;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class Notificacion extends Notification
+class Notificacion extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -19,22 +17,18 @@ class Notificacion extends Notification
         $this->message = $message;
     }
 
+    // Define los canales de notificación
     public function via($notifiable)
     {
-        return ['database', 'broadcast'];
+        // Utiliza solo el canal de base de datos
+        return ['database'];
     }
 
-    public function toDatabase($notifiable)
+    // Define la representación en array de la notificación
+    public function toArray($notifiable)
     {
         return [
             'message' => $this->message,
         ];
-    }
-
-    public function toBroadcast($notifiable)
-    {
-        return new BroadcastMessage([
-            'message' => $this->message,
-        ]);
     }
 }

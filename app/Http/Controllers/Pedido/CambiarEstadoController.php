@@ -51,7 +51,7 @@ class CambiarEstadoController extends Controller
         $idRestaurante = (int) $request->id_restaurante;
         // return response()->json(['idPedido' => $idPedido, 'idEstado' => $idEstado, 'idRestaurante' => $idRestaurante], 200);
         $platosPedidos = PlatoPedido::where('id_pedido', $idPedido)->get();
-        if (!$platosPedidos) {
+        if ($platosPedidos->isEmpty()) {
             return response()->json(['status' => 'error', 'message' => 'Platos no encontrados'], 404);
         }
         foreach ($platosPedidos as $platoPedido) {
@@ -59,7 +59,7 @@ class CambiarEstadoController extends Controller
             $platoPedido->save();
         }
         $this->enviarNotificacion($idPedido, $idEstado, $idRestaurante);
-        return response()->json(['status' => 'success', 'platoPedido' => $platoPedido], 200);
+        return response()->json(['status' => 'success', 'platosPedidos' => $platosPedidos], 200);
     }
 
     function enviarNotificacion($idPedido, $idEstado, $idRestaurante)
