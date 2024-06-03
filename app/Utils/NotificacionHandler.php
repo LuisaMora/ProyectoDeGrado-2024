@@ -53,10 +53,10 @@ class NotificacionHandler
 
             // Verificar que $mensaje no esté vacío antes de crear la notificación
             if (!empty($mensaje)) {
-                //cada primera letra en mayuscula
                 $notificacion = new Notificacion();
                 $notificacion->id_pedido = $idPedido;
                 $notificacion->id_creador = $user->id;
+                // ucfirst convierte la primera letra de la cadena a mayúscula seguido de un espacio y accion
                 $notificacion->titulo = ucfirst($user->nombre).' '.$accion.' un pedido';
                 $notificacion->tipo = 'pedido';
                 $notificacion->mensaje = $mensaje;
@@ -76,7 +76,9 @@ class NotificacionHandler
     {
         $user = auth()->user();
         if ($user) {
-            $notificaciones = Notificacion::where('id_usuario', $user->id)->get();
+            $notificaciones = Notificacion::select('id', 'tipo', 'titulo', 'mensaje', 'created_at', 'read_at')
+                ->orderBy(' ', 'desc')
+                ->get();
             return response()->json(['status' => 'success', 'notificaciones' => $notificaciones], 200);
         } else {
             // Manejar el caso en el que no hay un usuario autenticado

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', 'App\Http\Controllers\Auth\AuthController@logout');
-    Route::get('/notificaciones', 'App\Utils\NotificacionHandler@obtenerNotificaciones');
+
     Route::middleware('propietario')->group(function () {
         Route::get('/menu/platillo', 'App\Http\Controllers\PlatilloController@index');
         Route::post('/menu/platillo', 'App\Http\Controllers\PlatilloController@store');
@@ -56,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('empleado:cajero,mesero,cocinero')->group(function () {
         Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
+        Route::get('/notificaciones', 'App\Utils\NotificacionHandler@obtenerNotificaciones');
     });
 
 
