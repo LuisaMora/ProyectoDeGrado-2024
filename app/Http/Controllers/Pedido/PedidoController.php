@@ -5,13 +5,20 @@ namespace App\Http\Controllers\Pedido;
 use App\Events\PedidoCreado;
 use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
+use App\Models\Mesa;
 use App\Models\Pedido;
 use App\Models\PlatoPedido;
+use App\Utils\NotificacionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PedidoController extends Controller
 {
+    private $notificacionHandler;
+    public function __construct()
+    {
+        $this->notificacionHandler = new NotificacionHandler();
+    }
     function index()
     {
         $pedidos = Pedido::all();
@@ -47,9 +54,10 @@ class PedidoController extends Controller
         $pedido->fecha_hora_pedido = now();
         $pedido->save();
 
-        $this->crearPlatillosPedido($platillos_decode, $pedido);
-        PedidoCreado::dispatch($request->id_restaurante, $pedido->id);
+        $nombreMesa = Mesa::where('id_restaurante', $request->id_restaurante)->first()->nombre;
 
+        $this->crearPlatillosPedido($platillos_decode, $pedido);
+        $this->notificacionHandler->enviarNotificacion($pedido->id, 1, $request->id_restaurante, $nombreMesa);
         return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
     }
 

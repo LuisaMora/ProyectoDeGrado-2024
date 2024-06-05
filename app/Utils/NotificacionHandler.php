@@ -8,6 +8,7 @@ use App\Events\PedidoEliminado;
 use App\Events\PedidoEnPreparacion;
 use App\Events\PedidoServido;
 use App\Models\Notificacion;
+use App\Events\Notificacion as NotificacionEvent;
 
 class NotificacionHandler
 {
@@ -61,6 +62,8 @@ class NotificacionHandler
                 $notificacion->tipo = 'pedido';
                 $notificacion->mensaje = $mensaje;
                 $notificacion->save();
+                $creado_hace = $notificacion->created_at->diffForHumans();
+                NotificacionEvent::dispatch($notificacion, $idRestaurante, $creado_hace);
             } else {
                 // Manejar el caso en el que $mensaje esté vacío
                 print_r('No se generó un mensaje de notificación');
@@ -77,8 +80,15 @@ class NotificacionHandler
         $user = auth()->user();
         if ($user) {
             $notificaciones = Notificacion::select('id', 'tipo', 'titulo', 'mensaje', 'created_at', 'read_at')
-                ->orderBy(' ', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->get();
+            foreach ($notificaciones as $notificacion) {
+                // Diferencia en tiempo desde que se creó la notificación 15 min 
+                // 
+                $notificacion->creado_hace = $notificacion->created_at->diffForHumans();
+                // $diffForHumans = $notificacion->created_at->diffForHumans();
+                // $notificacion->creado_hace = str_replace(['hace ', 'hace'], '', $diffForHumans);
+            }
             return response()->json(['status' => 'success', 'notificaciones' => $notificaciones], 200);
         } else {
             // Manejar el caso en el que no hay un usuario autenticado
