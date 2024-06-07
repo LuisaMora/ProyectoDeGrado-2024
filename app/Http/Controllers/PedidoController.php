@@ -50,6 +50,31 @@ class PedidoController extends Controller
         return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
     }
 
+    function delete($id)
+    {
+        $pedido = Pedido::find($id);
+        if ($pedido == null) {
+            return response()->json(['status' => 'error', 'error' => 'El pedido no existe.'], 404);
+        }
+        // [
+        //     ['estado' => 'Abierta'],
+        //     ['estado' => 'Pagada'],
+        //     ['estado' => 'Cancelada'],
+        //     ['estado' => 'PagoPendiente']
+        // ];
+        $estadoCuenta = $pedido->cuenta->estado;
+        if ($estadoCuenta != 1) {
+            return response()->json(['status' => 'error', 'error' => 'No se puede cancelar un pedido de una cuenta pagada.'], 400);
+        }
+        
+        $platosPedidos = PlatoPedido::where('id_pedido', $id)->get();
+        foreach ($platosPedidos as $platoPedido) {
+            $platoPedido->delete();
+        }
+        $pedido->delete();
+        return response()->json(['status' => 'success', 'message' => 'Pedido cancelado.'], 200);
+    }
+
     protected function obtenerOCrearCuenta(Request $request)
     {
         $fecha_resta_dos_horas = now()->subHours(2)->format('Y-m-d H:i:s');
