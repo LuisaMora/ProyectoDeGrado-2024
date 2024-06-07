@@ -13,6 +13,8 @@ class Notificacion extends Model
 
     protected $fillable = [
         'id_usuario',
+        'id_pedido',
+        'id_restaurante',
         'titulo',
         'tipo',
         'mensaje',

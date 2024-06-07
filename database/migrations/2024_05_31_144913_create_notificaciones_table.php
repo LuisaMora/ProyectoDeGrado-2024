@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_pedido'); // ID del pedido al que pertenece la notificación
             $table->unsignedBigInteger('id_creador'); // ID del usuario que creo la notificacion
+            $table->unsignedBigInteger('id_restaurante'); // ID del restaurante al que pertenece la notificación
             // Tipo de notificación sola para Pedidos, Platillos 
             $table->enum('tipo', ['pedido', 'platillo']);
             $table->string('titulo', 100); // Título de la notificación (opcional
@@ -25,6 +26,7 @@ return new class extends Migration
             // Llave foránea para el ID del usuario
             $table->foreign('id_creador')->references('id')->on('usuarios')->onDelete('cascade');
             $table->foreign('id_pedido')->references('id')->on('pedidos')->onDelete('cascade');
+            $table->foreign('id_restaurante')->references('id')->on('restaurantes')->onDelete('cascade');
         });
     }
 

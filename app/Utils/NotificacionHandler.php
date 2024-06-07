@@ -57,6 +57,7 @@ class NotificacionHandler
                 $notificacion = new Notificacion();
                 $notificacion->id_pedido = $idPedido;
                 $notificacion->id_creador = $user->id;
+                $notificacion->id_restaurante = $idRestaurante;
                 // ucfirst convierte la primera letra de la cadena a mayúscula seguido de un espacio y accion
                 $notificacion->titulo = ucfirst($user->nombre).' '.$accion.' un pedido';
                 $notificacion->tipo = 'pedido';
@@ -75,24 +76,4 @@ class NotificacionHandler
         }
     }
 
-    public static function obtenerNotificaciones()
-    {
-        $user = auth()->user();
-        if ($user) {
-            $notificaciones = Notificacion::select('id', 'tipo', 'titulo', 'mensaje', 'created_at', 'read_at')
-                ->orderBy('created_at', 'desc')
-                ->get();
-            foreach ($notificaciones as $notificacion) {
-                // Diferencia en tiempo desde que se creó la notificación 15 min 
-                // 
-                $notificacion->creado_hace = $notificacion->created_at->diffForHumans();
-                // $diffForHumans = $notificacion->created_at->diffForHumans();
-                // $notificacion->creado_hace = str_replace(['hace ', 'hace'], '', $diffForHumans);
-            }
-            return response()->json(['status' => 'success', 'notificaciones' => $notificaciones], 200);
-        } else {
-            // Manejar el caso en el que no hay un usuario autenticado
-            return response()->json(['status' => 'error', 'message' => 'Usuario no autenticado'], 401);
-        }
-    }
 }

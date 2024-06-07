@@ -18,27 +18,7 @@ class Notificacion implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-//     creado_hace
-// : 
-// "hace 1 día"
-// created_at
-// : 
-// "2024-06-03T15:51:10.000000Z"
-// id
-// : 
-// 1
-// mensaje
-// : 
-// "Pedido de la MESA 1 en preparación."
-// read_at
-// : 
-// null
-// tipo
-// : 
-// "pedido"
-// titulo
-// : 
-// "Virgil puso en preparación un pedido"
+
     public string $id;
     public string $titulo;
     public string $mensaje;

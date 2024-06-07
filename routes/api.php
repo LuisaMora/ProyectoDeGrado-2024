@@ -50,13 +50,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
-    Route::middleware('empleado:mesero,cocinero')->group(function () {
-        Route::put('/plato-pedido/estado', 'App\Http\Controllers\Pedido\CambiarEstadoController@update');
-    });
 
     Route::middleware('empleado:cajero,mesero,cocinero')->group(function () {
+        Route::put('/plato-pedido/estado', 'App\Http\Controllers\Pedido\CambiarEstadoController@update');
         Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
-        Route::get('/notificaciones', 'App\Utils\NotificacionHandler@obtenerNotificaciones');
+        Route::get('/notificaciones', 'App\Http\Controllers\NotificacionController@obtenerNotificaciones');
+        Route::get('/notificaciones/cantidad', 'App\Http\Controllers\NotificacionController@obtenerNotificacionesCantidad');
     });
 
 
