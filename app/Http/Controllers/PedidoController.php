@@ -37,6 +37,7 @@ class PedidoController extends Controller
         if (empty($platillos_decode)) {
             return response()->json(['status' => 'error', 'error' => 'El campo platillos no puede estar vacío.'], 400);
         }
+        
         $cuenta = $this->obtenerOCrearCuenta($request);
 
         $pedido = $pedido = new Pedido();
@@ -44,9 +45,8 @@ class PedidoController extends Controller
         $pedido->tipo = $request->tipo;
         $pedido->id_empleado = $request->id_empleado;
         $pedido->fecha_hora_pedido = now();
-        $pedido->save();
-
-        $this->crearPlatillosPedido($platillos_decode, $pedido);
+        $monto = $this->crearPlatillosPedido($platillos_decode, $pedido);
+        
 
         return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
     }
@@ -96,8 +96,13 @@ class PedidoController extends Controller
 
     protected function crearPlatillosPedido(array $platillos, Pedido $pedido)
     {
-        $monto_total = 0;
+        $monto = 0;
 
+        foreach ($platillos as $platillo) {
+            $monto += $platillo['precio_unitario'] * $platillo['cantidad'];
+        }
+        $pedido->monto = $monto;
+        $pedido->save();
         foreach ($platillos as $platillo) {
             PlatoPedido::create([
                 'id_platillo' => $platillo['id_platillo'],
@@ -106,12 +111,11 @@ class PedidoController extends Controller
                 'cantidad' => $platillo['cantidad'],
                 'detalle' => $platillo['detalle'],
             ]);
-
-            $monto_total += $platillo['precio_unitario'] * $platillo['cantidad'];
         }
 
-        $pedido->cuenta->monto_total += $monto_total;
+        $pedido->cuenta->monto_total += $monto;
         $pedido->cuenta->save();
+        return $monto;
     }
     
     public function destroy($id)
@@ -128,7 +132,7 @@ class PedidoController extends Controller
     $cuenta = $pedido->cuenta;
 
     PlatoPedido::where('id_pedido', $pedido->id)->delete();
-
+    
   
     $pedido->delete();
 

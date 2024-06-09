@@ -12,6 +12,7 @@ class Pedido extends Model
         'tipo',
         'id_empleado',
         'fecha_hora_pedido',
+        'monto',
     ];
 
     public function cuenta()

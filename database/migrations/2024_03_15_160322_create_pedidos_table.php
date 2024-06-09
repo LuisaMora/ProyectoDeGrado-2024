@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('tipo', ['local', 'llevar'])->default('local');
             $table->unsignedBigInteger('id_empleado')->nullable();
             $table->dateTime('fecha_hora_pedido')->nullable();
+            $table->decimal('monto', 8, 2)->nullable();
             $table->timestamps();
             $table->foreign('id_cuenta')->references('id')->on('cuentas')->onDelete('restrict')->onUpdate('restrict');
             $table->foreign('id_empleado')->references('id')->on('empleados')->onDelete('restrict')->onUpdate('restrict');
