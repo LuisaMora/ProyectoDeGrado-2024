@@ -71,4 +71,4 @@ Route::get('/prohibido', function () {
     return response()->json([
         'message' => 'No tienes permiso para acceder a esta ruta',
     ], 403);
-})->name('prohibido');
+})->name('prohibido'); 
