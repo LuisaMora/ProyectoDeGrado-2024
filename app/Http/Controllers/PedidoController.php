@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
 use App\Models\Pedido; 
 use App\Models\PlatoPedido;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -87,4 +88,30 @@ class PedidoController extends Controller
         $pedido->cuenta->monto_total += $monto_total;
         $pedido->cuenta->save();
     }
+    
+    public function destroy($id)
+{
+  
+    $pedido = Pedido::find($id);
+
+   
+    if (!$pedido) {
+        return response()->json(['status' => 'error', 'error' => 'Pedido no encontrado.'], 404);
+    }
+
+    
+    $cuenta = $pedido->cuenta;
+
+    PlatoPedido::where('id_pedido', $pedido->id)->delete();
+
+  
+    $pedido->delete();
+
+    $cuenta->monto_total = PlatoPedido::where('id_cuenta', $cuenta->id)->sum(DB::raw('precio_unitario * cantidad'));
+    $cuenta->save();
+
+    return response()->json(['status' => 'success', 'message' => 'Pedido eliminado correctamente.'], 200);
+}
+
+
 }
