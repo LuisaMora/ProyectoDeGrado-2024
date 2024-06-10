@@ -119,28 +119,38 @@ class PedidoController extends Controller
     }
     
     public function destroy($id)
-{
-  
-    $pedido = Pedido::find($id);
+    {
+        $pedido = Pedido::find($id); 
 
-   
-    if (!$pedido) {
-        return response()->json(['status' => 'error', 'error' => 'Pedido no encontrado.'], 404);
+        if (!$pedido) {
+            return response()->json(['status' => 'error', 'error' => 'Pedido no encontrado.'], 404);
+        }
+
+        $cuenta = $pedido->cuenta;
+
+        // Verifica el estado de la cuenta antes de eliminar el pedido
+        if (in_array($cuenta->estado, ['Pagada', 'Cancelada'])) {
+            return response()->json(['status' => 'error', 'error' => 'No se puede eliminar un pedido de una cuenta pagada o cancelada.'], 400);
+        }
+        $montoPedido = $pedido->monto;
+
+        // Obtener los platos del pedido
+        $platosPedidos = PlatoPedido::where('id_pedido', $pedido->id)->get();
+
+        // Eliminar los platos asociados al pedido
+        foreach ($platosPedidos as $platoPedido) {
+            $platoPedido->delete();
+        }
+
+        // Eliminar el pedido
+        $pedido->delete();
+
+        // Actualizar el monto total de la cuenta
+        $cuenta->monto_total -= $montoPedido;
+        $cuenta->save();
+
+        return response()->json(['status' => 'success', 'message' => 'Pedido eliminado correctamente.'], 200);
     }
-
-    
-    $cuenta = $pedido->cuenta;
-
-    PlatoPedido::where('id_pedido', $pedido->id)->delete();
-    
-  
-    $pedido->delete();
-
-    $cuenta->monto_total = PlatoPedido::where('id_cuenta', $cuenta->id)->sum(DB::raw('precio_unitario * cantidad'));
-    $cuenta->save();
-
-    return response()->json(['status' => 'success', 'message' => 'Pedido eliminado correctamente.'], 200);
-}
 
 
 }
