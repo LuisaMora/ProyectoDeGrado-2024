@@ -19,25 +19,29 @@ class Notificacion implements ShouldBroadcast
      * Create a new event instance.
      */
 
-    public string $id;
+    public int $id;
+    public int $id_creador;
     public string $titulo;
     public string $mensaje;
     public string $tipo;
     public string $creado_hace;
     public string $created_at;
     public string $read_at;
-    private $idRestaurante;
-    public function __construct(NotificacionModel $notificacion , $idRestaurante, $creado_hace)
+    private int $idRestaurante;
+    private int $id_empleado;
+    public function __construct(NotificacionModel $notificacion, $idRestaurante, $creado_hace, $idPedidoEmpleado = 0)
     {
-       $this->id = $notificacion->id;
-         $this->titulo = $notificacion->titulo;
-            $this->mensaje = $notificacion->mensaje;
-            $this->tipo = $notificacion->tipo;
-            $this->creado_hace = $creado_hace;
-            $this->created_at = $notificacion->created_at;
-            $this->read_at = $notificacion->read_at||'';
-            $this->idRestaurante = $idRestaurante;
-        }
+        $this->id = $notificacion->id;
+        $this->id_creador = $notificacion->id_creador;
+        $this->titulo = $notificacion->titulo;
+        $this->mensaje = $notificacion->mensaje;
+        $this->tipo = $notificacion->tipo;
+        $this->creado_hace = $creado_hace;
+        $this->created_at = $notificacion->created_at;
+        $this->read_at = $notificacion->read_at || '';
+        $this->idRestaurante = $idRestaurante;
+        $this->id_empleado = $idPedidoEmpleado;
+    }
 
     /**
      * Get the channels the event should broadcast on.
@@ -47,7 +51,7 @@ class Notificacion implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('notificaciones'.$this->idRestaurante),
+            new Channel('notificaciones' . $this->idRestaurante),
         ];
     }
 

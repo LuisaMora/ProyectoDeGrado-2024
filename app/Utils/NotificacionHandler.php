@@ -12,7 +12,7 @@ use App\Events\Notificacion as NotificacionEvent;
 
 class NotificacionHandler
 {
-    public static function enviarNotificacion($idPedido, $idEstado, $idRestaurante, $nombreMesa)
+    public static function enviarNotificacion($idPedido, $idEstado, $idRestaurante, $nombreMesa, $idPedidoEmpleado)
     {
         $user = auth()->user();
         if ($user) {
@@ -64,7 +64,7 @@ class NotificacionHandler
                 $notificacion->mensaje = $mensaje;
                 $notificacion->save();
                 $creado_hace = $notificacion->created_at->diffForHumans();
-                NotificacionEvent::dispatch($notificacion, $idRestaurante, $creado_hace);
+                NotificacionEvent::dispatch($notificacion, $idRestaurante, $creado_hace, $idPedidoEmpleado);
             } else {
                 // Manejar el caso en el que $mensaje esté vacío
                 print_r('No se generó un mensaje de notificación');
