@@ -56,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
         Route::get('/notificaciones', 'App\Http\Controllers\NotificacionController@obtenerNotificaciones');
         Route::get('/notificaciones/cantidad', 'App\Http\Controllers\NotificacionController@obtenerNotificacionesCantidad');
+        Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
     });
 
 

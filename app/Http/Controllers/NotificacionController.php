@@ -36,6 +36,26 @@ class NotificacionController extends Controller
       return $this->getNotificacion($idRestaurante, $cantidad);
     }
 
+    public function marcarComoLeida(Request $request)
+    {
+        $validarDatos = Validator::make($request->all(), [
+            'id_notificaciones' => 'required|array',
+            'id_restaurante' => 'required|integer|min:1',
+        ]);
+        if ($validarDatos->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validarDatos->errors()], 400);
+        }
+        $userId = auth()->user()->id;
+        $notificaciones = Notificacion::whereIn('id', $request->id_notificaciones)
+            ->where('id_restaurante', $request->id_restaurante)
+            ->where('id_creador', $userId)
+            ->update(['read_at' => now()]);
+        if ($notificaciones == 0) {
+            return response()->json(['status' => 'error', 'message' => 'No se encontraron notificaciones para marcar como leídas'], 404);
+        }
+        return response()->json(['status' => 'success', 'message' => 'Notificaciones marcadas como leídas'], 200);
+    }
+
     private function getNotificacion($idRestaurante, $cantidad = 0){
         $user = auth()->user();
         $idTipoEmpleado = Empleado::select('id_rol', 'id')
