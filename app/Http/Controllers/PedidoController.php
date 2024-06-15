@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
+use App\Models\EstadoPedido;
 use App\Models\Pedido; 
 use App\Models\PlatoPedido;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class PedidoController extends Controller
 {
     public function index()
 {
-    $pedidos = Pedido::with(['cuenta.mesa','platos'])->get();
+    $pedidos = Pedido::with(['cuenta.mesa','platos','estado'])->get();
     return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
 }
 
