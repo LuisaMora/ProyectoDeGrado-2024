@@ -15,11 +15,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_cuenta')->nullable();
             $table->enum('tipo', ['local', 'llevar'])->default('local');
+            $table->unsignedBigInteger('id_estado');
             $table->unsignedBigInteger('id_empleado')->nullable();
             $table->dateTime('fecha_hora_pedido')->nullable();
             $table->timestamps();
             $table->foreign('id_cuenta')->references('id')->on('cuentas')->onDelete('restrict')->onUpdate('restrict');
             $table->foreign('id_empleado')->references('id')->on('empleados')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreign('id_estado')->references('id')->on('estado_pedidos')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 

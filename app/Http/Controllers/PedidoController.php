@@ -42,6 +42,7 @@ class PedidoController extends Controller
         $pedido->id_cuenta = $cuenta->id;
         $pedido->tipo = $request->tipo;
         $pedido->id_empleado = $request->id_empleado;
+        $pedido->id_estado = 1;
         $pedido->fecha_hora_pedido = now();
         $pedido->save();
 
@@ -76,7 +77,6 @@ class PedidoController extends Controller
             PlatoPedido::create([
                 'id_platillo' => $platillo['id_platillo'],
                 'id_pedido' => $pedido->id,
-                'id_estado' => 1,
                 'cantidad' => $platillo['cantidad'],
                 'detalle' => $platillo['detalle'],
             ]);

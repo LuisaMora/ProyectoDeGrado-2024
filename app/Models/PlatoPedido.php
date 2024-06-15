@@ -24,7 +24,7 @@ class PlatoPedido extends Model
         PlatoPedido::create([
             'id_platillo' => $platillo['id_platillo'],
             'id_pedido' => $pedido_id,
-            'id_estado' => 1,// por defecto en espera
+            // por defecto en espera
             'cantidad' => $platillo['cantidad'],
             'detalle' => $platillo['detalle'],
         ]);
