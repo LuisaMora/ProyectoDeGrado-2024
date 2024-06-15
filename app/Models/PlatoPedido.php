@@ -13,7 +13,6 @@ class PlatoPedido extends Model
     protected $fillable = [
         'id_platillo',
         'id_pedido',
-        'id_estado',
         'cantidad',
         'detalle',
     ];
@@ -24,7 +23,6 @@ class PlatoPedido extends Model
         PlatoPedido::create([
             'id_platillo' => $platillo['id_platillo'],
             'id_pedido' => $pedido_id,
-            // por defecto en espera
             'cantidad' => $platillo['cantidad'],
             'detalle' => $platillo['detalle'],
         ]);
@@ -41,8 +39,5 @@ class PlatoPedido extends Model
         return $this->belongsTo(Pedido::class, 'id_pedido');
     }
 
-    public function estado()
-    {
-        return $this->belongsTo(EstadoPedido::class, 'id_estado');
-    }
+  
 }

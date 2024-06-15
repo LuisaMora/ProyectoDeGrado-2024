@@ -28,6 +28,6 @@ class Pedido extends Model
     public function platos()
     {
         return $this->belongsToMany(Platillo::class, 'plato_pedido', 'id_pedido', 'id_platillo')
-            ->withPivot('id_estado', 'detalle', 'cantidad');
+            ->withPivot('detalle', 'cantidad');
     }
 }
