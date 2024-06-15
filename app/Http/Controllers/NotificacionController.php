@@ -11,43 +11,15 @@ use Illuminate\Support\Facades\Validator;
 
 class NotificacionController extends Controller
 {
-    public static function obtenerNotificaciones(Request $request)
+    public  function obtenerNotificaciones(Request $request)
     {
-        $user = auth()->user();
         $validarDatos = Validator::make($request->all(), [
             'id_restaurante' => 'required|integer|min:1',
         ]);
         if ($validarDatos->fails()) {
             return response()->json(['status' => 'error', 'message' => $validarDatos->errors()], 400);
         }
-        if ($user) {
-            $idTipoEmpleado = Empleado::select('id_rol', 'id')
-                ->where('id_usuario', $user->id)
-                ->first();
-
-            if ($idTipoEmpleado) {
-                if ($idTipoEmpleado->id_rol == 1) {
-                    $listaPedidos = Pedido::select('id')
-                        ->where('id_empleado', $idTipoEmpleado->id)
-                        ->get();
-                        // print_r($listaPedidos);
-                    $notificaciones = Notificacion::orderBy('created_at', 'desc')
-                        ->where('id_restaurante', $request->id_restaurante)
-                        ->whereIn('id_pedido', $listaPedidos)
-                        ->get();
-                } else {
-                    $notificaciones = Notificacion::orderBy('created_at', 'desc')
-                        ->where('id_restaurante', $request->id_restaurante)
-                        ->get();
-                }
-                foreach ($notificaciones as $notificacion) {
-                    $notificacion->creado_hace = $notificacion->created_at->diffForHumans();
-                }
-                return response()->json(['status' => 'success', 'notificaciones' => $notificaciones], 200);
-            } else {
-                return response()->json(['status' => 'error', 'message' => 'No tienes permisos para acceder a esta información'], 403);
-            }
-        }
+        return $this->getNotificacion($request->id_restaurante);
     }
 
     public function obtenerNotificacionesCantidad(Request $request)
@@ -61,21 +33,7 @@ class NotificacionController extends Controller
         }
         $cantidad = $request->cantidad;
         $idRestaurante = $request->id_restaurante;
-        $user = auth()->user();
-        if ($user) {
-            $notificaciones = Notificacion::select('id', 'id_creador', 'tipo', 'titulo', 'mensaje', 'created_at', 'read_at')
-                ->orderBy('created_at', 'desc')
-                ->where('id_restaurante', $idRestaurante)
-                ->take($cantidad)
-                ->get();
-            foreach ($notificaciones as $notificacion) {
-                $notificacion->creado_hace = $notificacion->created_at->diffForHumans();
-            }
-            return response()->json(['status' => 'success', 'notificaciones' => $notificaciones], 200);
-        } else {
-            // Manejar el caso en el que no hay un usuario autenticado
-            return response()->json(['status' => 'error', 'message' => 'Usuario no autenticado'], 401);
-        }
+      return $this->getNotificacion($idRestaurante, $cantidad);
     }
 
     private function getNotificacion($idRestaurante, $cantidad = 0){

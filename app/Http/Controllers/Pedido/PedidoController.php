@@ -54,10 +54,10 @@ class PedidoController extends Controller
         $pedido->fecha_hora_pedido = now();
         $pedido->save();
 
-        $nombreMesa = Mesa::where('id_restaurante', $request->id_restaurante)->first()->nombre;
+        $nombreMesa = Mesa::where('id', $request->id_mesa)->first()->nombre;
 
         $this->crearPlatillosPedido($platillos_decode, $pedido);
-        $this->notificacionHandler->enviarNotificacion($pedido->id, 1, $request->id_restaurante, $nombreMesa);
+        $this->notificacionHandler->enviarNotificacion($pedido->id, 1, $request->id_restaurante, $nombreMesa, $request->id_empleado);
         return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
     }
 

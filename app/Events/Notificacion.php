@@ -28,8 +28,8 @@ class Notificacion implements ShouldBroadcast
     public string $created_at;
     public string $read_at;
     private int $idRestaurante;
-    private int $id_empleado;
-    public function __construct(NotificacionModel $notificacion, $idRestaurante, $creado_hace, $idPedidoEmpleado = 0)
+    public int $id_empleado;
+    public function __construct(NotificacionModel $notificacion, $idRestaurante, $creado_hace, $idPedidoEmpleado)
     {
         $this->id = $notificacion->id;
         $this->id_creador = $notificacion->id_creador;
