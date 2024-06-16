@@ -1,22 +1,29 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pedido;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
-use App\Models\EstadoPedido;
 use App\Models\Pedido; 
+use App\Models\Mesa;
 use App\Models\PlatoPedido;
+use App\Utils\NotificacionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PedidoController extends Controller
 {
+    private $notificacionHandler;
+    public function __construct()
+    {
+        $this->notificacionHandler = new NotificacionHandler();
+    }
     public function index()
 {
     $pedidos = Pedido::with(['cuenta.mesa','platos','estado'])->get();
     return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
 }
+   
 
     function store(Request $request)
     {
@@ -25,6 +32,7 @@ class PedidoController extends Controller
             'id_mesa' => 'required|integer|min:1',
             'id_empleado' => 'required|integer:min:1',
             'platillos' => 'required|string',
+            'id_restaurante' => 'required|integer',
             'tipo' => 'required|string|in:local,llevar'
         ], [
             'tipo.in' => 'El campo tipo debe ser "local" o "llevar".',
@@ -47,8 +55,10 @@ class PedidoController extends Controller
         $pedido->fecha_hora_pedido = now();
         $pedido->save();
 
-        $this->crearPlatillosPedido($platillos_decode, $pedido);
+        $nombreMesa = Mesa::where('id', $request->id_mesa)->first()->nombre;
 
+        $this->crearPlatillosPedido($platillos_decode, $pedido);
+        $this->notificacionHandler->enviarNotificacion($pedido->id, 1, $request->id_restaurante, $nombreMesa, $request->id_empleado);
         return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
     }
 
@@ -87,5 +97,6 @@ class PedidoController extends Controller
 
         $pedido->cuenta->monto_total += $monto_total;
         $pedido->cuenta->save();
-    }
+    } 
 }
+
