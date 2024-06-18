@@ -13,6 +13,7 @@ class Pedido extends Model
         'id_estado' => 1,// por defecto en espera
         'id_empleado',
         'fecha_hora_pedido',
+        'monto',
     ];
 
     public function cuenta()

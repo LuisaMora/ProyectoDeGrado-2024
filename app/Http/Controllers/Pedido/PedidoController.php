@@ -45,6 +45,7 @@ class PedidoController extends Controller
         if (empty($platillos_decode)) {
             return response()->json(['status' => 'error', 'error' => 'El campo platillos no puede estar vacío.'], 400);
         }
+        
         $cuenta = $this->obtenerOCrearCuenta($request);
 
         $pedido = $pedido = new Pedido();
@@ -56,10 +57,37 @@ class PedidoController extends Controller
         $pedido->save();
 
         $nombreMesa = Mesa::where('id', $request->id_mesa)->first()->nombre;
+        $monto = $this->crearPlatillosPedido($platillos_decode, $pedido);
+        
 
         $this->crearPlatillosPedido($platillos_decode, $pedido);
         $this->notificacionHandler->enviarNotificacion($pedido->id, 1, $request->id_restaurante, $nombreMesa, $request->id_empleado);
         return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
+    }
+
+    function delete($id)
+    {
+        $pedido = Pedido::find($id);
+        if ($pedido == null) {
+            return response()->json(['status' => 'error', 'error' => 'El pedido no existe.'], 404);
+        }
+        // [
+        //     ['estado' => 'Abierta'],
+        //     ['estado' => 'Pagada'],
+        //     ['estado' => 'Cancelada'],
+        //     ['estado' => 'PagoPendiente']
+        // ];
+        $estadoCuenta = $pedido->cuenta->estado;
+        if ($estadoCuenta != 1) {
+            return response()->json(['status' => 'error', 'error' => 'No se puede cancelar un pedido de una cuenta pagada.'], 400);
+        }
+        
+        $platosPedidos = PlatoPedido::where('id_pedido', $id)->get();
+        foreach ($platosPedidos as $platoPedido) {
+            $platoPedido->delete();
+        }
+        $pedido->delete();
+        return response()->json(['status' => 'success', 'message' => 'Pedido cancelado.'], 200);
     }
 
     protected function obtenerOCrearCuenta(Request $request)
@@ -82,8 +110,13 @@ class PedidoController extends Controller
 
     protected function crearPlatillosPedido(array $platillos, Pedido $pedido)
     {
-        $monto_total = 0;
+        $monto = 0;
 
+        foreach ($platillos as $platillo) {
+            $monto += $platillo['precio_unitario'] * $platillo['cantidad'];
+        }
+        $pedido->monto = $monto;
+        $pedido->save();
         foreach ($platillos as $platillo) {
             PlatoPedido::create([
                 'id_platillo' => $platillo['id_platillo'],
@@ -91,12 +124,48 @@ class PedidoController extends Controller
                 'cantidad' => $platillo['cantidad'],
                 'detalle' => $platillo['detalle'],
             ]);
-
-            $monto_total += $platillo['precio_unitario'] * $platillo['cantidad'];
         }
 
-        $pedido->cuenta->monto_total += $monto_total;
+        $pedido->cuenta->monto_total += $monto;
         $pedido->cuenta->save();
-    } 
+     
+        return $monto;
+    }
+    
+    public function destroy($id)
+    {
+        $pedido = Pedido::find($id); 
+
+        if (!$pedido) {
+            return response()->json(['status' => 'error', 'error' => 'Pedido no encontrado.'], 404);
+        }
+
+        $cuenta = $pedido->cuenta;
+
+        // Verifica el estado de la cuenta antes de eliminar el pedido
+        if (in_array($cuenta->estado, ['Pagada', 'Cancelada'])) {
+            return response()->json(['status' => 'error', 'error' => 'No se puede eliminar un pedido de una cuenta pagada o cancelada.'], 400);
+        }
+        $montoPedido = $pedido->monto;
+
+        // Obtener los platos del pedido
+        $platosPedidos = PlatoPedido::where('id_pedido', $pedido->id)->get();
+
+        // Eliminar los platos asociados al pedido
+        foreach ($platosPedidos as $platoPedido) {
+            $platoPedido->delete();
+        }
+
+        // Eliminar el pedido
+        $pedido->delete();
+
+        // Actualizar el monto total de la cuenta
+        $cuenta->monto_total -= $montoPedido;
+        $cuenta->save();
+
+        return response()->json(['status' => 'success', 'message' => 'Pedido eliminado correctamente.'], 200);
+    }
+
+
 }
 
