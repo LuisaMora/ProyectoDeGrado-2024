@@ -57,7 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
         Route::get('/menu/pedido/platillos', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
 
-        Route::post('/pedido', 'App\Http\Controllers\PedidoController@store');
+        Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
         Route::delete('/pedidos/{id}', 'App\Http\Controllers\PedidoController@destroy');
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
