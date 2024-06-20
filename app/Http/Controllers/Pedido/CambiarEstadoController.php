@@ -58,10 +58,11 @@ class CambiarEstadoController extends Controller
         }
         $nombreMesa= Mesa::where('id_restaurante', $idRestaurante)->first()->nombre;
         foreach ($platosPedidos as $platoPedido) {
-            $platoPedido->id_estado = $idEstado;
             $platoPedido->save();
         }
         $pedido = Pedido::find($idPedido);
+        $pedido->id_estado = $idEstado;
+        $pedido->save();
         $this->enviarNotificacion($idPedido, $idEstado, $idRestaurante, $nombreMesa, $pedido->id_empleado);
         return response()->json(['status' => 'success', 'platosPedidos' => $platosPedidos], 200);
     }
