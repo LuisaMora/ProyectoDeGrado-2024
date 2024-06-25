@@ -39,16 +39,25 @@ class NotificacionController extends Controller
     public function marcarComoLeida(Request $request)
     {
         $validarDatos = Validator::make($request->all(), [
-            'id_notificaciones' => 'required|array',
+            'id_notificaciones' => 'required|array',// puede ser [4,5,6] o ['all']
             'id_restaurante' => 'required|integer|min:1',
         ]);
         if ($validarDatos->fails()) {
             return response()->json(['status' => 'error', 'message' => $validarDatos->errors()], 400);
         }
-        $userId = auth()->user()->id;
+        if (in_array('all', $request->id_notificaciones)) {
+            $notificaciones = Notificacion::where('id_restaurante', $request->id_restaurante)
+                // ->where('id_creador', $userId)
+                ->update(['read_at' => now()]);
+            if ($notificaciones == 0) {
+                return response()->json(['status' => 'error', 'message' => 'No se encontraron notificaciones para marcar como leídas'], 404);
+            }
+            return response()->json(['status' => 'success', 'message' => 'Notificaciones marcadas como leídas'], 200);
+        }
+
         $notificaciones = Notificacion::whereIn('id', $request->id_notificaciones)
             ->where('id_restaurante', $request->id_restaurante)
-            ->where('id_creador', $userId)
+            // ->where('id_creador', $userId)
             ->update(['read_at' => now()]);
         if ($notificaciones == 0) {
             return response()->json(['status' => 'error', 'message' => 'No se encontraron notificaciones para marcar como leídas'], 404);
