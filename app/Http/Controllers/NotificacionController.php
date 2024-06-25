@@ -75,19 +75,25 @@ class NotificacionController extends Controller
                 $notificacionesQuery = Notificacion::orderBy('created_at', 'desc')
                     ->where('id_restaurante', $idRestaurante);
             }
-    
-            // Agregar condicional para aplicar 'take' solo si cantidad es mayor a 0
+
             if ($cantidad > 0) {
                 $notificacionesQuery->take($cantidad);
             }
-    
+
             $notificaciones = $notificacionesQuery->get();
+
+            $notificacionNoLeida = $notificacionesQuery->whereNull('read_at')->count();
+    
+            // Agregar condicional para aplicar 'take' solo si cantidad es mayor a 0
+            
+    
+            
     
             foreach ($notificaciones as $notificacion) {
                 $notificacion->creado_hace = $notificacion->created_at->diffForHumans();
             }
             
-            return response()->json(['status' => 'success', 'notificaciones' => $notificaciones], 200);
+            return response()->json(['status' => 'success', 'notificaciones' => $notificaciones, 'notificacionesSinLeer'=> $notificacionNoLeida], 200);
         } else {
             return response()->json(['status' => 'error', 'message' => 'No tienes permisos para acceder a esta información'], 403);
         }
