@@ -36,6 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/menu/generar/qr', 'App\Http\Controllers\MenuController@generateQr');
         
         Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
+
+        Route::get('/reporte', 'App\Http\Controllers\ReporteController@index');
     });
     
     Route::middleware('administrador')->group(function () {
@@ -44,15 +46,6 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     }); 
     
-    // Route::middleware('empleado')->group(function () {
-    //     Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
-    //     Route::get('/menu/pedido/platillos', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
-    //     Route::get('/prueba_empleado', function () {
-    //         return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
-    //     });
-    //     Route::get('/pedidos', 'App\Http\Controllers\PedidoController@index');
-    // });
-    //por ahora solo existe mesero , cocinero y cajero
     Route::middleware('empleado:mesero,cajero')->group(function () {
         Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
         Route::get('/menu/pedido/platillos', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
