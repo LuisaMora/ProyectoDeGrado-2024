@@ -8,32 +8,64 @@ use App\Models\Mesa;
 use App\Models\Pedido;
 use App\Models\Restaurante;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ReporteController extends Controller
 {
-    public function index(Request $request ){
+    public function getReporte(Request $request)
+    {
         $validate = Validator::make($request->all(), [
             'id_restaurante' => 'required|integer|min:1',
+            'fecha_inicio' => 'date',
+            'fecha_fin' => 'date',
         ]);
         if ($validate->fails()) {
             return response()->json(['status' => 'error', 'error' => $validate->errors()], 400);
         }
         $idRestaurante = $request->id_restaurante;
         //pedidos de hace una semana hasta hoy
-        $fechaInicio = now()->subDays(7);
-        $fechaFin = now();
+        if ($request->fecha_inicio && $request->fecha_fin) {
+            $fechaInicio = Carbon::parse($request->fecha_inicio);
+            $fechaFin = Carbon::parse($request->fecha_fin);
+        } else {
+            $fechaInicio = now()->subDays(7);
+
+            $fechaFin = now();
+        }
         // $restaurante = Restaurante::find($idRestaurante);
         $mesas = Mesa::select('id')->where('id_restaurante', $idRestaurante)->get();
         $cuentas = Cuenta::select('id')
-        ->where('estado', 'Pagada')
-        ->whereIn('id_mesa', $mesas)
-        ->get();
-        $pedidos = Pedido::whereIn('id_cuenta', $cuentas)
-            ->whereBetween('fecha_hora_pedido', [$fechaInicio, $fechaFin])
-            // agrupar por cuentas
+            ->where('estado', 'Pagada')
+            ->whereBetween('created_at', [$fechaInicio, $fechaFin])
+            ->whereIn('id_mesa', $mesas)
             ->get();
+        $montoTotalPedidosPorDia = DB::table('pedidos')
+            ->select(DB::raw('DATE(created_at) as fecha'), DB::raw('SUM(monto) as monto'))
+            ->whereBetween('created_at', [$fechaInicio, $fechaFin])
+            ->whereIn('id_cuenta', $cuentas)
+            ->groupBy('fecha')
+            ->get();
+        $cantidadPedidosPorDia = DB::table('pedidos')
+            ->select(DB::raw('DATE(created_at) as fecha'), DB::raw('COUNT(id) as cantidad'))
+            ->whereBetween('created_at', [$fechaInicio, $fechaFin])
+            ->whereIn('id_cuenta', $cuentas)
+            ->groupBy('fecha')
+            ->get();
+        $cantidadPedidosPorMesa =DB::table('pedidos')
+        ->join('cuentas', 'pedidos.id_cuenta', '=', 'cuentas.id')
+        ->join('mesas', 'cuentas.id_mesa', '=', 'mesas.id')
+        ->select(
+            'mesas.nombre AS mesa',
+            DB::raw('COUNT(pedidos.id) AS cantidad_pedidos')
+        )
+        ->groupBy('mesas.nombre')
+        ->orderBy('cantidad_pedidos', 'DESC')
+        ->get();
+
         
-        return response()->json(['status' => 'success', 'pedidos' => $pedidos, 'cuentas' => $cuentas], 200);
+        return response()->json(['status' => 'success', 'montoTotalPedidosPorDia' => $montoTotalPedidosPorDia,
+        'cantidadPedidosPorDia' => $cantidadPedidosPorDia, 'cantidadPedidosPorMesa'=> $cantidadPedidosPorMesa , 'cuentas' => $cuentas], 200);
     }
 }

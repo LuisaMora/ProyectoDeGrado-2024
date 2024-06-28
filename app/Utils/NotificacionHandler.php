@@ -62,6 +62,9 @@ class NotificacionHandler
                 $notificacion->titulo = ucfirst($user->nombre).' '.$accion.' un pedido';
                 $notificacion->tipo = 'pedido';
                 $notificacion->mensaje = $mensaje;
+                if($accion == 'creó'){
+                    $notificacion->read_at = now();
+                }
                 $notificacion->save();
                 $creado_hace = $notificacion->created_at->diffForHumans();
                 NotificacionEvent::dispatch($notificacion, $idRestaurante, $creado_hace, $idPedidoEmpleado);

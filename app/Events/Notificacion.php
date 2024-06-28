@@ -38,7 +38,7 @@ class Notificacion implements ShouldBroadcast
         $this->tipo = $notificacion->tipo;
         $this->creado_hace = $creado_hace;
         $this->created_at = $notificacion->created_at;
-        $this->read_at = $notificacion->read_at || '';
+        $this->read_at = $notificacion->read_at || null;
         $this->idRestaurante = $idRestaurante;
         $this->id_empleado = $idPedidoEmpleado;
     }
