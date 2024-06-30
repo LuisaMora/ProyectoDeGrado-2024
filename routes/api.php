@@ -62,7 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
         });
-        Route::get('/pedidos', 'App\Http\Controllers\PedidoController@index');
+        Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\PedidoController@index');
     });
 
 
@@ -72,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/notificaciones', 'App\Http\Controllers\NotificacionController@obtenerNotificaciones');
         Route::get('/notificaciones/cantidad', 'App\Http\Controllers\NotificacionController@obtenerNotificacionesCantidad');
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
-        Route::get('/pedidos', 'App\Http\Controllers\Pedido\PedidoController@index');
+        Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
 
         
     });

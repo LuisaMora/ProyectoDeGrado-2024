@@ -18,11 +18,17 @@ class PedidoController extends Controller
     {
         $this->notificacionHandler = new NotificacionHandler();
     }
-    public function index()
-{
-    $pedidos = Pedido::with(['cuenta.mesa','platos','estado'])->get();
-    return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
-}
+    public function index($idEmpleado, $idRestaurante)
+    {
+        $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
+           ->where('id_empleado', $idEmpleado)
+           ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
+        $query->where('id_restaurante', $idRestaurante);
+       })
+    ->get();
+    
+        return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
+    }
    
 
     function store(Request $request)
@@ -71,12 +77,6 @@ class PedidoController extends Controller
         if ($pedido == null) {
             return response()->json(['status' => 'error', 'error' => 'El pedido no existe.'], 404);
         }
-        // [
-        //     ['estado' => 'Abierta'],
-        //     ['estado' => 'Pagada'],
-        //     ['estado' => 'Cancelada'],
-        //     ['estado' => 'PagoPendiente']
-        // ];
         $estadoCuenta = $pedido->cuenta->estado;
         if ($estadoCuenta != 1) {
             return response()->json(['status' => 'error', 'error' => 'No se puede cancelar un pedido de una cuenta pagada.'], 400);
