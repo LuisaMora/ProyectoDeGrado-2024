@@ -62,12 +62,13 @@ class PlatilloFactory extends Factory
         ];
         
         $nombre = $this->faker->unique()->randomElement(array_keys($descripciones));
-
+        $categorias = [1,2,3,4,5,6];
         return [
             'nombre' => $nombre,
             'descripcion' => $descripciones[$nombre],
             'precio' => $this->faker->numberBetween(10, 120),
             'imagen' => $this->faker->imageUrl(),
+            'id_categoria' => $this->faker->randomElement($categorias),
         ];
     }
 }

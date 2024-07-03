@@ -14,6 +14,6 @@ class PlatilloSeeder extends Seeder
     public function run(): void
     {
         // tengo categorias del 1 al 6, tienen que pertenecer al menu 1, 2 o 3 unos 30 platillos cada menu
-        Platillo::factory(30)->asignarCategoria(1)->asignarMenu(1)->create();
+        Platillo::factory(30)->asignarMenu(1)->create();
     }
 }

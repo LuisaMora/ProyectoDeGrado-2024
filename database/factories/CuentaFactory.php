@@ -20,9 +20,10 @@ class CuentaFactory extends Factory
     //     'monto_total',
     //     'estado',
     // ];
-    public function asignarDatosCuenta($monto_total, $created_at, $updated_at){
+    public function asignarDatosCuenta($id_mesa,$monto_total, $created_at, $updated_at){
         if( $created_at && $updated_at)
         return $this->state( [
+            'id_mesa' => $id_mesa,
             'monto_total' => $monto_total,
             'created_at' => $created_at,
             'updated_at' => $updated_at,
@@ -32,12 +33,12 @@ class CuentaFactory extends Factory
             'monto_total' => $monto_total,
         ]);
     }
-    
+
     public function definition(): array
     {
         return [
-            'id_mesa' => 1,
             'nombre_razon_social' => $this->faker->name(),
+            // 'estado' => $this->faker->randomElement(['Abierta', 'Cancelada', 'PagoPendiente', 'Pagada']),
             'estado' => $this->faker->randomElement(['Abierta', 'Cancelada', 'PagoPendiente', 'Pagada']),
         ];
     }
