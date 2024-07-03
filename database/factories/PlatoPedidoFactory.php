@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Pedido;
+use App\Models\Platillo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,10 @@ class PlatoPedidoFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'id_pedido' => Pedido::factory(),
+            'id_platillo' => Platillo::factory(),
+            'cantidad' => $this->faker->numberBetween(1, 10),
+            'detalle' => $this->faker->sentence,
         ];
     }
 }

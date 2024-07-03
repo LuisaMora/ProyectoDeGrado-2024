@@ -41,9 +41,6 @@ class PedidoFactory extends Factory
             
             'tipo' => $this->faker->randomElement(['local', 'llevar']),
             'id_estado' => 4,
-            // 'id_empleado' => 1,
-            // 'fecha_hora_pedido' => $this->faker->dateTime(),
-            // 'monto' => $this->faker->randomFloat(2, 1, 100),
         ];
     }
 }
