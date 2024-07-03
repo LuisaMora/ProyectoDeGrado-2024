@@ -42,18 +42,21 @@ class ReporteController extends Controller
             ->whereIn('id_mesa', $mesas)
             ->get();
         $montoTotalPedidosPorDia = DB::table('pedidos')
-            ->select(DB::raw('DATE(created_at) as fecha'), DB::raw('SUM(monto) as monto'))
-            ->whereBetween('created_at', [$fechaInicio, $fechaFin])
+            ->select(DB::raw('DATE(fecha_hora_pedido) as fecha'), DB::raw('SUM(monto) as monto'))
+            ->whereBetween('fecha_hora_pedido', [$fechaInicio, $fechaFin])
             ->whereIn('id_cuenta', $cuentas)
             ->groupBy('fecha')
+            ->orderBy('fecha', 'ASC')
             ->get();
         $cantidadPedidosPorDia = DB::table('pedidos')
-            ->select(DB::raw('DATE(created_at) as fecha'), DB::raw('COUNT(id) as cantidad'))
-            ->whereBetween('created_at', [$fechaInicio, $fechaFin])
+            ->select(DB::raw('DATE(fecha_hora_pedido) as fecha'), DB::raw('COUNT(id) as cantidad'))
+            ->whereBetween('fecha_hora_pedido', [$fechaInicio, $fechaFin])
             ->whereIn('id_cuenta', $cuentas)
             ->groupBy('fecha')
+            ->orderBy('fecha', 'ASC')
             ->get();
         $cantidadPedidosPorMesa =DB::table('pedidos')
+        ->whereBetween('fecha_hora_pedido', [$fechaInicio, $fechaFin])
         ->join('cuentas', 'pedidos.id_cuenta', '=', 'cuentas.id')
         ->join('mesas', 'cuentas.id_mesa', '=', 'mesas.id')
         ->select(
