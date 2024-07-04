@@ -58,7 +58,7 @@ class PedidoSeeder extends Seeder
 
             $pedido = Pedido::factory()->asignarDatos($empleadoIdAleatorio, $fecha, $monto, $idCuentaActual)->create();
 
-            $numPlatillos = rand(1, 5);
+            $numPlatillos = rand(1, 20);
             for ($j = 0; $j < $numPlatillos; $j++) {
                 PlatoPedido::factory()->create([
                     'id_pedido' => $pedido->id,

@@ -7,6 +7,7 @@ use App\Models\Cuenta;
 use App\Models\Pedido; 
 use App\Models\Mesa;
 use App\Models\PlatoPedido;
+use App\Models\User;
 use App\Utils\NotificacionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -20,12 +21,25 @@ class PedidoController extends Controller
     }
     public function index($idEmpleado, $idRestaurante)
     {
-        $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
-           ->where('id_empleado', $idEmpleado)
-           ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
-        $query->where('id_restaurante', $idRestaurante);
-       })
-    ->get();
+        $tipoEmpleado = User::find(auth()->user()->id)->getTipoEmpleado();
+        if($tipoEmpleado == 1){
+            $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
+               ->where('id_empleado', $idEmpleado ) 
+               ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
+            $query->where('id_restaurante', $idRestaurante);
+           })
+        ->get();
+        }else if ($tipoEmpleado == 3){
+            $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
+            ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
+                $query->where('id_restaurante', $idRestaurante);
+            })
+            ->get();
+        }else{
+            return response()->json(['status' => 'error', 'error' => 'No tienes permisos para ver los pedidos.'], 403);
+        }
+
+        
     
         return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
     }
