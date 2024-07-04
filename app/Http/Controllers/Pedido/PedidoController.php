@@ -7,6 +7,7 @@ use App\Models\Cuenta;
 use App\Models\Pedido; 
 use App\Models\Mesa;
 use App\Models\PlatoPedido;
+use App\Models\User;
 use App\Utils\NotificacionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -18,11 +19,30 @@ class PedidoController extends Controller
     {
         $this->notificacionHandler = new NotificacionHandler();
     }
-    public function index()
-{
-    $pedidos = Pedido::with(['cuenta.mesa','platos','estado'])->get();
-    return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
-}
+    public function index($idEmpleado, $idRestaurante)
+    {
+        $tipoEmpleado = User::find(auth()->user()->id)->getTipoEmpleado();
+        if($tipoEmpleado == 1){
+            $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
+               ->where('id_empleado', $idEmpleado ) 
+               ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
+            $query->where('id_restaurante', $idRestaurante);
+           })
+        ->get();
+        }else if ($tipoEmpleado == 3){
+            $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
+            ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
+                $query->where('id_restaurante', $idRestaurante);
+            })
+            ->get();
+        }else{
+            return response()->json(['status' => 'error', 'error' => 'No tienes permisos para ver los pedidos.'], 403);
+        }
+
+        
+    
+        return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
+    }
    
 
     function store(Request $request)
@@ -71,12 +91,6 @@ class PedidoController extends Controller
         if ($pedido == null) {
             return response()->json(['status' => 'error', 'error' => 'El pedido no existe.'], 404);
         }
-        // [
-        //     ['estado' => 'Abierta'],
-        //     ['estado' => 'Pagada'],
-        //     ['estado' => 'Cancelada'],
-        //     ['estado' => 'PagoPendiente']
-        // ];
         $estadoCuenta = $pedido->cuenta->estado;
         if ($estadoCuenta != 1) {
             return response()->json(['status' => 'error', 'error' => 'No se puede cancelar un pedido de una cuenta pagada.'], 400);
