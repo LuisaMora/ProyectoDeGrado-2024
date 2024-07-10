@@ -34,4 +34,11 @@ class Platillo extends Model
         $this->disponible = false;
         $this->save(); 
     }
+
+    public function pedidos()
+{
+    return $this->belongsToMany(Pedido::class, 'plato_pedido', 'id_platillo', 'id_pedido')
+                ->withPivot('precio', 'detalle', 'cantidad');
+}
+
 }
