@@ -17,4 +17,8 @@ class Categoria extends Model
         'imagen',
         'estado',
     ];
+    public function platillos()
+    {
+        return $this->hasMany(Platillo::class, 'id_categoria');
+    }
 }

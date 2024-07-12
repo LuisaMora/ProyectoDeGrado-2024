@@ -6,19 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Models\Platillo;
 use App\Models\Restaurante;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use SebastianBergmann\Type\TrueType;
+
 
 class PlatilloController extends Controller
 {
-    public function index()
+    public function index($id_restaurante)
     {
-
-        $platillo = Platillo::with('categoria')->where('disponible', true)->get();
-        return response()->json(['status' => 'success', 'platillo' => $platillo], 200);
+        // Obtén el menú asociado al restaurante
+        $menuId = Restaurante::where('id', $id_restaurante)->value('id_menu');
+        // Obtén los platillos disponibles que pertenecen al menú del restaurante
+        $platillos = Platillo::with('categoria')
+            ->where('id_menu', $menuId)
+            ->where('disponible', true)
+            ->get();
+    
+        return response()->json(['status' => 'success', 'platillos' => $platillos], 200);
     }
+    
     public function platillosDisponibles()
     {
         $platillo = Platillo::with('categoria')->where('disponible', true)->where('plato_disponible_menu', true)->get();

@@ -18,7 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', 'App\Http\Controllers\Auth\AuthController@logout');
 
     Route::middleware('propietario')->group(function () {
-        Route::get('/menu/platillo', 'App\Http\Controllers\PlatilloController@index');
+        Route::get('/menu/platillos/{id}', 'App\Http\Controllers\PlatilloController@index');
         Route::post('/menu/platillo', 'App\Http\Controllers\PlatilloController@store');
         Route::post('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@update');
         Route::get('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@show');
