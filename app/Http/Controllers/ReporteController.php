@@ -92,6 +92,7 @@ class ReporteController extends Controller
             ->join('plato_pedido', 'plato_pedido.id_pedido', '=', 'pedidos.id')
             ->join('estado_pedidos', 'estado_pedidos.id', '=', 'pedidos.id_estado')
             ->join('platillos', 'platillos.id', '=', 'plato_pedido.id_platillo')
+            ->whereIn('cuentas.id', $cuentas)
             ->whereBetween('cuentas.created_at', [$fechaInicio, $fechaFin])
             ->select(
                 'cuentas.id as id_cuenta',
