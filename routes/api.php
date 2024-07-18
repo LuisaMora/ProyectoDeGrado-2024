@@ -44,15 +44,40 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     }); 
     
-    Route::middleware('empleado')->group(function () {
-        Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
+    // Route::middleware('empleado')->group(function () {
+    //     Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
+    //     Route::get('/menu/pedido/platillos', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
+    //     Route::get('/prueba_empleado', function () {
+    //         return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
+    //     });
+    //     Route::get('/pedidos', 'App\Http\Controllers\PedidoController@index');
+    // });
+    //por ahora solo existe mesero , cocinero y cajero
+    Route::middleware('empleado:mesero,cajero')->group(function () {
+        Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
         Route::get('/menu/pedido/platillos', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
-        Route::post('/pedido', 'App\Http\Controllers\PedidoController@store');
+
+        Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
+        Route::delete('/pedidos/{id}', 'App\Http\Controllers\PedidoController@destroy');
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
         });
         Route::get('/pedidos', 'App\Http\Controllers\PedidoController@index');
     });
+
+
+    Route::middleware('empleado:cajero,mesero,cocinero')->group(function () {
+        Route::put('/plato-pedido/estado', 'App\Http\Controllers\Pedido\CambiarEstadoController@update');
+        Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
+        Route::get('/notificaciones', 'App\Http\Controllers\NotificacionController@obtenerNotificaciones');
+        Route::get('/notificaciones/cantidad', 'App\Http\Controllers\NotificacionController@obtenerNotificacionesCantidad');
+        Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
+        Route::get('/pedidos', 'App\Http\Controllers\Pedido\PedidoController@index');
+
+        
+    });
+
+
 
     Route::middleware('propietarioOempleado')->group(function () {
         
@@ -70,4 +95,4 @@ Route::get('/prohibido', function () {
     return response()->json([
         'message' => 'No tienes permiso para acceder a esta ruta',
     ], 403);
-})->name('prohibido');
+})->name('prohibido'); 
