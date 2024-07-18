@@ -26,6 +26,10 @@ class Empleado extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario');
     }
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'id_usuario');
+    }
 
     public function rol()
     {

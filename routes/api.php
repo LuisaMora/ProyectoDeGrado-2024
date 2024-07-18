@@ -36,6 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/menu/generar/qr', 'App\Http\Controllers\MenuController@generateQr');
         
         Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
+
+        Route::post('/reporte/pedidos', 'App\Http\Controllers\ReporteController@getReporte');
     });
     
     Route::middleware('administrador')->group(function () {
