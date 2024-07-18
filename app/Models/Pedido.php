@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'id_cuenta',
         'tipo',
@@ -20,17 +21,13 @@ class Pedido extends Model
     {
         return $this->belongsTo(Cuenta::class, 'id_cuenta');
     }
-
-    public function empleado()
-    {
-        return $this->belongsTo(Empleado::class, 'id_empleado');
-    }
-
+    
     public function platos()
     {
         return $this->belongsToMany(Platillo::class, 'plato_pedido', 'id_pedido', 'id_platillo')
             ->withPivot('detalle', 'cantidad');
     }
+
     public function estado()
     {
         return $this->belongsTo(EstadoPedido::class, 'id_estado'); // 'id_estado' es la clave foránea en la tabla pedidos

@@ -18,13 +18,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', 'App\Http\Controllers\Auth\AuthController@logout');
 
     Route::middleware('propietario')->group(function () {
-        Route::get('/menu/platillo', 'App\Http\Controllers\PlatilloController@index');
+        Route::get('/menu/platillos/{id}', 'App\Http\Controllers\PlatilloController@index');
         Route::post('/menu/platillo', 'App\Http\Controllers\PlatilloController@store');
         Route::post('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@update');
         Route::get('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@show');
         Route::delete('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@destroy'); // Corregido el nombre de la ruta
    
-        Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
+        Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
         Route::post('/menu/categoria', 'App\Http\Controllers\CategoriaController@store');
         Route::post('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@update');
         Route::get('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@show');
@@ -62,7 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
         });
-        Route::get('/pedidos', 'App\Http\Controllers\PedidoController@index');
+        Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\PedidoController@index');
     });
 
 
@@ -72,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/notificaciones', 'App\Http\Controllers\NotificacionController@obtenerNotificaciones');
         Route::get('/notificaciones/cantidad', 'App\Http\Controllers\NotificacionController@obtenerNotificacionesCantidad');
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
-        Route::get('/pedidos', 'App\Http\Controllers\Pedido\PedidoController@index');
+        Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
 
         
     });

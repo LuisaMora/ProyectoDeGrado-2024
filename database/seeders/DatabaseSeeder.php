@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Categoria;
 use App\Models\Mesa;
+use App\Models\Pedido;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,6 +23,8 @@ class DatabaseSeeder extends Seeder
             MesaSeeder::class,
             EstadoPedidoSeeder::class,
             EstadoCuentaSeeder::class,
+            PlatilloSeeder::class,
+            PedidoSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 
