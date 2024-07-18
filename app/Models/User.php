@@ -103,4 +103,10 @@ class User extends Authenticatable
         ")->where('id', $this->id)->value('type_user');
         return $nameoftype;
     }
+
+    public function getTipoEmpleado(): int
+    {
+        $type = Empleado::select('id_rol')->where('id_usuario', $this->id)->first();
+        return $type->id_rol;
+    }
 }
