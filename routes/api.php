@@ -18,13 +18,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', 'App\Http\Controllers\Auth\AuthController@logout');
 
     Route::middleware('propietario')->group(function () {
-        Route::get('/menu/platillo', 'App\Http\Controllers\PlatilloController@index');
+        Route::get('/menu/platillos/{id}', 'App\Http\Controllers\PlatilloController@index');
         Route::post('/menu/platillo', 'App\Http\Controllers\PlatilloController@store');
         Route::post('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@update');
         Route::get('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@show');
         Route::delete('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@destroy'); // Corregido el nombre de la ruta
    
-        Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
+        Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
         Route::post('/menu/categoria', 'App\Http\Controllers\CategoriaController@store');
         Route::post('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@update');
         Route::get('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@show');
