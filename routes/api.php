@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@show');
         Route::delete('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@destroy'); // Corregido el nombre de la ruta
    
-        Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
+        Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
         Route::post('/menu/categoria', 'App\Http\Controllers\CategoriaController@store');
         Route::post('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@update');
         Route::get('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@show');

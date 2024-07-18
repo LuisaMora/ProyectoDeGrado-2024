@@ -21,4 +21,9 @@ class Categoria extends Model
     {
         return $this->hasMany(Platillo::class, 'id_categoria');
     }
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class, 'id_menu');
+    }
+    
 }
