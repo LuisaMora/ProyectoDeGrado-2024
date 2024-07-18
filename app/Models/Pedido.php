@@ -38,9 +38,5 @@ class Pedido extends Model
     return $this->belongsTo(Empleado::class, 'id_empleado');
 }
 
-public function estadoPedido()
-{
-    return $this->belongsTo(EstadoPedido::class, 'id_estado');
-}
 }
 

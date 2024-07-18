@@ -91,6 +91,12 @@ class PedidoController extends Controller
         if ($pedido == null) {
             return response()->json(['status' => 'error', 'error' => 'El pedido no existe.'], 404);
         }
+        // [
+        //     ['estado' => 'Abierta'],
+        //     ['estado' => 'Pagada'],
+        //     ['estado' => 'Cancelada'],
+        //     ['estado' => 'PagoPendiente']
+        // ];
         $estadoCuenta = $pedido->cuenta->estado;
         if ($estadoCuenta != 1) {
             return response()->json(['status' => 'error', 'error' => 'No se puede cancelar un pedido de una cuenta pagada.'], 400);
