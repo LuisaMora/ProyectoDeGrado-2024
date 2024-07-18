@@ -19,14 +19,14 @@ class Platillo extends Model
         'plato_disponible_menu'
     ];
 
-    public function menu()
-    {
-        return $this->belongsTo(Menu::class, 'id_menu');
-    }
-
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'id_categoria');
+    }
+
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class, 'id_menu');
     }
 
     public function delete()

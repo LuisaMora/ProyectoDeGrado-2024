@@ -18,6 +18,7 @@ class CategoriaFactory extends Factory
     {
         return [
             'imagen' => $this->faker->imageUrl(),
+            'id_menu'=> 1 
         ];
     }
 

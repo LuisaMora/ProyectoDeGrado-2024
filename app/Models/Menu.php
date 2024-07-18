@@ -17,4 +17,13 @@ class Menu extends Model
         'tema',
         'qr',
     ];
+    public function platillos()
+    {
+        return $this->hasMany(Platillo::class, 'id_menu');
+    }
+
+    public function restaurante()
+    {
+        return $this->hasOne(Restaurante::class, 'id_menu');
+    }
 }

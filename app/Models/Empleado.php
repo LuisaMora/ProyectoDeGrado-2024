@@ -36,4 +36,8 @@ class Empleado extends Model
     {
         return $this->belongsTo(Propietario::class, 'id_propietario');
     }
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class, 'id_empleado');
+    }
 }
