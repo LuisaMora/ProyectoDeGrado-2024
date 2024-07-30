@@ -32,5 +32,11 @@ class Pedido extends Model
     {
         return $this->belongsTo(EstadoPedido::class, 'id_estado'); // 'id_estado' es la clave foránea en la tabla pedidos
     }
+
+ public function empleado()
+{
+    return $this->belongsTo(Empleado::class, 'id_empleado');
+}
+
 }
 

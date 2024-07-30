@@ -29,7 +29,7 @@ class PedidoServido implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
         return [
             new Channel('pedido'.$this->idRestaurante),

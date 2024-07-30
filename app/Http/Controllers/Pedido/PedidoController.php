@@ -38,9 +38,6 @@ class PedidoController extends Controller
         }else{
             return response()->json(['status' => 'error', 'error' => 'No tienes permisos para ver los pedidos.'], 403);
         }
-
-         
-    
         return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
     }
    
