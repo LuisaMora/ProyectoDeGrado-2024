@@ -18,16 +18,20 @@ class CategoriaController extends Controller
     {
         // Obtén el id_menu directamente de la tabla restaurante
         $id_menu = Restaurante::where('id', $id_restaurante)->value('id_menu');
+        
         // Verifica que se haya encontrado un id_menu
         if (!$id_menu) {
             return response()->json(['status' => 'error', 'message' => 'Menu not found for the given restaurant.'], 404);
         }
-        // Obtén las categorías asociadas al id_menu
-        $categorias = Categoria::where('id_menu', $id_menu)->get();
+        
+        // Obtén las categorías asociadas al id_menu y con estado true
+        $categorias = Categoria::where('id_menu', $id_menu)->where('estado', true)->get();
+        
         // Verifica que se hayan encontrado categorías
         if ($categorias->isEmpty()) {
             return response()->json(['status' => 'error', 'message' => 'No categories found for the given menu.'], 404);
         }
+        
         return response()->json(['status' => 'success', 'categorias' => $categorias], 200);
     }
     
