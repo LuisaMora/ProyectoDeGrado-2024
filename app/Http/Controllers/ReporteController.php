@@ -66,6 +66,7 @@ class ReporteController extends Controller
             ->whereBetween('fecha_hora_pedido', [$fechaInicio, $fechaFin])
             ->join('cuentas', 'pedidos.id_cuenta', '=', 'cuentas.id')
             ->join('mesas', 'cuentas.id_mesa', '=', 'mesas.id')
+            ->whereIn('cuentas.id', $cuentas)
             ->select(
                 'mesas.nombre AS mesa',
                 DB::raw('COUNT(pedidos.id) AS cantidad_pedidos')
