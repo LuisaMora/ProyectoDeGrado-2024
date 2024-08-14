@@ -12,7 +12,7 @@ use App\Events\Notificacion as NotificacionEvent;
 
 class NotificacionHandler
 {
-    public static function enviarNotificacion($idPedido, $idEstado, $idRestaurante, $nombreMesa, $idPedidoEmpleado)
+    public static function enviarNotificacion($pedido, $idEstado, $idRestaurante, $nombreMesa, $idPedidoEmpleado)
     {
         $user = auth()->user();
         if ($user) {
@@ -22,31 +22,31 @@ class NotificacionHandler
             switch ($idEstado) {
                 case 1:
                     // Enviar notificación de pedido en espera
-                    PedidoCreado::dispatch($idRestaurante, $idPedido);
+                    PedidoCreado::dispatch($idRestaurante, $pedido);
                     $accion = 'creó';
                     $mensaje = 'Nuevo pedido de la '.strtoupper($nombreMesa).'.';
                     break;
                 case 2:
                     // Enviar notificación de pedido en preparación
-                    PedidoEnPreparacion::dispatch($idPedido, $idRestaurante);
+                    PedidoEnPreparacion::dispatch($pedido->id, $idRestaurante);
                     $accion = 'puso en preparación';
                     $mensaje = 'Pedido de la '.strtoupper($nombreMesa).' en preparación.';
                     break;
                 case 3:
                     // Enviar notificación de pedido listo para servir
-                    event(new PedidoCompletado($idPedido, $idRestaurante));
+                    event(new PedidoCompletado($pedido->id, $idRestaurante));
                     $accion = 'completó';
                     $mensaje = 'Se completó el pedido de la '.strtoupper($nombreMesa).'.';
                     break;
                 case 4:
                     // Enviar notificación de pedido servido
-                    event(new PedidoServido($idPedido, $idRestaurante));
+                    event(new PedidoServido($pedido->id, $idRestaurante));
                     $accion = 'sirvió';
                     $mensaje = 'Se sirvió el pedido de la '.strtoupper($nombreMesa).'.';
                     break;
                 case 5:
                     // Enviar notificación de pedido cancelado
-                    event(new PedidoEliminado($idPedido, $idRestaurante));
+                    event(new PedidoEliminado($pedido->id, $idRestaurante));
                     $accion = 'canceló';
                     $mensaje = 'Cancelación del pedido de la '.strtoupper($nombreMesa).'.';
                     break;
@@ -55,7 +55,7 @@ class NotificacionHandler
             // Verificar que $mensaje no esté vacío antes de crear la notificación
             if (!empty($mensaje)) {
                 $notificacion = new Notificacion();
-                $notificacion->id_pedido = $idPedido;
+                $notificacion->id_pedido = $pedido->id;
                 $notificacion->id_creador = $user->id;
                 $notificacion->id_restaurante = $idRestaurante;
                 // ucfirst convierte la primera letra de la cadena a mayúscula seguido de un espacio y accion

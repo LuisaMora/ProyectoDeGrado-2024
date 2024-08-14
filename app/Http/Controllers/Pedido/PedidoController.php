@@ -31,6 +31,7 @@ class PedidoController extends Controller
         ->get();
         }else if ($tipoEmpleado == 3){
             $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
+            ->whereDate('fecha_hora_pedido', now())
             ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
                 $query->where('id_restaurante', $idRestaurante);
             })
@@ -41,6 +42,19 @@ class PedidoController extends Controller
         return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
     }
    
+    function showPlatillos($idPedido, $idRestaurante)
+    {
+        $platillos = Pedido::with(['platos', ])
+        ->whereDate('fecha_hora_pedido', now())
+        ->where('id', $idPedido)
+        ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
+            $query->where('id_restaurante', $idRestaurante);
+        })->first();
+        if ($platillos == null) {
+            return response()->json(['status' => 'error', 'error' => 'El pedido no existe.'], 404);
+        }
+        return response()->json(['status' => 'success', 'platos' => $platillos['platos']], 200);
+    }
 
     function store(Request $request)
     {
@@ -75,10 +89,14 @@ class PedidoController extends Controller
 
         $nombreMesa = Mesa::where('id', $request->id_mesa)->first()->nombre;
         $monto = $this->crearPlatillosPedido($platillos_decode, $pedido);
-        
 
-        $this->crearPlatillosPedido($platillos_decode, $pedido);
-        $this->notificacionHandler->enviarNotificacion($pedido->id, 1, $request->id_restaurante, $nombreMesa, $request->id_empleado);
+        $pedido->cuenta->monto_total += $monto;
+
+        $pedido->monto = $monto;
+        $pedido->save();
+
+        
+        $this->notificacionHandler->enviarNotificacion($pedido, 1, $request->id_restaurante, $nombreMesa, $request->id_empleado);
         return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
     }
 
