@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             // $table->unsignedBigInteger('cuenta_id');
             // $table->string('estado', 50)->nullable()->change();
-            $table->enum('estado', ['Abierta', 'Cancelada', 'PagoPendiente', 'Pagada']);
+            $table->enum('estado', ['Abierta', 'Cancelada', 'PagoPendiente', 'Pagada', 'Vencida', 'NoPagada']);
             // $table->foreign('cuenta_id')->references('id')->on('cuentas')->onDelete('cascade');
             $table->timestamps();
         });

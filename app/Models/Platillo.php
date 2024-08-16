@@ -19,14 +19,14 @@ class Platillo extends Model
         'plato_disponible_menu'
     ];
 
-    public function menu()
-    {
-        return $this->belongsTo(Menu::class, 'id_menu');
-    }
-
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'id_categoria');
+    }
+
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class, 'id_menu');
     }
 
     public function delete()
@@ -34,4 +34,11 @@ class Platillo extends Model
         $this->disponible = false;
         $this->save(); 
     }
+
+    public function pedidos()
+{
+    return $this->belongsToMany(Pedido::class, 'plato_pedido', 'id_platillo', 'id_pedido')
+                ->withPivot('precio', 'detalle', 'cantidad');
+}
+
 }

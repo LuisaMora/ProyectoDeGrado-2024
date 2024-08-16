@@ -26,6 +26,10 @@ class Empleado extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario');
     }
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'id_usuario');
+    }
 
     public function rol()
     {
@@ -35,5 +39,9 @@ class Empleado extends Model
     public function propietario()
     {
         return $this->belongsTo(Propietario::class, 'id_propietario');
+    }
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class, 'id_empleado');
     }
 }

@@ -6,6 +6,7 @@ use App\Utils\ImageHandler;
 use App\Http\Controllers\Controller;
 use App\Models\Categoria;
 use App\Models\Platillo;
+use App\Models\Restaurante;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,26 +14,45 @@ use Illuminate\Support\Facades\Storage;
 
 class CategoriaController extends Controller
 {
-    function index()
+    public function index($id_restaurante)
     {
-        $categorias = Categoria::where('estado', true)->get();
+        // Obtén el id_menu directamente de la tabla restaurante
+        $id_menu = Restaurante::where('id', $id_restaurante)->value('id_menu');
+        
+        // Verifica que se haya encontrado un id_menu
+        if (!$id_menu) {
+            return response()->json(['status' => 'error', 'message' => 'Menu not found for the given restaurant.'], 404);
+        }
+        
+        // Obtén las categorías asociadas al id_menu y con estado true
+        $categorias = Categoria::where('id_menu', $id_menu)->where('estado', true)->get();
+        
+        // Verifica que se hayan encontrado categorías
+        if ($categorias->isEmpty()) {
+            return response()->json(['status' => 'error', 'message' => 'No categories found for the given menu.'], 404);
+        }
+        
         return response()->json(['status' => 'success', 'categorias' => $categorias], 200);
     }
-
+    
     function store(Request $request)
     {
         $validarDatos = Validator::make($request->all(), [
+            'id_restaurante'=>'required|min:1',
             'nombre' => 'required|max:100|min:2',
             'imagen' => 'required|image',
         ]);
+
         if ($validarDatos->fails()) {
             return response()->json(['status' => 'error', 'error' => $validarDatos->errors()], 400);
         }
-
+        $restaurante=Restaurante::find($request->id_restaurante);
         $imagen = ImageHandler::guardarImagen($request->file('imagen'), 'categorias');
 
-        $categoria = Categoria::create($request->all());
+        $categoria = new Categoria();
+        $categoria->nombre=$request->nombre;
         $categoria->imagen = $imagen;
+        $categoria->id_menu = $restaurante->id_menu;
         $categoria->save();
 
 
