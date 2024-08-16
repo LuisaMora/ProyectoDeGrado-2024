@@ -23,7 +23,7 @@ class AuthController extends Controller
         ]);
 
         if ($validarDatos->fails()) {
-            return response()->json([
+            return response()->json([ 
                 'message' => 'Datos invalidos',
                 'errors' => $validarDatos->errors()
             ], 422);

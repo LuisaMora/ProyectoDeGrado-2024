@@ -56,5 +56,5 @@ class PedidoCreado implements ShouldBroadcast
     public function broadcastAs()
     {
         return 'PedidoCreado';
-    }
+    } 
 }
