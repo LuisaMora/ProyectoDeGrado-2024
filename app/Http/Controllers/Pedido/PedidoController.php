@@ -53,7 +53,7 @@ class PedidoController extends Controller
         if ($platillos == null) {
             return response()->json(['status' => 'error', 'error' => 'El pedido no existe.'], 404);
         }
-        return response()->json(['status' => 'success', 'platos' => $platillos['platos']], 200);
+        return response()->json(['status' => 'success', 'platos' => $platillos['platos'], 'idPedido'=> $idPedido], 200);
     }
 
     function store(Request $request)

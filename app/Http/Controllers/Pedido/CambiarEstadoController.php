@@ -63,7 +63,7 @@ class CambiarEstadoController extends Controller
         $pedido = Pedido::find($idPedido);
         $pedido->id_estado = $idEstado;
         $pedido->save();
-        $this->enviarNotificacion($idPedido, $idEstado, $idRestaurante, $nombreMesa, $pedido->id_empleado);
+        $this->enviarNotificacion($pedido, $idEstado, $idRestaurante, $nombreMesa, $pedido->id_empleado);
         return response()->json(['status' => 'success', 'platosPedidos' => $platosPedidos], 200);
     }
 
