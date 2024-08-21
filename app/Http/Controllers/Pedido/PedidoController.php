@@ -36,6 +36,14 @@ class PedidoController extends Controller
                 $query->where('id_restaurante', $idRestaurante);
             })
             ->get();
+        }else
+            if($tipoEmpleado == 2){
+                $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
+                   ->where('id_empleado', $idEmpleado ) 
+                   ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
+                $query->where('id_restaurante', $idRestaurante);
+               })
+            ->get();
         }else{
             return response()->json(['status' => 'error', 'error' => 'No tienes permisos para ver los pedidos.'], 403);
         }
