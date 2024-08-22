@@ -11,6 +11,7 @@ class Cuenta extends Model
     protected $fillable = [
         'id_mesa',
         'nombre_razon_social',
+        'nit',
         'monto_total',
         'estado',
     ];
