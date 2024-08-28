@@ -10,10 +10,10 @@ class Cuenta extends Model
     use HasFactory;
     protected $fillable = [
         'id_mesa',
-        'nombre_razon_social',
         'nit',
         'monto_total',
         'estado',
+         'nombre_razon_social'
     ];
 
     public function pedidos()
