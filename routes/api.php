@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PreRegistroController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -93,6 +94,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/menu/{id}', 'App\Http\Controllers\MenuController@show');
 
 Route::post('/login', 'App\Http\Controllers\Auth\AuthController@login');
+
+Route::post('/pre/registro', [PreRegistroController::class, 'store']);
 
 Route::get('/prohibido', function () {
     return response()->json([

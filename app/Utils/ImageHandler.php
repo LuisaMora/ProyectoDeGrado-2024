@@ -8,6 +8,11 @@ class ImageHandler
 {
     public static function guardarImagen($imagen,$nombreCarpeta)
     {
+        //crear carpeta si no existe
+        print_r($nombreCarpeta);
+        if (!Storage::exists('public/'.$nombreCarpeta)) {
+            Storage::makeDirectory('public/'.$nombreCarpeta);
+        }
         $categoriaImg = md5_file($imagen->getRealPath()).time() .'.'. $imagen->getClientOriginalExtension();
         $path = $imagen->storeAs('public/'.$nombreCarpeta, $categoriaImg);
         return Storage::url($path);

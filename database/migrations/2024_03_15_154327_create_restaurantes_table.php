@@ -16,10 +16,12 @@ return new class extends Migration
             $table->unsignedBigInteger('id_menu')->nullable();
             $table->string('nombre', 100);
             $table->bigInteger('nit');
-            $table->string('direccion', 100);
-            $table->integer('telefono');
+            $table->decimal('latitud', 9, 6);
+            $table->decimal('longitud', 9, 6);
+            $table->string('celular', 20);
             $table->string('correo', 100);
             $table->string('licencia_funcionamiento', 100);
+            $table->string('tipo_establecimiento', 100);
             $table->timestamps();
 
             // Clave foránea
