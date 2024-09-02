@@ -27,6 +27,7 @@ return new class extends Migration
             $table->integer('cedula_identidad_propietario');
             $table->string('correo_propietario', 100);
             $table->string('fotografia_propietario', 150)->nullable();
+            $table->string('estado', 20)->default('pendiente');
             $table->timestamps(); // Automatically adds created_at and updated_at columns
         });
     }

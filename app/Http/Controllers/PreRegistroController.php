@@ -11,6 +11,7 @@ class PreRegistroController extends Controller
 {
     public function store(Request $request)
     {
+        // return response()->json(['status' => 'success', 'data' => $request->all()], 200);
         $validatedData = Validator::make($request->all(), [
             'nombre_restaurante' => 'required|string|max:100',
             'nit' => 'required|numeric',
@@ -36,7 +37,11 @@ class PreRegistroController extends Controller
 
         $imagen = $request->file('fotografia_propietario');
         $nombreCarpeta = 'fotografias_propietarios';
-        $urlImagen = ImageHandler::guardarImagen($imagen, $nombreCarpeta);
+        $urlImagen = ImageHandler::guardarArchivo($imagen, $nombreCarpeta);
+
+        $imagen = $request->file('licencia_funcionamiento');
+        $nombreCarpeta = 'licencias_funcionamiento';
+        $urlImagen = ImageHandler::guardarArchivo($imagen, $nombreCarpeta);
 
         $formPreRegistro = new FormularioPreRegistro($request->all());
         $formPreRegistro->fotografia_propietario = $urlImagen;

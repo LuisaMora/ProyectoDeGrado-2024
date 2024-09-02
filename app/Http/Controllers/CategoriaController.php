@@ -47,7 +47,7 @@ class CategoriaController extends Controller
             return response()->json(['status' => 'error', 'error' => $validarDatos->errors()], 400);
         }
         $restaurante=Restaurante::find($request->id_restaurante);
-        $imagen = ImageHandler::guardarImagen($request->file('imagen'), 'categorias');
+        $imagen = ImageHandler::guardarArchivo($request->file('imagen'), 'categorias');
 
         $categoria = new Categoria();
         $categoria->nombre=$request->nombre;
@@ -81,13 +81,13 @@ class CategoriaController extends Controller
         $categoria->update($request->all());
         if ($request->imagen != null) {
             //$categoria->imagen = '/storage/categorias/05bc509bb2added0a71009299593455a1715808837.jpeg'
-            $res = ImageHandler::eliminarImagenes([$rutaImagen]);
+            $res = ImageHandler::eliminarArchivos([$rutaImagen]);
             // if (!$res) {
                 // DB::rollBack();
                 // return response()->json(['message' => 'Error al eliminar la imagen.'], 500);
 
             // }
-            $imagen = ImageHandler::guardarImagen($request->file('imagen'), 'categorias');
+            $imagen = ImageHandler::guardarArchivo($request->file('imagen'), 'categorias');
             $categoria->imagen = $imagen;
         }
         $categoria->save();

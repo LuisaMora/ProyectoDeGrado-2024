@@ -95,7 +95,7 @@ Route::get('/menu/{id}', 'App\Http\Controllers\MenuController@show');
 
 Route::post('/login', 'App\Http\Controllers\Auth\AuthController@login');
 
-Route::post('/pre/registro', [PreRegistroController::class, 'store']);
+Route::post('/pre-registro', [PreRegistroController::class, 'store']);
 
 Route::get('/prohibido', function () {
     return response()->json([
