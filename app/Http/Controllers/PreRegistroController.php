@@ -2,51 +2,127 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePreRegistroRequest;
 use App\Utils\ImageHandler;
 use App\Models\FormularioPreRegistro;
+use App\Models\Propietario;
+use App\Models\Restaurante;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 
 class PreRegistroController extends Controller
 {
-    public function store(Request $request)
+    public function index()
     {
-        // return response()->json(['status' => 'success', 'data' => $request->all()], 200);
-        $validatedData = Validator::make($request->all(), [
-            'nombre_restaurante' => 'required|string|max:100',
-            'nit' => 'required|numeric',
-            'latitud' => 'required|numeric|between:-90,90',
-            'longitud' => 'required|numeric|between:-180,180',
-            'celular_restaurante' => 'required|string|max:20',
-            'correo_restaurante' => 'required|email|max:100',
-            'licencia_funcionamiento' => 'required',
-            'tipo_establecimiento' => 'required|string|max:100',
-            'nombre_propietario' => 'required|string|max:100',
-            'apellido_paterno_propietario' => 'required|string|max:100',
-            'apellido_materno_propietario' => 'required|string|max:100',
-            'cedula_identidad_propietario' => 'required|numeric',
-            'correo_propietario' => 'required|email|max:100',
-            'fotografia_propietario' => 'required|image',
-        ]);
-        if ($validatedData->fails()) {
-            return response()->json([
-                'message' => 'Datos invalidos',
-                'errors' => $validatedData->errors()
-            ], 422);
+       //reverse
+        $formPreRegistros = FormularioPreRegistro::all();
+        $formPreRegistros = $formPreRegistros->reverse()->values();
+        return response()->json(['status' => 'success', 'data' => $formPreRegistros], 200);
+    }
+
+    public function store(StorePreRegistroRequest $request)
+    {
+        try {
+            $formPreRegistro = new FormularioPreRegistro($request->all());
+
+            $imagen = $request->file('fotografia_propietario');
+            $nombreCarpeta = 'fotografias_propietarios';
+            $urlImagen = ImageHandler::guardarArchivo($imagen, $nombreCarpeta);
+
+            $imagen = $request->file('licencia_funcionamiento');
+            $nombreCarpeta = 'licencias_funcionamiento';
+            $urlPdf = ImageHandler::guardarArchivo($imagen, $nombreCarpeta);
+
+
+            $formPreRegistro->fotografia_propietario = $urlImagen;
+            $formPreRegistro->licencia_funcionamiento = $urlPdf;
+            $formPreRegistro->save();
+
+            return response()->json(['status' => 'success', 'data' => $formPreRegistro], 201);
+        } catch (\Throwable $th) {
+            return response()->json(['status' => 'error', 'message' => $th->getMessage()], 500);
         }
+    }
 
-        $imagen = $request->file('fotografia_propietario');
-        $nombreCarpeta = 'fotografias_propietarios';
-        $urlImagen = ImageHandler::guardarArchivo($imagen, $nombreCarpeta);
+    public function confirmar(Request $request)
+    {
+        $preRegistroId = $request->query('pre_registro_id');
+        $estado = $request->query('estado');
 
-        $imagen = $request->file('licencia_funcionamiento');
-        $nombreCarpeta = 'licencias_funcionamiento';
-        $urlImagen = ImageHandler::guardarArchivo($imagen, $nombreCarpeta);
+        // return response()->json(['status' => 'success', 'data' => $preRegistroId], 200);
 
-        $formPreRegistro = new FormularioPreRegistro($request->all());
-        $formPreRegistro->fotografia_propietario = $urlImagen;
-        $formPreRegistro->save();
+        try {
+            // No puede confirmar dos veces
+            DB::beginTransaction();
 
-        return response()->json(['status' => 'success', 'data' => $formPreRegistro], 201);
+            // Buscar el formulario de pre-registro
+            $formPreRegistro = FormularioPreRegistro::find($preRegistroId);
+            if (!$formPreRegistro || $formPreRegistro->estado != 'pendiente') {
+                return response()->json(['status' => 'error', 'message' => 'El formulario ya fue confirmado o no existe'], 400);
+            }
+
+            // Actualizar estado del formulario
+            $formPreRegistro->estado = $estado;
+            $formPreRegistro->save();
+
+            // Crear usuario
+            $usuario = new User();
+            $usuario->correo = $formPreRegistro->correo_propietario;
+            $usuario->password = bcrypt('12345678');
+            $usuario->nombre = $formPreRegistro->nombre_propietario;
+            $usuario->apellido_paterno = $formPreRegistro->apellido_paterno_propietario;
+            $usuario->apellido_materno = $formPreRegistro->apellido_materno_propietario;
+            // Generar nickname
+            $usuario->nickname = str_replace(' ', '', $formPreRegistro->nombre_restaurante) . $formPreRegistro->nit;
+            $usuario->foto_perfil = $formPreRegistro->fotografia_propietario;
+            $usuario->save();
+            // Crear restaurante
+            $restaurante = new Restaurante();
+            $restaurante->nombre = str_replace(' ', '', $formPreRegistro->nombre_restaurante);
+            $restaurante->nit = $formPreRegistro->nit;
+            $restaurante->celular = $formPreRegistro->celular_restaurante;
+            $restaurante->correo = $formPreRegistro->correo_restaurante;
+            $restaurante->latitud = $formPreRegistro->latitud;
+            $restaurante->longitud = $formPreRegistro->longitud;
+            $restaurante->licencia_funcionamiento = $formPreRegistro->licencia_funcionamiento;
+            $restaurante->tipo_establecimiento = $formPreRegistro->tipo_establecimiento;
+            $restaurante->save();
+
+            // Asignar restaurante al propietario
+            $propietario = new Propietario();
+            $propietario->id_usuario = $usuario->id;
+            $propietario->id_restaurante = $restaurante->id;
+            $propietario->id_administrador = auth()->user()->id;
+            $propietario->ci = $formPreRegistro->cedula_identidad_propietario;
+            $propietario->fecha_registro = now();
+            $propietario->save();
+
+            FormularioPreRegistro::where(function ($query) use ($formPreRegistro) {
+                $query->where('nit', $formPreRegistro->nit)->orWhere('correo_propietario', $formPreRegistro->correo_propietario)->orWhere('cedula_identidad_propietario', $formPreRegistro->cedula_identidad_propietario);
+            })->where('estado', '!=', 'aceptado')->update(['estado' => 'rechazado']);
+ 
+            DB::commit();
+
+            return response()->json(['status' => 'success', 'data' => $formPreRegistro], 200);
+        } catch (QueryException $e) {
+            DB::rollBack();
+
+            // Manejar violación de clave única
+            if ($e->getCode() == 23505) {
+                FormularioPreRegistro::where(function ($query) use ($formPreRegistro) {
+                    $query->where('nit', $formPreRegistro->nit)->orWhere('correo_propietario', $formPreRegistro->correo_propietario)->orWhere('cedula_identidad_propietario', $formPreRegistro->cedula_identidad_propietario);
+                })->where('estado', '!=', 'aceptado')->update(['estado' => 'rechazado']);
+                // ->update(['estado' => 'rechazado']);
+
+                return response()->json(['status' => 'error', 'message' => $e], 400);
+            }
+
+            return response()->json(['status' => 'error', 'message' => 'Error en la base de datos: ' . $e->getMessage()], 500);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
     }
 }

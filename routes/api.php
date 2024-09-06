@@ -45,6 +45,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/prueba_admin', function () {
             return response()->json(['message' => 'Bienvenido administrador']);
         });
+        Route::get('/pre-registros', 'App\Http\Controllers\PreRegistroController@index');
+        Route::put('/pre-registro/confirmar', 'App\Http\Controllers\PreRegistroController@confirmar');
     }); 
     
     // Route::middleware('empleado')->group(function () {
@@ -95,7 +97,7 @@ Route::get('/menu/{id}', 'App\Http\Controllers\MenuController@show');
 
 Route::post('/login', 'App\Http\Controllers\Auth\AuthController@login');
 
-Route::post('/pre-registro', [PreRegistroController::class, 'store']);
+Route::post('/pre-registro', 'App\Http\Controllers\PreRegistroController@store');
 
 Route::get('/prohibido', function () {
     return response()->json([
