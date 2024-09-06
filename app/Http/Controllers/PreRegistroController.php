@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePreRegistroRequest;
+use App\Mail\ConfirmacionPreRegistro;
 use App\Utils\ImageHandler;
 use App\Models\FormularioPreRegistro;
 use App\Models\Propietario;
@@ -11,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Mail;
 
 class PreRegistroController extends Controller
 {
@@ -102,7 +104,12 @@ class PreRegistroController extends Controller
             FormularioPreRegistro::where(function ($query) use ($formPreRegistro) {
                 $query->where('nit', $formPreRegistro->nit)->orWhere('correo_propietario', $formPreRegistro->correo_propietario)->orWhere('cedula_identidad_propietario', $formPreRegistro->cedula_identidad_propietario);
             })->where('estado', '!=', 'aceptado')->update(['estado' => 'rechazado']);
- 
+            
+            //enviar correo de confirmacion con credenciales de acceso
+            Mail::to($usuario->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
+            //esperar a que se envie el correo
+            sleep(5);
+            Mail::to($restaurante->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
             DB::commit();
 
             return response()->json(['status' => 'success', 'data' => $formPreRegistro], 200);
