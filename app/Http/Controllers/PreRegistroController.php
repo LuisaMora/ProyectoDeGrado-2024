@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePreRegistroRequest;
 use App\Mail\ConfirmacionPreRegistro;
+use App\Mail\RechazoPreRegistro;
 use App\Utils\ImageHandler;
 use App\Models\FormularioPreRegistro;
 use App\Models\Propietario;
@@ -53,7 +54,10 @@ class PreRegistroController extends Controller
         $preRegistroId = $request->query('pre_registro_id');
         $estado = $request->query('estado');
 
-        // return response()->json(['status' => 'success', 'data' => $preRegistroId], 200);
+        // return response()->json(['status' => 'success',
+        //  'preRegistro' => $preRegistroId,
+        //  'rechazo' => $request->query('motivo_rechazo'),
+        //   'estado'=>$estado ], 200);
 
         try {
             // No puede confirmar dos veces
@@ -68,6 +72,15 @@ class PreRegistroController extends Controller
             // Actualizar estado del formulario
             $formPreRegistro->estado = $estado;
             $formPreRegistro->save();
+
+            if ($estado == 'rechazado') {
+                $mensaje  = $request->query('motivo_rechazo');
+                Mail::to($formPreRegistro->correo_propietario)->send(new RechazoPreRegistro($formPreRegistro, $mensaje));
+                sleep(5);
+                Mail::to($formPreRegistro->correo_restaurante)->send(new RechazoPreRegistro($formPreRegistro, $mensaje));
+                DB::commit();
+                return response()->json(['status' => 'success', 'data' => $formPreRegistro], 200);
+            }
 
             // Crear usuario
             $usuario = new User();
