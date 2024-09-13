@@ -19,9 +19,8 @@ class PreRegistroController extends Controller
 {
     public function index()
     {
-       //reverse
-        $formPreRegistros = FormularioPreRegistro::all();
-        $formPreRegistros = $formPreRegistros->reverse()->values();
+       //ordenadoi por fecha de actualizacion
+        $formPreRegistros = FormularioPreRegistro::orderBy('updated_at', 'desc')->get();
         return response()->json(['status' => 'success', 'data' => $formPreRegistros], 200);
     }
 
@@ -54,10 +53,10 @@ class PreRegistroController extends Controller
         $preRegistroId = $request->query('pre_registro_id');
         $estado = $request->query('estado');
 
-        // return response()->json(['status' => 'success',
-        //  'preRegistro' => $preRegistroId,
-        //  'rechazo' => $request->query('motivo_rechazo'),
-        //   'estado'=>$estado ], 200);
+        return response()->json(['status' => 'success',
+         'preRegistro' => $preRegistroId,
+         'rechazo' => $request->query('motivo_rechazo'),
+          'estado'=>$estado ], 200);
 
         try {
             // No puede confirmar dos veces
