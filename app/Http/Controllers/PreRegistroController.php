@@ -53,11 +53,6 @@ class PreRegistroController extends Controller
         $preRegistroId = $request->query('pre_registro_id');
         $estado = $request->query('estado');
 
-        return response()->json(['status' => 'success',
-         'preRegistro' => $preRegistroId,
-         'rechazo' => $request->query('motivo_rechazo'),
-          'estado'=>$estado ], 200);
-
         try {
             // No puede confirmar dos veces
             DB::beginTransaction();
