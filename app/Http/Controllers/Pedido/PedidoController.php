@@ -39,16 +39,18 @@ class PedidoController extends Controller
         }else
             if($tipoEmpleado == 2){
                 $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
-                   ->where('id_empleado', $idEmpleado ) 
-                   ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
-                $query->where('id_restaurante', $idRestaurante);
-               })
-            ->get();
+                ->whereDate('fecha_hora_pedido', now())
+                ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
+                    $query->where('id_restaurante', $idRestaurante);
+                })
+                ->get();
         }else{
             return response()->json(['status' => 'error', 'error' => 'No tienes permisos para ver los pedidos.'], 403);
         }
         return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
     }
+
+
    
     function showPlatillos($idPedido, $idRestaurante)
     {
@@ -132,7 +134,6 @@ class PedidoController extends Controller
         $fecha_resta_dos_horas = now()->subHours(2)->format('Y-m-d H:i:s');
         $cuenta = Cuenta::where('id_mesa', $request->id_mesa)
             ->whereNotIn('estado', ['Cancelada', 'Pagada'])
-            ->where('created_at', '>=', $fecha_resta_dos_horas)
             ->first();
 
         if ($cuenta == null) {

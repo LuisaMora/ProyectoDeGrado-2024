@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
         Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
         Route::post('/cuenta/store/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@store');
+        Route::post('/cuenta/close/{idCuenta}', 'App\Http\Controllers\Pedido\CuentaController@close');
     });
 
 

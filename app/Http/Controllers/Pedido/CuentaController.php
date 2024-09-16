@@ -33,4 +33,19 @@ class CuentaController extends Controller
 
         return response()->json(['status' => 'success', 'cuenta' => $cuenta], 200);
     }
+    public function close($idCuenta)
+    {
+        // Find the account by its ID
+        $cuenta = Cuenta::find($idCuenta);
+        if (!$cuenta) {
+            return response()->json(['status' => 'error', 'error' => 'Cuenta no encontrada.'], 404);
+        }
+    
+        // Update the account's state to 'Pagado'
+        $cuenta->estado = 'Pagado';
+        $cuenta->save();
+    
+        return response()->json(['status' => 'success', 'message' => 'Cuenta cerrada con éxito.', 'cuenta' => $cuenta], 200);
+    }
+
 }
