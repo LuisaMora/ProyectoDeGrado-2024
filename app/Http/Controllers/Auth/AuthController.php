@@ -120,33 +120,24 @@ class AuthController extends Controller
         try {
             DB::beginTransaction();
 
-            // Obtener al usuario autenticado
             $user = User::find(auth()->user()->id);
-
-            // Actualizar datos del modelo relacionado (por ejemplo, Propietario)
             $user_data = $this->getDatosPersonales($user);
             $user_data->ci = $request->ci;
             //quitar tipo del user_data
             unset($user_data->tipo);
             $user_data->save();
 
-            // Actualizar los datos del usuario
             $user->nombre = $request->nombre;
             $user->apellido_paterno = $request->apellido_paterno;
             $user->apellido_materno = $request->apellido_materno;
             $user->correo = $request->correo;
             $user->nickname = $request->nickname;
-
-            // Manejar la imagen de perfil (si se envía)
-            //si cambia o no cambia la foto de perfil
             if ($request->hasFile('foto_perfil')) {
-                // Eliminar la foto anterior
                 ImageHandler::eliminarArchivos([$user->foto_perfil]);
                 $user ->foto_perfil = ImageHandler::guardarArchivo($request->foto_perfil, 'fotografias_propietarios');
             }
            
 
-            // Guardar los cambios en el usuario
             $user->save();
 
             DB::commit();
