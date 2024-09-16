@@ -39,6 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
 
         Route::post('/reporte/pedidos', 'App\Http\Controllers\ReporteController@getReporte');
+        
+        Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
     });
     
     Route::middleware('administrador')->group(function () {
