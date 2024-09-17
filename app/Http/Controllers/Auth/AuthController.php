@@ -48,6 +48,38 @@ class AuthController extends Controller
         }
     }
 
+    public function show(Request $request)
+{
+    $id_usuario = $request->query('id_usuario');
+    
+    if (!$id_usuario) {
+        return response()->json([
+            'message' => 'El ID del usuario es requerido'
+        ], 400); 
+    }
+
+    $user = User::find($id_usuario);
+    
+    if (!$user) {
+        return response()->json([
+            'message' => 'Usuario no encontrado'
+        ], 404);
+    }
+    $datosPersonales = $this->getDatosPersonales($user);
+
+    if (!$datosPersonales) {
+        return response()->json([
+            'message' => 'No se encontraron datos personales para este usuario'
+        ], 404);
+    }
+    $datosPersonales->usuario = $user;
+    return response()->json([
+        'user' => $datosPersonales
+    ], 200);
+}
+
+
+
     private function getDatosPersonales(User $user)
     {
         $nameoftype = $user->getTipoUsuario();
@@ -97,7 +129,6 @@ class AuthController extends Controller
 
     public function updateDatosPersonales(Request $request)
     {
-        // Validar los datos de entrada
         $validarDatos = Validator::make($request->all(), [
             'nombre' => 'required|max:100|min:2',
             'apellido_paterno' => 'required|max:100|min:2',
@@ -134,9 +165,9 @@ class AuthController extends Controller
             $user->nickname = $request->nickname;
             if ($request->hasFile('foto_perfil')) {
                 ImageHandler::eliminarArchivos([$user->foto_perfil]);
-                $user ->foto_perfil = ImageHandler::guardarArchivo($request->foto_perfil, 'fotografias_propietarios');
+                $user->foto_perfil = ImageHandler::guardarArchivo($request->foto_perfil, 'fotografias_propietarios');
             }
-           
+
 
             $user->save();
 

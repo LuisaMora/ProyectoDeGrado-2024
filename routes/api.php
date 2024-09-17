@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/reporte/pedidos', 'App\Http\Controllers\ReporteController@getReporte');
         
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
+        Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
     });
     
     Route::middleware('administrador')->group(function () {
