@@ -102,6 +102,11 @@ Route::post('/login', 'App\Http\Controllers\Auth\AuthController@login');
 
 Route::post('/pre-registro', 'App\Http\Controllers\PreRegistroController@store');
 
+Route::post('solicitar-cambio-contrasena', 'App\Http\Controllers\PreRegistroController@solicitarCambioContrasena');
+
+// Restablecer contraseña (deberás implementar este método)
+Route::post('restablecer-contrasena', 'App\Http\Controllers\PreRegistroController@restablecerContrasena');
+
 Route::get('/prohibido', function () {
     return response()->json([
         'message' => 'No tienes permiso para acceder a esta ruta',

@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Utils\ImageHandler;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -186,4 +189,57 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    public function solicitarCambioContrasena(Request $request)
+    {
+        // Validar el correo electrónico
+        $request->validate([
+            'correo' => 'required|email|exists:users,email',
+            'direccion_frontend' => 'required|url'
+        ]);
+
+        $user = User::where('correo', $request->correo)->first();
+
+        if ($user) {
+            // Generar un token de restablecimiento
+            $token = Str::random(60);
+            $user->reset_token = $token;
+            $user->reset_token_expires_at = now()->addMinutes(60); // Token válido por 60 minutos
+            $user->save();
+
+            // Enviar correo con el enlace de restablecimiento
+            Mail::to($user->correo)->send(new \App\Mail\ResetPasswordMail($token, $request->direccion_frontend));
+
+            return response()->json(['message' => 'Correo de restablecimiento enviado.']);
+        }
+
+        return response()->json(['message' => 'Error al solicitar el cambio de contraseña.'], 500);
+    }
+
+    public function restablecerContrasena(Request $request)
+{
+    // Validar los datos
+    $request->validate([
+        'token' => 'required',
+        'newPassword' => 'required|min:6|confirmed', // Confirmar que la contraseña es igual en los dos campos
+    ]);
+
+    // Buscar al usuario por el token
+    $user = User::where('reset_token', $request->token)
+                ->where('reset_token_expires_at', '>', now())
+                ->first();
+
+    if ($user) {
+        // Actualizar la contraseña
+        $user->password = Hash::make($request->newPassword);
+        $user->reset_token = null; // Eliminar el token después de usarlo
+        $user->reset_token_expires_at = null;
+        $user->save();
+
+        return response()->json(['message' => 'Contraseña actualizada correctamente.']);
+    }
+
+    return response()->json(['message' => 'Token inválido o expirado.'], 400);
+}
+
 }
