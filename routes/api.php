@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
         
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
+        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
     });
     
     Route::middleware('administrador')->group(function () {
@@ -102,10 +103,10 @@ Route::post('/login', 'App\Http\Controllers\Auth\AuthController@login');
 
 Route::post('/pre-registro', 'App\Http\Controllers\PreRegistroController@store');
 
-Route::post('solicitar-cambio-contrasena', 'App\Http\Controllers\PreRegistroController@solicitarCambioContrasena');
+Route::post('solicitar-cambio-contrasenia', 'App\Http\Controllers\PreRegistroController@solicitarCambioContrasena');
 
 // Restablecer contraseña (deberás implementar este método)
-Route::post('restablecer-contrasena', 'App\Http\Controllers\PreRegistroController@restablecerContrasena');
+
 
 Route::get('/prohibido', function () {
     return response()->json([

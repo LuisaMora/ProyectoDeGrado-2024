@@ -22,8 +22,8 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validarDatos = Validator::make($request->all(), [
-            'usuario' => 'required|max:100|min:2',
-            'password' => 'required|max:100|min:2',
+            'usuario' => 'required|max:60|min:6',
+            'password' => 'required|max:60|min:6',
         ]);
 
         if ($validarDatos->fails()) {
@@ -216,18 +216,30 @@ class AuthController extends Controller
         return response()->json(['message' => 'Error al solicitar el cambio de contraseña.'], 500);
     }
 
-    public function restablecerContrasena(Request $request)
+    public function restablecerContrasenia(Request $request)
 {
     // Validar los datos
     $request->validate([
-        'token' => 'required',
-        'newPassword' => 'required|min:6|confirmed', // Confirmar que la contraseña es igual en los dos campos
+        'token' => 'min:60|max:60',
+        'oldPassword' => 'min:6|max:60', // Confirmar que la contraseña es igual en los dos campos
+        'newPassword' => 'required|min:6', // Confirmar que la contraseña es igual en los dos campos
     ]);
 
-    // Buscar al usuario por el token
-    $user = User::where('reset_token', $request->token)
-                ->where('reset_token_expires_at', '>', now())
-                ->first();
+    if($request->token ){
+        // Buscar al usuario por el token
+        $user = User::where('reset_token', $request->token)
+        ->where('reset_token_expires_at', '>', now())
+        ->first();
+    }elseif (auth()->user()) {
+        $user = User::find(auth()->user()->id);
+        if (!Hash::check($request->oldPassword, $user->password)) {
+            return response()->json(['message' => 'La contraseña actual no coincide.'], 400);
+        }
+    }else{
+        return response()->json(['message' => 'Token inválido o expirado.'], 400);
+    }
+    
+    
 
     if ($user) {
         // Actualizar la contraseña
