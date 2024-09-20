@@ -56,10 +56,41 @@
         <div class="header">
             <h1>Bienvenido a {{ config('app.name') }}</h1>
         </div>
-        <div class="content">
-            <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-            <a href="{{ $direccion_front . '/cambiar-contrasena?token=' . $token }}">Cambiar contraseña</a>
+        <div class="content" style="padding: 20px 0; line-height: 1.6;">
+            <p style="color: #333333; font-size: 16px; margin-bottom: 20px;">
+                Estimado usuario,
+            </p>
+            <p style="color: #333333; font-size: 16px; margin-bottom: 20px;">
+                Hemos recibido una solicitud para restablecer tu contraseña. Si fuiste tú quien solicitó este cambio, por favor sigue las instrucciones a continuación:
+            </p>
+            <ol style="color: #333333; font-size: 16px; margin-bottom: 20px; padding-left: 20px;">
+                <li>
+                    Haz clic en el botón que aparece a continuación para acceder a la página de restablecimiento de contraseña.
+                </li>
+                <li>
+                    En la página, introduce una nueva contraseña segura, mejor si no la usaste antes.
+                </li>
+                <li>
+                    Confirma la nueva contraseña e ingresa al sistema.
+                </li>
+            </ol>
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{{ $direccion_front . '?token=' . $token }}" 
+                   style="background-color: #333333; color: white; text-decoration: none; padding: 12px 20px; border-radius: 5px; display: inline-block; font-size: 16px;">
+                   Cambiar Contraseña
+                </a>
+            </div>
+            <p style="color: #333333; font-size: 16px; margin-bottom: 20px;">
+                Si no solicitaste este cambio de contraseña, puedes ignorar este mensaje. Tu cuenta seguirá protegida.
+            </p>
+            <p style="color: #333333; font-size: 14px; margin-bottom: 20px;">
+                Si tienes problemas para acceder al enlace, copia y pega la siguiente URL en tu navegador:
+            </p>
+            <p style="color: #333333; font-size: 14px; word-break: break-all;">
+                {{ $direccion_front . '?token=' . $token }}
+            </p>
         </div>
+        
         <div class="footer">
             <p>&copy; {{ date('Y') }} {{ config('app.name') }}. Todos los derechos reservados.</p>
         </div>

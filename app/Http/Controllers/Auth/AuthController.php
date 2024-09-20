@@ -190,11 +190,11 @@ class AuthController extends Controller
         }
     }
 
-    public function solicitarCambioContrasena(Request $request)
+    public function solicitarCambioContrasenia(Request $request)
     {
         // Validar el correo electrónico
         $request->validate([
-            'correo' => 'required|email|exists:users,email',
+            'correo' => 'required|email|exists:usuarios,correo',
             'direccion_frontend' => 'required|url'
         ]);
 
