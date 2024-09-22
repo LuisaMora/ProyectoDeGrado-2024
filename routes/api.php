@@ -105,7 +105,6 @@ Route::post('/pre-registro', 'App\Http\Controllers\PreRegistroController@store')
 
 Route::post('solicitar-cambio-contrasenia', 'App\Http\Controllers\auth\AuthController@solicitarCambioContrasenia');
 Route::post('/restablecer-contrasenia-olvidada', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
-// Restablecer contraseña (deberás implementar este método)
 
 
 Route::get('/prohibido', function () {
