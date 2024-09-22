@@ -9,7 +9,6 @@ class ImageHandler
     public static function guardarArchivo($archivo ,$nombreCarpeta)
     {
         //crear carpeta si no existe
-        print_r($nombreCarpeta);
         if (!Storage::exists('public/'.$nombreCarpeta)) {
             Storage::makeDirectory('public/'.$nombreCarpeta);
         }
