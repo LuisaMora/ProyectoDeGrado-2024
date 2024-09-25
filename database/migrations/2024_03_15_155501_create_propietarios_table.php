@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('id_usuario')->constrained('usuarios')->onDelete('restrict')->onUpdate('restrict');
             $table->foreignId('id_administrador')->nullable()->constrained('administradores')->onDelete('restrict')->onUpdate('restrict');
             $table->foreignId('id_restaurante')->nullable()->constrained('restaurantes')->onDelete('restrict')->onUpdate('restrict');
-            $table->integer('ci')->nullable();
+            $table->integer('ci')->nullable()->unique();
             $table->date('fecha_registro')->nullable();
             $table->string('pais', 100)->nullable();
             $table->string('departamento', 100)->nullable();

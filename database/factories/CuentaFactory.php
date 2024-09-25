@@ -39,7 +39,7 @@ class CuentaFactory extends Factory
         return [
             'nombre_razon_social' => $this->faker->name(),
             // 'estado' => $this->faker->randomElement(['Abierta', 'Cancelada', 'PagoPendiente', 'Pagada']),
-            'estado' => $this->faker->randomElement(['Abierta', 'Cancelada', 'PagoPendiente', 'Pagada']),
+            'estado' => $this->faker->randomElement(['Pagada']),
         ];
     }
 }

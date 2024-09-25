@@ -25,8 +25,6 @@ class CuentaController extends Controller
         if (!$cuenta) {
             return response()->json(['status' => 'error', 'error' => 'No se encontró una cuenta con el ID proporcionado.'], 404);
         }
-
-        // Guardar razón social y NIT en la cuenta
         $cuenta->nombre_razon_social = $request->razon_social;
         $cuenta->nit = $request->nit;
         $cuenta->save();
@@ -35,14 +33,11 @@ class CuentaController extends Controller
     }
     public function close($idCuenta)
     {
-        // Find the account by its ID
         $cuenta = Cuenta::find($idCuenta);
         if (!$cuenta) {
             return response()->json(['status' => 'error', 'error' => 'Cuenta no encontrada.'], 404);
         }
-    
-        // Update the account's state to 'Pagado'
-        $cuenta->estado = 'Pagado';
+        $cuenta->estado = 'Pagada';
         $cuenta->save();
     
         return response()->json(['status' => 'success', 'message' => 'Cuenta cerrada con éxito.', 'cuenta' => $cuenta], 200);

@@ -24,24 +24,34 @@ class PedidoController extends Controller
         $tipoEmpleado = User::find(auth()->user()->id)->getTipoEmpleado();
         if($tipoEmpleado == 1){
             $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
+               ->whereDate('fecha_hora_pedido', now())
                ->where('id_empleado', $idEmpleado ) 
                ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
             $query->where('id_restaurante', $idRestaurante);
            })
+           ->whereHas('cuenta', function($query) {
+            $query->where('estado','!=','Pagada');
+        })
         ->get();
         }else if ($tipoEmpleado == 3){
             $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
             ->whereDate('fecha_hora_pedido', now())
-            ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
+            ->whereHas('cuenta.mesa', function($query) use ($idRestaurante){
                 $query->where('id_restaurante', $idRestaurante);
             })
+            ->whereHas('cuenta', function($query) {
+                $query->where('estado','!=','Pagada');
+            })
             ->get();
-        }else
+        }else 
             if($tipoEmpleado == 2){
                 $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
                 ->whereDate('fecha_hora_pedido', now())
                 ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
                     $query->where('id_restaurante', $idRestaurante);
+                })
+                ->whereHas('cuenta', function($query) {
+                    $query->where('estado','!=','Pagada');
                 })
                 ->get();
         }else{
