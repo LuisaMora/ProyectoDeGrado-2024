@@ -51,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
         Route::get('/pre-registros', 'App\Http\Controllers\PreRegistroController@index');
         Route::put('/pre-registro/confirmar', 'App\Http\Controllers\PreRegistroController@confirmar');
+        Route::get('/propietarios', 'App\Http\Controllers\Auth\CuentaUsuarioController@propietarios');
     }); 
     
     // Route::middleware('empleado')->group(function () {

@@ -106,6 +106,8 @@ class PreRegistroController extends Controller
             $propietario->id_administrador = auth()->user()->id;
             $propietario->ci = $formPreRegistro->cedula_identidad_propietario;
             $propietario->fecha_registro = now();
+            $propietario->pais = $formPreRegistro->pais;
+            $propietario->departamento = $formPreRegistro->departamento;
             $propietario->save();
 
             FormularioPreRegistro::where(function ($query) use ($formPreRegistro) {

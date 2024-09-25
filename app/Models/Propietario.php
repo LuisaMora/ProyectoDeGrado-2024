@@ -32,4 +32,9 @@ class Propietario extends Model
     {
         return $this->belongsTo(Restaurante::class, 'id_restaurante');
     }
+
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'id_usuario');
+    }
 }
