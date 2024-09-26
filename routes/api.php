@@ -52,6 +52,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/pre-registros', 'App\Http\Controllers\PreRegistroController@index');
         Route::put('/pre-registro/confirmar', 'App\Http\Controllers\PreRegistroController@confirmar');
         Route::get('/propietarios', 'App\Http\Controllers\Auth\CuentaUsuarioController@propietarios');
+
+        Route::put('/propietario/dar-baja/{id_usuario}', function($id_usuario) {
+            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
+                        ->cambiarEstadoPropietario($id_usuario, false);
+        });
+        
+        Route::put('/propietario/dar-alta/{id_usuario}', function($id_usuario) {
+            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
+                        ->cambiarEstadoPropietario($id_usuario, true);
+        });
     }); 
     
     // Route::middleware('empleado')->group(function () {

@@ -36,6 +36,7 @@ class User extends Authenticatable
         'foto_perfil',
         'apellido_paterno',
         'apellido_materno',
+        'estado',
 
     ];
 

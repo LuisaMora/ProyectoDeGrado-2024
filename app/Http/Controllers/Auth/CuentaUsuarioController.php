@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Controllers\Auth ;
+namespace app\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Propietario;
@@ -13,6 +13,34 @@ class CuentaUsuarioController extends Controller
         $propietarios = Propietario::with('usuario')->orderBy('created_at', 'desc')->get();
         return response()->json(['status' => 'success', 'data' => $propietarios], 200);
     }
+
+    public function cambiarEstadoPropietario($id_usuario, $estado)
+    {
+        $propietario = Propietario::where('id_usuario', $id_usuario)->first();
+        if (!$propietario) {
+            return response()->json(['status' => 'error', 'message' => 'Propietario no encontrado'], 404);
+        }
+
+        $usuario = User::find($id_usuario);
+        if (!$usuario) {
+            return response()->json(['status' => 'error', 'message' => 'Usuario no encontrado'], 404);
+        }
+
+        $usuario->estado = $estado;
+        $usuario->save();
+
+        //desactivar todos los tokens del usuario
+        if ($estado) $usuario->tokens()->delete();
+
+        $menu = $propietario->restaurante->menu;
+        $menu->disponible = $estado; // Activar o desactivar según el estado
+        $menu->save();
+
+        $message = $estado ? 'Propietario activado' : 'Propietario dado de baja';
+
+        return response()->json(['status' => 'success', 'message' => $message], 200);
+    }
+
 
     // public function store(StoreUserRequest $request)
     // {

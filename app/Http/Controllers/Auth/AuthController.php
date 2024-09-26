@@ -7,8 +7,6 @@ use App\Models\Administrador;
 use App\Models\Empleado;
 use App\Models\Propietario;
 use App\Models\User;
-use App\Http\Requests\LoginRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -25,61 +23,60 @@ class AuthController extends Controller
             'usuario' => 'required|max:60|min:6',
             'password' => 'required|max:60|min:6',
         ]);
-
         if ($validarDatos->fails()) {
             return response()->json([
-                'message' => 'Datos invalidos',
+                'message' => 'Datos inválidos',
                 'errors' => $validarDatos->errors()
             ], 422);
         }
-        //$user es de tipo User y no mixed
+
         $user = $this->attemptLogin($request->usuario, $request->password);
         if ($user) {
-            // el token expira en 12 horas - probar
             $token = $user->createToken('personal-token', expiresAt: now()->addHours(12))->plainTextToken;
             $datosPersonales = $this->getDatosPersonales($user);
             $datosPersonales->usuario = $user;
             return response()->json([
                 'token' => $token,
-                'user' => $datosPersonales,
+                'user' => $datosPersonales, // Se asume que este método ya incluye el usuario
                 'message' => 'Inicio de sesión exitoso.'
             ], 200);
         } else {
+            // Implementar un sistema de rate limiting o captchas para múltiples intentos fallidos
             return response()->json([
-                'message' => 'Credenciales invalidas'
+                'message' => 'Credenciales inválidas'
             ], 401);
         }
     }
 
     public function show(Request $request)
-{
-    $id_usuario = $request->query('id_usuario');
-    
-    if (!$id_usuario) {
-        return response()->json([
-            'message' => 'El ID del usuario es requerido'
-        ], 400); 
-    }
+    {
+        $id_usuario = $request->query('id_usuario');
 
-    $user = User::find($id_usuario);
-    
-    if (!$user) {
-        return response()->json([
-            'message' => 'Usuario no encontrado'
-        ], 404);
-    }
-    $datosPersonales = $this->getDatosPersonales($user);
+        if (!$id_usuario) {
+            return response()->json([
+                'message' => 'El ID del usuario es requerido'
+            ], 400);
+        }
 
-    if (!$datosPersonales) {
+        $user = User::find($id_usuario);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Usuario no encontrado'
+            ], 404);
+        }
+        $datosPersonales = $this->getDatosPersonales($user);
+
+        if (!$datosPersonales) {
+            return response()->json([
+                'message' => 'No se encontraron datos personales para este usuario'
+            ], 404);
+        }
+        $datosPersonales->usuario = $user;
         return response()->json([
-            'message' => 'No se encontraron datos personales para este usuario'
-        ], 404);
+            'user' => $datosPersonales
+        ], 200);
     }
-    $datosPersonales->usuario = $user;
-    return response()->json([
-        'user' => $datosPersonales
-    ], 200);
-}
 
 
 
@@ -105,13 +102,14 @@ class AuthController extends Controller
         return $user_data;
     }
 
-    private function attemptLogin($userCredential, $password): User | null
+    private function attemptLogin($usuario, $password)
     {
-        $user = User::where('correo', $userCredential)->orWhere(
-            'nickname',
-            $userCredential
-        )->first();
-        if ($user != null && Auth::attempt(['correo' => $user->correo, 'password' => $password])) {
+        $user = User::where('correo', $usuario)
+            ->orWhere('nickname', $usuario) // Asumiendo que el campo 'nickname' existe en tu modelo
+            ->where('estado', true) // Asumiendo que el campo 'estado' existe en tu modelo
+            ->first();
+
+        if ($user && Hash::check($password, $user->password)) {
             return $user;
         }
         return null;
@@ -217,41 +215,40 @@ class AuthController extends Controller
     }
 
     public function restablecerContrasenia(Request $request)
-{
-    // Validar los datos
-    $request->validate([
-        'token' => 'min:60|max:60',
-        'oldPassword' => 'min:6|max:60', // Confirmar que la contraseña es igual en los dos campos
-        'newPassword' => 'required|min:6', // Confirmar que la contraseña es igual en los dos campos
-    ]);
+    {
+        // Validar los datos
+        $request->validate([
+            'token' => 'min:60|max:60',
+            'oldPassword' => 'min:6|max:60', // Confirmar que la contraseña es igual en los dos campos
+            'newPassword' => 'required|min:6', // Confirmar que la contraseña es igual en los dos campos
+        ]);
 
-    if($request->token ){
-        // Buscar al usuario por el token
-        $user = User::where('reset_token', $request->token)
-        ->where('reset_token_expires_at', '>', now())
-        ->first();
-    }elseif (auth()->user()) {
-        $user = User::find(auth()->user()->id);
-        if (!Hash::check($request->oldPassword, $user->password)) {
-            return response()->json(['message' => 'La contraseña actual no coincide.'], 400);
+        if ($request->token) {
+            // Buscar al usuario por el token
+            $user = User::where('reset_token', $request->token)
+                ->where('reset_token_expires_at', '>', now())
+                ->first();
+        } elseif (auth()->user()) {
+            $user = User::find(auth()->user()->id);
+            if (!Hash::check($request->oldPassword, $user->password)) {
+                return response()->json(['message' => 'La contraseña actual no coincide.'], 400);
+            }
+        } else {
+            return response()->json(['message' => 'Token inválido o expirado.'], 400);
         }
-    }else{
+
+
+
+        if ($user) {
+            // Actualizar la contraseña
+            $user->password = Hash::make($request->newPassword);
+            $user->reset_token = null; // Eliminar el token después de usarlo
+            $user->reset_token_expires_at = null;
+            $user->save();
+
+            return response()->json(['message' => 'Contraseña actualizada correctamente.']);
+        }
+
         return response()->json(['message' => 'Token inválido o expirado.'], 400);
     }
-    
-    
-
-    if ($user) {
-        // Actualizar la contraseña
-        $user->password = Hash::make($request->newPassword);
-        $user->reset_token = null; // Eliminar el token después de usarlo
-        $user->reset_token_expires_at = null;
-        $user->save();
-
-        return response()->json(['message' => 'Contraseña actualizada correctamente.']);
-    }
-
-    return response()->json(['message' => 'Token inválido o expirado.'], 400);
-}
-
 }

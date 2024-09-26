@@ -16,6 +16,7 @@ class Menu extends Model
         'portada',
         'tema',
         'qr',
+        'disponible',
     ];
     public function platillos()
     {
