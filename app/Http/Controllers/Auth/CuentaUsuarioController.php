@@ -3,8 +3,11 @@
 namespace app\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AltaUsuario;
+use App\Mail\BajaUsuario;
 use App\Models\Propietario;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 class CuentaUsuarioController extends Controller
 {
@@ -30,7 +33,14 @@ class CuentaUsuarioController extends Controller
         $usuario->save();
 
         //desactivar todos los tokens del usuario
-        if ($estado) $usuario->tokens()->delete();
+        if ($estado) {
+            $usuario->tokens()->delete();
+            //despachar correo de activación
+            Mail::to($usuario->correo)->send(new AltaUsuario($usuario));
+        }else{
+            //despachar correo de baja
+            Mail::to($usuario->correo)->send(new BajaUsuario($usuario));
+        }
 
         $menu = $propietario->restaurante->menu;
         $menu->disponible = $estado; // Activar o desactivar según el estado

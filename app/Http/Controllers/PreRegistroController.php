@@ -116,8 +116,7 @@ class PreRegistroController extends Controller
             
             //enviar correo de confirmacion con credenciales de acceso
             Mail::to($usuario->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
-            //esperar a que se envie el correo
-            sleep(5);
+
             Mail::to($restaurante->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
             DB::commit();
 
