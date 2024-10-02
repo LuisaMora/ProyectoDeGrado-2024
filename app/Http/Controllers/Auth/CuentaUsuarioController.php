@@ -5,6 +5,7 @@ namespace app\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\AltaUsuario;
 use App\Mail\BajaUsuario;
+use App\Models\Empleado;
 use App\Models\Propietario;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -17,37 +18,50 @@ class CuentaUsuarioController extends Controller
         return response()->json(['status' => 'success', 'data' => $propietarios], 200);
     }
 
-    public function cambiarEstadoPropietario($id_usuario, $estado)
+    public function empleados()
     {
-        $propietario = Propietario::where('id_usuario', $id_usuario)->first();
-        if (!$propietario) {
-            return response()->json(['status' => 'error', 'message' => 'Propietario no encontrado'], 404);
-        }
+        $empleados = Empleado::with('usuario')
+            ->where('id_propietario', auth()->user()->id)->orderBy('created_at', 'desc')->get();
+        return response()->json(['status' => 'success', 'data' => $empleados], 200);
+    }
 
+    public function cambiarEstadoUsuario($id_usuario, $estado, $rol)
+    {
+        // Verificar si el usuario existe
         $usuario = User::find($id_usuario);
         if (!$usuario) {
             return response()->json(['status' => 'error', 'message' => 'Usuario no encontrado'], 404);
         }
 
+        if ($rol === 'empleado') {
+            $relacion = Empleado::where('id_usuario', $id_usuario)->where('id_propietario', auth()->user()->id)->first();
+        } else if ($rol === 'propietario') {
+            $relacion = Propietario::where('id_usuario', $id_usuario)->first();
+        }
+
+        if (!$relacion) {
+            return response()->json(['status' => 'error', 'message' => ucfirst($rol) . ' no encontrado'], 404);
+        }
+
         $usuario->estado = $estado;
         $usuario->save();
 
-        //desactivar todos los tokens del usuario
+        // Desactivar todos los tokens del usuario si el estado es activado
         if ($estado) {
             $usuario->tokens()->delete();
-            //despachar correo de activación
-            Mail::to($usuario->correo)->send(new AltaUsuario($usuario));
-        }else{
-            //despachar correo de baja
-            Mail::to($usuario->correo)->send(new BajaUsuario($usuario));
+            Mail::to($usuario->correo)->send(new AltaUsuario($usuario)); // Correo de activación
+        } else {
+            Mail::to($usuario->correo)->send(new BajaUsuario($usuario)); // Correo de baja
         }
 
-        $menu = $propietario->restaurante->menu;
-        $menu->disponible = $estado; // Activar o desactivar según el estado
-        $menu->save();
+        // Si el usuario es propietario, actualizar el estado del menú del restaurante
+        if ($rol === 'propietario') {
+            $menu = $relacion->restaurante->menu;
+            $menu->disponible = $estado;
+            $menu->save();
+        }
 
-        $message = $estado ? 'Propietario activado' : 'Propietario dado de baja';
-
+        $message = $estado ? ucfirst($rol) . ' activado' : ucfirst($rol) . ' dado de baja';
         return response()->json(['status' => 'success', 'message' => $message], 200);
     }
 

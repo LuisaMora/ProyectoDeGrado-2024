@@ -43,6 +43,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
+        Route::get('/empleados', 'App\Http\Controllers\Auth\CuentaUsuarioController@empleados');
+
+        Route::put('/empleado/dar-baja/{id_usuario}', function($id_usuario) {
+            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
+                        ->cambiarEstadoUsuario($id_usuario, false, 'empleado');
+        });
+
+        Route::put('/empleado/dar-alta/{id_usuario}', function($id_usuario) {
+            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
+                        ->cambiarEstadoUsuario($id_usuario, true, 'empleado');
+        });
     });
     
     Route::middleware('administrador')->group(function () {
@@ -55,12 +66,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::put('/propietario/dar-baja/{id_usuario}', function($id_usuario) {
             return app('App\Http\Controllers\Auth\CuentaUsuarioController')
-                        ->cambiarEstadoPropietario($id_usuario, false);
+                        ->cambiarEstadoUsuario($id_usuario, false, 'propietario');
         });
         
         Route::put('/propietario/dar-alta/{id_usuario}', function($id_usuario) {
             return app('App\Http\Controllers\Auth\CuentaUsuarioController')
-                        ->cambiarEstadoPropietario($id_usuario, true);
+                        ->cambiarEstadoUsuario($id_usuario, true, 'propietario');
         });
     }); 
     
