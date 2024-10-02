@@ -83,8 +83,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/cuenta/close/{id}', 'App\Http\Controllers\Pedido\CuentaController@close');
     });
 
-
-
+    Route::middleware('empleado:cajero')->group(function () {
+        Route::get('/show/cuenta/{id}', 'App\Http\Controllers\Pedido\CuentaController@show');
+    });
+    
     Route::middleware('propietarioOempleado')->group(function () {
         Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
