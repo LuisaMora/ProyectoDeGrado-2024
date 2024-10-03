@@ -41,7 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/reporte/pedidos', 'App\Http\Controllers\ReporteController@getReporte');
         
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
-        Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
+        
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
     });
     
@@ -83,7 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
         Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
         Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
-
+        Route::post('/actualizar/datos-empleado', 'App\Http\Controllers\Auth\AuthController@updateDatosEmpleado');
         
     });
 
@@ -93,6 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/restaurante/mesas', 'App\Http\Controllers\MesaController@index');
+        Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
     });
     
 });
