@@ -2,62 +2,52 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Empleado;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class EmpleadoController extends Controller
-{public function store(Request $request)
+{
+    public function store(Request $request)
     {
-        $validatedData = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:255',
-            'apellido_paterno' => 'required|string|max:255',
-            'apellido_materno' => 'required|string|max:255',
-            'fecha_nacimiento' => 'required|date',
-            'telefono' => 'required|numeric|min:7',
-            'direccion' => 'required|string|max:255',
-            'correo' => 'required|max:255|min:4', 
-        ]);
-    
-        if ($validatedData->fails()) {
-            return response()->json([
-                'message' => 'Datos inválidos',
-                'errors' => $validatedData->errors(),
-            ], 422);
+        try {
+            DB::beginTransaction();
+
+            // Create new User
+            $usuario = new User();
+            $usuario->nombre = $request->input('nombre');
+            $usuario->apellido_paterno = $request->input('apellido_paterno');
+            $usuario->apellido_materno = $request->input('apellido_materno');
+            $usuario->correo = $request->input('correo');
+            $usuario->nickname = $request->input('nickname');
+            $usuario->password = Hash::make('12345678'); // Default password
+           
+            // Verifica si se ha enviado una imagen
+            if ($request->hasFile('foto_perfil')) {
+             $file = $request->file('foto_perfil');
+             $path = $file->store('store/imagenes', 'public'); // Guarda en 'storage/app/public/uploads/imagenes'
+             $usuario->foto_perfil = $path; 
+            }
+            $usuario->save();
+
+            // Create new Empleado
+            $empleado = new Empleado();
+            $empleado->id_usuario = $usuario->id;
+            $empleado->id_rol = $request->input('id_rol'); // 1: Waiter, 2: Cashier, 3: Cook
+            $empleado->id_propietario = $request->input('id_propietario');
+            $empleado->fecha_nacimiento = $request->input('fecha_nacimiento');
+            $empleado->fecha_contratacion = $request->input('fecha_contratacion');
+            $empleado->ci = $request->input('ci');
+            $empleado->direccion = $request->input('direccion');
+            $empleado->save();
+
+            DB::commit();
+            return response()->json(['status' => 'success', 'data' => $empleado], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
-    
-        // Crear un nuevo usuario
-        $user = User::create([
-            'nombre' => $request->nombre,
-            'apellido_paterno' => $request->apellido_paterno,
-            'apellido_materno' => $request->apellido_materno,
-            'correo' => $request->correo,
-            'nickname' => $request->nombre,
-            'foto_de_perfil' => $request->foto_de_perfil, 
-            'password' => Hash::make('12345678'),
-        ]);
-    
-        // Obtener el id_propietario a partir del id_usuario
-        $idPropietario = auth()->user()->id;
-    
-        // Guardar datos del empleado
-        $empleado = new Empleado();
-        $empleado->id_usuario = $user->id; // Relacionar el empleado con el usuario recién creado
-        $empleado->id_rol = $request->id_rol; // 1: mesero, 2: cajero, 3: cocinero
-        $empleado->id_propietario = $idPropietario; // Relacionar con el propietario
-        $empleado->fecha_nacimiento = $request->fecha_nacimiento;
-        $empleado->fecha_contratacion = $request->fecha_contratacion;
-        $empleado->ci = $request->ci; // Cédula de identidad
-        $empleado->direccion = $request->direccion;
-        $empleado->save();
-    
-        // Retornar una respuesta
-        return response()->json([
-            'message' => 'Empleado y usuario creados exitosamente',
-            'empleado' => $empleado,
-            'user' => $user
-        ], 201);
     }
 }
