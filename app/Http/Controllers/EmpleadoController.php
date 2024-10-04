@@ -36,7 +36,8 @@ class EmpleadoController extends Controller
             $empleado = new Empleado();
             $empleado->id_usuario = $usuario->id;
             $empleado->id_rol = $request->input('id_rol'); // 1: Waiter, 2: Cashier, 3: Cook
-            $empleado->id_propietario = $request->input('id_propietario');
+
+            $empleado->id_propietario = auth()->user()->id;
             $empleado->fecha_nacimiento = $request->input('fecha_nacimiento');
             $empleado->fecha_contratacion = $request->input('fecha_contratacion');
             $empleado->ci = $request->input('ci');
