@@ -79,12 +79,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
         Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
         Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
-
-        
+        Route::post('/cuenta/store/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@store');
+        Route::post('/cuenta/close/{id}', 'App\Http\Controllers\Pedido\CuentaController@close');
     });
 
-
-
+    Route::middleware('empleado:cajero')->group(function () {
+        Route::get('/show/cuenta/{id}', 'App\Http\Controllers\Pedido\CuentaController@show');
+    });
+    
     Route::middleware('propietarioOempleado')->group(function () {
         Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
