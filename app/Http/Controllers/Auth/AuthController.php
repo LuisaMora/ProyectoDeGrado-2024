@@ -177,10 +177,6 @@ class AuthController extends Controller
 
     public function updateDatosEmpleado(Request $request)
     {
-        return response()->json([
-            'message' => 'Datos actualizados correctamente',
-            'data' =>  $request->all()
-        ], 200);
         $validarDatos = Validator::make($request->all(), [
             'nombre' => 'required|max:100|min:2',
             'apellido_paterno' => 'required|max:100|min:2',

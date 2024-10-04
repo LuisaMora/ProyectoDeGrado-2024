@@ -42,7 +42,6 @@ Route::middleware('auth:sanctum')->group(function () {
         
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
         
-        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
     });
     
     Route::middleware('administrador')->group(function () {
@@ -94,6 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/restaurante/mesas', 'App\Http\Controllers\MesaController@index');
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
+        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
     });
     
 });
