@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CuentaController extends Controller
 {
-
     public function store(Request $request, $idCuenta)
     {
         // Validar los datos
