@@ -91,6 +91,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/restaurante/mesas', 'App\Http\Controllers\MesaController@index');
+        Route::post('/empleado', 'App\Http\Controllers\EmpleadoController@store');
+
     });
     
 });
