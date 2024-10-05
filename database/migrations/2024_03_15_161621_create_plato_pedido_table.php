@@ -22,6 +22,7 @@ return new class extends Migration
 
             $table->foreign('id_platillo')->references('id')->on('platillos')->onDelete('restrict')->onUpdate('restrict');
             $table->foreign('id_pedido')->references('id')->on('pedidos')->onDelete('restrict')->onUpdate('restrict');
+        
         });
     }
 

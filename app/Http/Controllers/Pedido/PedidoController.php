@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Pedido;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
-use App\Models\Pedido; 
+use App\Models\Pedido;
 use App\Models\Mesa;
 use App\Models\PlatoPedido;
 use App\Models\User;
 use App\Utils\NotificacionHandler;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PedidoController extends Controller
@@ -22,90 +23,116 @@ class PedidoController extends Controller
     public function index($idEmpleado, $idRestaurante)
     {
         $tipoEmpleado = User::find(auth()->user()->id)->getTipoEmpleado();
-        if($tipoEmpleado == 1){
+        if ($tipoEmpleado == 1) {
             $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
-               ->where('id_empleado', $idEmpleado ) 
-               ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
-            $query->where('id_restaurante', $idRestaurante);
-           })
-        ->get();
-        }else if ($tipoEmpleado == 3){
+                ->whereDate('fecha_hora_pedido', now())
+                ->where('id_empleado', $idEmpleado)
+                ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
+                    $query->where('id_restaurante', $idRestaurante);
+                })
+                ->whereHas('cuenta', function ($query) {
+                    $query->where('estado', '!=', 'Pagada');
+                })
+                ->get();
+        } else if ($tipoEmpleado == 3) {
             $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
-            ->whereDate('fecha_hora_pedido', now())
-            ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
-                $query->where('id_restaurante', $idRestaurante);
-            })
-            ->get();
-        }else
-            if($tipoEmpleado == 2){
-                $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
-                   ->where('id_empleado', $idEmpleado ) 
-                   ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
-                $query->where('id_restaurante', $idRestaurante);
-               })
-            ->get();
-        }else{
+                ->whereDate('fecha_hora_pedido', now())
+                ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
+                    $query->where('id_restaurante', $idRestaurante);
+                })
+                ->whereHas('cuenta', function ($query) {
+                    $query->where('estado', '!=', 'Pagada');
+                })
+                ->get();
+        } else 
+            if ($tipoEmpleado == 2) {
+            $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
+                ->whereDate('fecha_hora_pedido', now())
+                ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
+                    $query->where('id_restaurante', $idRestaurante);
+                })
+                ->whereHas('cuenta', function ($query) {
+                    $query->where('estado', '!=', 'Pagada');
+                })
+                ->get();
+        } else {
             return response()->json(['status' => 'error', 'error' => 'No tienes permisos para ver los pedidos.'], 403);
         }
         return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
     }
-   
+
+
+
     function showPlatillos($idPedido, $idRestaurante)
     {
-        $platillos = Pedido::with(['platos', ])
-        ->whereDate('fecha_hora_pedido', now())
-        ->where('id', $idPedido)
-        ->whereHas('cuenta.mesa', function($query) use ($idRestaurante) {
-            $query->where('id_restaurante', $idRestaurante);
-        })->first();
+        $platillos = Pedido::with(['platos',])
+            ->whereDate('fecha_hora_pedido', now())
+            ->where('id', $idPedido)
+            ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
+                $query->where('id_restaurante', $idRestaurante);
+            })->first();
         if ($platillos == null) {
             return response()->json(['status' => 'error', 'error' => 'El pedido no existe.'], 404);
         }
-        return response()->json(['status' => 'success', 'platos' => $platillos['platos'], 'idPedido'=> $idPedido], 200);
+        return response()->json(['status' => 'success', 'platos' => $platillos['platos'], 'idPedido' => $idPedido], 200);
     }
 
     function store(Request $request)
     {
-
-        $validarDatos = Validator::make($request->all(), [
-            'id_mesa' => 'required|integer|min:1',
-            'id_empleado' => 'required|integer:min:1',
-            'platillos' => 'required|string',
-            'id_restaurante' => 'required|integer',
-            'tipo' => 'required|string|in:local,llevar'
-        ], [
-            'tipo.in' => 'El campo tipo debe ser "local" o "llevar".',
-        ]);
-        if ($validarDatos->fails()) {
-            return response()->json(['status' => 'error', 'error' => $validarDatos->errors()], 400);
+        try {
+            DB::beginTransaction();
+            $validarDatos = Validator::make($request->all(), [
+                'id_mesa' => 'required|integer|min:1',
+                'id_empleado' => 'required|integer:min:1',
+                'platillos' => 'required|string',
+                'id_restaurante' => 'required|integer',
+                'tipo' => 'required|string|in:local,llevar'
+            ], [
+                'tipo.in' => 'El campo tipo debe ser "local" o "llevar".',
+            ]);
+            if ($validarDatos->fails()) {
+                DB::rollBack();
+                return response()->json(['status' => 'error', 'error' => $validarDatos->errors()], 400);
+            }
+            $platillos_decode = json_decode($request->platillos, true);
+            //verificar que no es un objeto vacio
+            if (empty($platillos_decode)) {
+                DB::rollBack();
+                return response()->json(['status' => 'error', 'error' => 'El campo platillos no puede estar vacío.'], 400);
+            }
+            
+            $cuenta = $this->obtenerOCrearCuenta($request);
+            // return response()->json(['status' => 'success', 'cuenta' => $cuenta], 200);
+            if ($cuenta==null) {
+                DB::commit();
+                return response()->json(['status' => 'error', 'error' => 'No se puede crear un pedido para una mesa con cuenta abierta.'], 400);
+            }
+    
+            $pedido = $pedido = new Pedido();
+            $pedido->id_cuenta = $cuenta->id;
+            $pedido->tipo = $request->tipo;
+            $pedido->id_empleado = $request->id_empleado;
+            $pedido->id_estado = 1;
+            $pedido->fecha_hora_pedido = now();
+            $pedido->save();
+    
+            $nombreMesa = Mesa::where('id', $request->id_mesa)->first()->nombre;
+            $monto = $this->crearPlatillosPedido($platillos_decode, $pedido);
+    
+            $pedido->cuenta->monto_total += $monto;
+    
+            $pedido->monto = $monto;
+            $pedido->save();
+    
+            
+            $this->notificacionHandler->enviarNotificacion($pedido, 1, $request->id_restaurante, $nombreMesa, $request->id_empleado);
+            DB::commit();
+            return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'error' => 'Error al crear el pedido.',
+             'mensaje' => $th->getMessage()], 500);
         }
-        $platillos_decode = json_decode($request->platillos, true);
-        //verificar que no es un objeto vacio
-        if (empty($platillos_decode)) {
-            return response()->json(['status' => 'error', 'error' => 'El campo platillos no puede estar vacío.'], 400);
-        }
-        
-        $cuenta = $this->obtenerOCrearCuenta($request);
-
-        $pedido = $pedido = new Pedido();
-        $pedido->id_cuenta = $cuenta->id;
-        $pedido->tipo = $request->tipo;
-        $pedido->id_empleado = $request->id_empleado;
-        $pedido->id_estado = 1;
-        $pedido->fecha_hora_pedido = now();
-        $pedido->save();
-
-        $nombreMesa = Mesa::where('id', $request->id_mesa)->first()->nombre;
-        $monto = $this->crearPlatillosPedido($platillos_decode, $pedido);
-
-        $pedido->cuenta->monto_total += $monto;
-
-        $pedido->monto = $monto;
-        $pedido->save();
-
-        
-        $this->notificacionHandler->enviarNotificacion($pedido, 1, $request->id_restaurante, $nombreMesa, $request->id_empleado);
-        return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
     }
 
     function delete($id)
@@ -118,7 +145,7 @@ class PedidoController extends Controller
         if ($estadoCuenta != 1) {
             return response()->json(['status' => 'error', 'error' => 'No se puede cancelar un pedido de una cuenta pagada.'], 400);
         }
-        
+
         $platosPedidos = PlatoPedido::where('id_pedido', $id)->get();
         foreach ($platosPedidos as $platoPedido) {
             $platoPedido->delete();
@@ -129,20 +156,25 @@ class PedidoController extends Controller
 
     protected function obtenerOCrearCuenta(Request $request)
     {
-        $fecha_resta_dos_horas = now()->subHours(2)->format('Y-m-d H:i:s');
-        $cuenta = Cuenta::where('id_mesa', $request->id_mesa)
+        $cuentas = Cuenta::where('id_mesa', $request->id_mesa)
             ->whereNotIn('estado', ['Cancelada', 'Pagada'])
-            ->where('created_at', '>=', $fecha_resta_dos_horas)
-            ->first();
-
-        if ($cuenta == null) {
+            ->orderBy('created_at', 'desc')
+            ->get();
+        if ($cuentas->count() < 1 ) {
             $cuenta = new Cuenta();
             $cuenta->id_mesa = $request->id_mesa;
             $cuenta->monto_total = 0;
             $cuenta->save();
+            $cuentas->push($cuenta);
+            
+        }else if ($cuentas->count() > 1) {
+            $cuenta = $cuentas[1];
+            $cuenta->estado = 'Cancelada';
+            $cuenta->save();
+            return null;
         }
 
-        return $cuenta;
+        return $cuentas[0];
     }
 
     protected function crearPlatillosPedido(array $platillos, Pedido $pedido)
@@ -165,13 +197,13 @@ class PedidoController extends Controller
 
         $pedido->cuenta->monto_total += $monto;
         $pedido->cuenta->save();
-     
+
         return $monto;
     }
-    
+
     public function destroy($id)
     {
-        $pedido = Pedido::find($id); 
+        $pedido = Pedido::find($id);
 
         if (!$pedido) {
             return response()->json(['status' => 'error', 'error' => 'Pedido no encontrado.'], 404);
@@ -202,7 +234,4 @@ class PedidoController extends Controller
 
         return response()->json(['status' => 'success', 'message' => 'Pedido eliminado correctamente.'], 200);
     }
-
-
 }
-
