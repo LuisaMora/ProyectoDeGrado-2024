@@ -45,6 +45,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/prueba_admin', function () {
             return response()->json(['message' => 'Bienvenido administrador']);
         });
+        Route::get('/pre-registros', 'App\Http\Controllers\PreRegistroController@index');
+        Route::put('/pre-registro/confirmar', 'App\Http\Controllers\PreRegistroController@confirmar');
     }); 
     
     // Route::middleware('empleado')->group(function () {
@@ -77,12 +79,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
         Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
         Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
-
-        
+        Route::post('/cuenta/store/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@store');
+        Route::post('/cuenta/close/{id}', 'App\Http\Controllers\Pedido\CuentaController@close');
     });
 
-
-
+    Route::middleware('empleado:cajero')->group(function () {
+        Route::get('/show/cuenta/{id}', 'App\Http\Controllers\Pedido\CuentaController@show');
+    });
+    
     Route::middleware('propietarioOempleado')->group(function () {
         Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
@@ -97,7 +101,7 @@ Route::get('/menu/{id}', 'App\Http\Controllers\MenuController@show');
 
 Route::post('/login', 'App\Http\Controllers\Auth\AuthController@login');
 
-Route::post('/pre-registro', [PreRegistroController::class, 'store']);
+Route::post('/pre-registro', 'App\Http\Controllers\PreRegistroController@store');
 
 Route::get('/prohibido', function () {
     return response()->json([

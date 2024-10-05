@@ -28,6 +28,7 @@ class FormularioPreRegistro extends Model
         'cedula_identidad_propietario',
         'correo_propietario',
         'fotografia_propietario',
+        'estado',
     ];
 
     // Configurar timestamps si no quieres usar created_at y updated_at
