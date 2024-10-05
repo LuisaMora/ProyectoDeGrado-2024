@@ -102,8 +102,9 @@ class PedidoController extends Controller
             }
             
             $cuenta = $this->obtenerOCrearCuenta($request);
+            // return response()->json(['status' => 'success', 'cuenta' => $cuenta], 200);
             if ($cuenta==null) {
-                DB::rollBack();
+                DB::commit();
                 return response()->json(['status' => 'error', 'error' => 'No se puede crear un pedido para una mesa con cuenta abierta.'], 400);
             }
     
@@ -155,21 +156,25 @@ class PedidoController extends Controller
 
     protected function obtenerOCrearCuenta(Request $request)
     {
-        $cuenta = Cuenta::where('id_mesa', $request->id_mesa)
+        $cuentas = Cuenta::where('id_mesa', $request->id_mesa)
             ->whereNotIn('estado', ['Cancelada', 'Pagada'])
+            ->orderBy('created_at', 'desc')
             ->get();
-        if ($cuenta->count() > 1 ) {
-            return null;
-        }
-        
-        if ($cuenta->count() == 0) {
+        if ($cuentas->count() < 1 ) {
             $cuenta = new Cuenta();
             $cuenta->id_mesa = $request->id_mesa;
             $cuenta->monto_total = 0;
             $cuenta->save();
+            $cuentas->push($cuenta);
+            
+        }else if ($cuentas->count() > 1) {
+            $cuenta = $cuentas[1];
+            $cuenta->estado = 'Cancelada';
+            $cuenta->save();
+            return null;
         }
 
-        return $cuenta[0];
+        return $cuentas[0];
     }
 
     protected function crearPlatillosPedido(array $platillos, Pedido $pedido)
