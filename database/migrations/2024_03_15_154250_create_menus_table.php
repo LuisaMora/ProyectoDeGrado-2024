@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('portada', 100)->default('');
             $table->string('tema')->default('light-theme');
             $table->string('qr', 100)->default('');
+            $table->boolean('disponible')->default(true);
             $table->timestamps();
         });
     }

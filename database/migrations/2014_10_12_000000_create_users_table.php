@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('foto_perfil', 150)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('estado')->default(true);
             $table->rememberToken();
             //reset token
             $table->string('reset_token',100)->nullable();

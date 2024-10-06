@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('correo_propietario', 100);
             $table->string('fotografia_propietario', 150)->nullable();
             $table->string('estado', 20)->default('pendiente');
+            $table->string('pais', 50);
+            $table->string('departamento', 50);
             $table->timestamps(); // Automatically adds created_at and updated_at columns
         });
     }
