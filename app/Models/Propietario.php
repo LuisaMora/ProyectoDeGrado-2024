@@ -37,8 +37,4 @@ class Propietario extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario');
     }
-    public function propietario()
-    {
-    return $this->hasOne(Propietario::class, 'id_usuario', 'id');
-    }
 }
