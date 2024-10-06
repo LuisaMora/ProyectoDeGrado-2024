@@ -21,6 +21,7 @@ class EsEmpleadoMiddleware
             $rolMinusc = strtolower($rol);
             return $rolMinusc === 'mesero' ? 1 : ($rolMinusc === 'cajero' ? 2 : 3);
         }, $roles); 
+
         if ($user instanceof \App\Models\User && $user->esEmpleado()) {
             if (!empty($roles)) {
                 $tipoEmpleado = (int) $user->getTipoEmpleado();
