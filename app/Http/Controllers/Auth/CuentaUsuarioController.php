@@ -34,10 +34,11 @@ class CuentaUsuarioController extends Controller
 
         //desactivar todos los tokens del usuario
         if ($estado) {
-            $usuario->tokens()->delete();
+            
             //despachar correo de activación
             Mail::to($usuario->correo)->send(new AltaUsuario($usuario));
         }else{
+            $usuario->tokens()->delete();
             //despachar correo de baja
             Mail::to($usuario->correo)->send(new BajaUsuario($usuario));
         }

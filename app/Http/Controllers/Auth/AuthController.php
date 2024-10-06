@@ -215,40 +215,41 @@ class AuthController extends Controller
     }
 
     public function restablecerContrasenia(Request $request)
-    {
-        // Validar los datos
-        $request->validate([
-            'token' => 'min:60|max:60',
-            'oldPassword' => 'min:6|max:60', // Confirmar que la contraseña es igual en los dos campos
-            'newPassword' => 'required|min:6', // Confirmar que la contraseña es igual en los dos campos
-        ]);
+{
+    // Validar los datos
+    $request->validate([
+        'token' => 'min:60|max:60',
+        'oldPassword' => 'min:6|max:60', // Confirmar que la contraseña es igual en los dos campos
+        'newPassword' => 'required|min:6', // Confirmar que la contraseña es igual en los dos campos
+    ]);
 
-        if ($request->token) {
-            // Buscar al usuario por el token
-            $user = User::where('reset_token', $request->token)
-                ->where('reset_token_expires_at', '>', now())
-                ->first();
-        } elseif (auth()->user()) {
-            $user = User::find(auth()->user()->id);
-            if (!Hash::check($request->oldPassword, $user->password)) {
-                return response()->json(['message' => 'La contraseña actual no coincide.'], 400);
-            }
-        } else {
-            return response()->json(['message' => 'Token inválido o expirado.'], 400);
+    if($request->token ){
+        // Buscar al usuario por el token
+        $user = User::where('reset_token', $request->token)
+        ->where('reset_token_expires_at', '>', now())
+        ->first();
+    }elseif (auth()->user()) {
+        $user = User::find(auth()->user()->id);
+        if (!Hash::check($request->oldPassword, $user->password)) {
+            return response()->json(['message' => 'La contraseña actual no coincide.'], 400);
         }
-
-
-
-        if ($user) {
-            // Actualizar la contraseña
-            $user->password = Hash::make($request->newPassword);
-            $user->reset_token = null; // Eliminar el token después de usarlo
-            $user->reset_token_expires_at = null;
-            $user->save();
-
-            return response()->json(['message' => 'Contraseña actualizada correctamente.']);
-        }
-
+    }else{
         return response()->json(['message' => 'Token inválido o expirado.'], 400);
     }
+    
+    
+
+    if ($user) {
+        // Actualizar la contraseña
+        $user->password = Hash::make($request->newPassword);
+        $user->reset_token = null; // Eliminar el token después de usarlo
+        $user->reset_token_expires_at = null;
+        $user->save();
+
+        return response()->json(['message' => 'Contraseña actualizada correctamente.']);
+    }
+
+    return response()->json(['message' => 'Token inválido o expirado.'], 400);
+}
+
 }
