@@ -100,4 +100,25 @@ class CuentaController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Cuenta cerrada con éxito.', 'cuenta' => $cuenta], 200);
     }
 
+    public function showCerradas()
+{
+    // Query to get all accounts with estado 'Pagada'
+    $cuentasCerradas = Cuenta::with(['mesa', 'pedidos' => function ($query) {
+        $query->with(['platos' => function ($query) {
+            $query->select('platillos.id', 'platillos.nombre', 'platillos.precio'); // Fields from platillos
+        }]);
+    }])->where('estado', 'Pagada')->get();
+
+    // Check if there are closed accounts
+    if ($cuentasCerradas->isEmpty()) {
+        return response()->json(['status' => 'error', 'error' => 'No hay cuentas cerradas.'], 404);
+    }
+
+    // Process the data with the procesarDatos method
+    $cuentasProcesadas = $this->procesarDatos($cuentasCerradas->toArray());
+
+    return response()->json(['status' => 'success', 'cuentas' => $cuentasProcesadas], 200);
+}
+
+
 }

@@ -96,6 +96,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
         Route::post('/cuenta/store/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@store');
         Route::post('/cuenta/close/{id}', 'App\Http\Controllers\Pedido\CuentaController@close');
+
+        Route::get('/cuentas/cerradas', 'App\Http\Controllers\Pedido\CuentaController@showCerradas');
+
     });
 
     Route::middleware('empleado:cajero')->group(function () {
