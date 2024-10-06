@@ -22,6 +22,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            //reset token
+            $table->string('reset_token',100)->nullable();
+            $table->timestamp('reset_token_expires_at')->nullable(); // Nuevo campo para la expiración del token
             $table->timestamps();
         });
     }

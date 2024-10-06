@@ -39,6 +39,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
 
         Route::post('/reporte/pedidos', 'App\Http\Controllers\ReporteController@getReporte');
+        
+        Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
+        Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
+        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
     });
     
     Route::middleware('administrador')->group(function () {
@@ -102,6 +106,10 @@ Route::get('/menu/{id}', 'App\Http\Controllers\MenuController@show');
 Route::post('/login', 'App\Http\Controllers\Auth\AuthController@login');
 
 Route::post('/pre-registro', 'App\Http\Controllers\PreRegistroController@store');
+
+Route::post('solicitar-cambio-contrasenia', 'App\Http\Controllers\auth\AuthController@solicitarCambioContrasenia');
+Route::post('/restablecer-contrasenia-olvidada', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
+
 
 Route::get('/prohibido', function () {
     return response()->json([
