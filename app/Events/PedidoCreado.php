@@ -15,12 +15,12 @@ class PedidoCreado implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $id;
+    public $idCuenta;
     public $idRestaurante;
     public $mesa;
     public $tipoPedido;
     public $hora;
     public $estado;
-    public $platos;
 //   mesa:string;
 //   tipoPedido:string;
 //   hora:string;
@@ -38,7 +38,7 @@ class PedidoCreado implements ShouldBroadcast
         $this->mesa = $pedido->cuenta->mesa->nombre;
         $this->tipoPedido = $pedido->tipo;
         $this->estado = $pedido->estado->nombre;
-        $this->platos = [];
+        $this->idCuenta = $pedido->id_cuenta;
     }
 
     /**

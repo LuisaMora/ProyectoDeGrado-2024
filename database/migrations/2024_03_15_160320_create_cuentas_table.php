@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_mesa');
             $table->enum('estado', ['Abierta', 'Cancelada', 'PagoPendiente', 'Pagada'])->default('Abierta');
             $table->string('nombre_razon_social', 100)->default('Anónimo');
+            $table->integer('nit')->default(0);
             $table->decimal('monto_total', 8, 2)->default(0.00);
             $table->timestamps();
             $table->foreign('id_mesa')->references('id')->on('mesas')->onDelete('restrict')->onUpdate('restrict');
