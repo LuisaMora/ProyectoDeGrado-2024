@@ -37,7 +37,7 @@ class MenuController extends Controller
     public function show($id)
     {
         $nombreRestaurante = Restaurante::select('nombre')->where('id_menu', $id)->first();
-        $menu = Menu::select('portada', 'tema', 'qr')->find($id);
+        $menu = Menu::select('portada', 'tema', 'qr')->where('disponible',true)->find($id);
         if ($menu == null) {
             return response()->json(['message' => 'Menu no encontrado.'], 404);
         }

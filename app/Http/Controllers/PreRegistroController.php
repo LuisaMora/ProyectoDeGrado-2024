@@ -106,6 +106,8 @@ class PreRegistroController extends Controller
             $propietario->id_administrador = auth()->user()->id;
             $propietario->ci = $formPreRegistro->cedula_identidad_propietario;
             $propietario->fecha_registro = now();
+            $propietario->pais = $formPreRegistro->pais;
+            $propietario->departamento = $formPreRegistro->departamento;
             $propietario->save();
 
             FormularioPreRegistro::where(function ($query) use ($formPreRegistro) {
@@ -114,8 +116,7 @@ class PreRegistroController extends Controller
             
             //enviar correo de confirmacion con credenciales de acceso
             Mail::to($usuario->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
-            //esperar a que se envie el correo
-            sleep(5);
+
             Mail::to($restaurante->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
             DB::commit();
 

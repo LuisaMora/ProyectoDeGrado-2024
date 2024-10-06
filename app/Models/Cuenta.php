@@ -10,18 +10,19 @@ class Cuenta extends Model
     use HasFactory;
     protected $fillable = [
         'id_mesa',
-        'nombre_razon_social',
+        'nit',
         'monto_total',
         'estado',
+         'nombre_razon_social'
     ];
 
     public function pedidos()
     {
-        return $this->hasMany(Pedido::class, 'cuenta_id');
+        return $this->hasMany(Pedido::class, 'id_cuenta');
     }
     public function estadoCuentas()
     {
-        return $this->hasMany(EstadoCuenta::class, 'cuenta_id');
+        return $this->hasMany(EstadoCuenta::class, 'id_cuenta');
     }
 
     public function mesa()

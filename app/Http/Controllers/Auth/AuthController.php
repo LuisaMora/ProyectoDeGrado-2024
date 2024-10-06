@@ -7,8 +7,6 @@ use App\Models\Administrador;
 use App\Models\Empleado;
 use App\Models\Propietario;
 use App\Models\User;
-use App\Http\Requests\LoginRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -25,28 +23,27 @@ class AuthController extends Controller
             'usuario' => 'required|max:60|min:6',
             'password' => 'required|max:60|min:6',
         ]);
-
         if ($validarDatos->fails()) {
             return response()->json([
                 'message' => 'Datos invalidos',
                 'errors' => $validarDatos->errors()
             ], 422);
         }
-        //$user es de tipo User y no mixed
+
         $user = $this->attemptLogin($request->usuario, $request->password);
         if ($user) {
-            // el token expira en 12 horas - probar
             $token = $user->createToken('personal-token', expiresAt: now()->addHours(12))->plainTextToken;
             $datosPersonales = $this->getDatosPersonales($user);
             $datosPersonales->usuario = $user;
             return response()->json([
                 'token' => $token,
-                'user' => $datosPersonales,
+                'user' => $datosPersonales, // Se asume que este método ya incluye el usuario
                 'message' => 'Inicio de sesión exitoso.'
             ], 200);
         } else {
+            // Implementar un sistema de rate limiting o captchas para múltiples intentos fallidos
             return response()->json([
-                'message' => 'Credenciales invalidas'
+                'message' => 'Credenciales inválidas'
             ], 401);
         }
     }
@@ -105,13 +102,14 @@ class AuthController extends Controller
         return $user_data;
     }
 
-    private function attemptLogin($userCredential, $password): User | null
+    private function attemptLogin($usuario, $password)
     {
-        $user = User::where('correo', $userCredential)->orWhere(
-            'nickname',
-            $userCredential
-        )->first();
-        if ($user != null && Auth::attempt(['correo' => $user->correo, 'password' => $password])) {
+        $user = User::where('correo', $usuario)
+            ->orWhere('nickname', $usuario) // Asumiendo que el campo 'nickname' existe en tu modelo
+            ->where('estado', true) // Asumiendo que el campo 'estado' existe en tu modelo
+            ->first();
+
+        if ($user && Hash::check($password, $user->password)) {
             return $user;
         }
         return null;

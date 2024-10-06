@@ -30,6 +30,8 @@ class StorePreRegistroRequest extends FormRequest
             'cedula_identidad_propietario' => 'required|numeric',
             'correo_propietario' => 'required|email|max:100',
             'fotografia_propietario' => 'required|image',
+            'pais' => 'required|string|max:50',
+            'departamento' => 'required|string|max:50',
         ];
     }
 

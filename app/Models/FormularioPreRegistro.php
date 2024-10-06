@@ -29,6 +29,8 @@ class FormularioPreRegistro extends Model
         'correo_propietario',
         'fotografia_propietario',
         'estado',
+        'pais',
+        'departamento',
     ];
 
     // Configurar timestamps si no quieres usar created_at y updated_at

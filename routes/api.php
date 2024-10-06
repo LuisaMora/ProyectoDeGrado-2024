@@ -41,7 +41,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/reporte/pedidos', 'App\Http\Controllers\ReporteController@getReporte');
         
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
-        
+        Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
+        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
+        Route::get('/empleados', 'App\Http\Controllers\Auth\CuentaUsuarioController@empleados');
+
+        Route::put('/empleado/dar-baja/{id_usuario}', function($id_usuario) {
+            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
+                        ->cambiarEstadoUsuario($id_usuario, false, 'empleado');
+        });
+
+        Route::put('/empleado/dar-alta/{id_usuario}', function($id_usuario) {
+            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
+                        ->cambiarEstadoUsuario($id_usuario, true, 'empleado');
+        });
     });
     
     Route::middleware('administrador')->group(function () {
@@ -50,6 +62,17 @@ Route::middleware('auth:sanctum')->group(function () {
         });
         Route::get('/pre-registros', 'App\Http\Controllers\PreRegistroController@index');
         Route::put('/pre-registro/confirmar', 'App\Http\Controllers\PreRegistroController@confirmar');
+        Route::get('/propietarios', 'App\Http\Controllers\Auth\CuentaUsuarioController@propietarios');
+
+        Route::put('/propietario/dar-baja/{id_usuario}', function($id_usuario) {
+            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
+                        ->cambiarEstadoUsuario($id_usuario, false, 'propietario');
+        });
+        
+        Route::put('/propietario/dar-alta/{id_usuario}', function($id_usuario) {
+            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
+                        ->cambiarEstadoUsuario($id_usuario, true, 'propietario');
+        });
     }); 
     
     // Route::middleware('empleado')->group(function () {
@@ -84,16 +107,22 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
         Route::post('/actualizar/datos-empleado', 'App\Http\Controllers\Auth\AuthController@updateDatosEmpleado');
         
+        Route::post('/cuenta/store/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@store');
+        Route::post('/cuenta/close/{id}', 'App\Http\Controllers\Pedido\CuentaController@close');
     });
 
-
-
+    Route::middleware('empleado:cajero')->group(function () {
+        Route::get('/show/cuenta/{id}', 'App\Http\Controllers\Pedido\CuentaController@show');
+    });
+    
     Route::middleware('propietarioOempleado')->group(function () {
         Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/restaurante/mesas', 'App\Http\Controllers\MesaController@index');
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
+        Route::post('/empleado', 'App\Http\Controllers\EmpleadoController@store');
+
     });
     
 });

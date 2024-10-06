@@ -19,14 +19,6 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    // $table->string('nombre', 50);
-    //         $table->string('apellido_paterno', 100);
-    //         $table->string('apellido_materno', 100)->nullable();
-    //         $table->string('correo', 100)->unique();
-    //         $table->string('nickname', 100)->unique();
-    //         $table->string('foto_perfil', 150)->nullable();
-    //         $table->timestamp('email_verified_at')->nullable();
-    //         $table->string('password');
     protected $table = 'usuarios';
     protected $fillable = [
         'nombre',
@@ -36,6 +28,7 @@ class User extends Authenticatable
         'foto_perfil',
         'apellido_paterno',
         'apellido_materno',
+        'estado',
 
     ];
 
