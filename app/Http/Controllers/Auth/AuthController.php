@@ -25,7 +25,7 @@ class AuthController extends Controller
         ]);
         if ($validarDatos->fails()) {
             return response()->json([
-                'message' => 'Datos inválidos',
+                'message' => 'Datos invalidos',
                 'errors' => $validarDatos->errors()
             ], 422);
         }
@@ -137,8 +137,7 @@ class AuthController extends Controller
             'correo' => 'required|email|max:150',
             'nickname' => 'required|max:100|min:2',
             'foto_perfil' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // La imagen es opcional
-            'ci' => 'required|integer|min:1',
-            'id_usuario' => 'required|integer|min:1'
+            'ci' => 'required|integer|min:1'
         ]);
 
         // Verificar si la validación falló
@@ -152,25 +151,11 @@ class AuthController extends Controller
         try {
             DB::beginTransaction();
 
-            $user = User::find(auth()->user()->id);
+            $user = $this->actualizarDatosUsuario([''], $request);
             $user_data = $this->getDatosPersonales($user);
             $user_data->ci = $request->ci;
             //quitar tipo del user_data
             unset($user_data->tipo);
-            $user_data->save();
-
-            $user->nombre = $request->nombre;
-            $user->apellido_paterno = $request->apellido_paterno;
-            $user->apellido_materno = $request->apellido_materno;
-            $user->correo = $request->correo;
-            $user->nickname = $request->nickname;
-            if ($request->hasFile('foto_perfil')) {
-                ImageHandler::eliminarArchivos([$user->foto_perfil]);
-                $user->foto_perfil = ImageHandler::guardarArchivo($request->foto_perfil, 'fotografias_propietarios');
-            }
-
-
-            $user->save();
 
             DB::commit();
 
@@ -186,6 +171,49 @@ class AuthController extends Controller
                 'error' => $th->getMessage()
             ], 500);
         }
+    }
+
+    public function updateDatosEmpleado(Request $request)
+    {
+        $validarDatos = Validator::make($request->all(), [
+            'nombre' => 'required|max:100|min:2',
+            'apellido_paterno' => 'required|max:100|min:2',
+            'apellido_materno' => 'required|max:100|min:2',
+            'nickname' => 'required|max:100|min:2',
+            'foto_perfil' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+        if ($validarDatos->fails()) {
+            return response()->json([
+                'message' => 'Datos inválidos',
+                'errors' => $validarDatos->errors()
+            ], 422);
+        }
+
+        $usuario = $this->actualizarDatosUsuario(['correo'], $request);
+
+        return response()->json([
+            'message' => 'Datos actualizados correctamente',
+            'user' => $usuario
+        ], 200);
+    }
+
+    private function actualizarDatosUsuario($excepto, Request $request)
+    {
+        $user = User::find(auth()->user()->id);
+        $user->nombre = $request->nombre;
+        $user->apellido_paterno = $request->apellido_paterno;
+        $user->apellido_materno = $request->apellido_materno;
+        if (!in_array('correo', $excepto)) {
+            $user->correo = $request->correo;
+        }
+        $user->nickname = $request->nickname;
+        if ($request->hasFile('foto_perfil')) {
+            ImageHandler::eliminarArchivos([$user->foto_perfil]);
+            $user->foto_perfil = ImageHandler::guardarArchivo($request->foto_perfil, 'fotografias_propietarios');
+        }
+        $user->save();
+
+        return $user;
     }
 
     public function solicitarCambioContrasenia(Request $request)
