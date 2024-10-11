@@ -192,6 +192,7 @@ class PedidoController extends Controller
                 'id_pedido' => $pedido->id,
                 'cantidad' => $platillo['cantidad'],
                 'detalle' => $platillo['detalle'],
+                'precio_fijado' => $platillo['precio_unitario'],
             ]);
         }
 

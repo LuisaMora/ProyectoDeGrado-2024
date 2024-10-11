@@ -23,6 +23,7 @@ class PlatoPedidoFactory extends Factory
             'id_platillo' => Platillo::factory(),
             'cantidad' => $this->faker->numberBetween(1, 10),
             'detalle' => $this->faker->sentence,
+            'precio_fijado' => $this->faker->numberBetween(1, 100),
         ];
     }
 }

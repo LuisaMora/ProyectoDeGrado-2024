@@ -15,6 +15,7 @@ class PlatoPedido extends Model
         'id_pedido',
         'cantidad',
         'detalle',
+        'precio_fijado',
     ];
 
     public function guardarPlatillos(array $platillos, $pedido_id)
@@ -25,6 +26,7 @@ class PlatoPedido extends Model
             'id_pedido' => $pedido_id,
             'cantidad' => $platillo['cantidad'],
             'detalle' => $platillo['detalle'],
+            'precio_fijado' => $platillo['precio_fijado'],
         ]);
         }
     }

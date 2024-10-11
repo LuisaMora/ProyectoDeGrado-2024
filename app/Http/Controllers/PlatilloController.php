@@ -20,6 +20,7 @@ class PlatilloController extends Controller
         $platillos = Platillo::with('categoria')
             ->where('id_menu', $menuId)
             ->where('disponible', true)
+            ->orderBy('nombre')
             ->get();
     
         return response()->json(['status' => 'success', 'platillos' => $platillos], 200);
@@ -27,7 +28,8 @@ class PlatilloController extends Controller
     
     public function platillosDisponibles()
     {
-        $platillo = Platillo::with('categoria')->where('disponible', true)->where('plato_disponible_menu', true)->get();
+        $platillo = Platillo::with('categoria')->where('disponible', true)->where('plato_disponible_menu', true)
+        ->orderBy('nombre')->get();
         return response()->json(['status' => 'success', 'platillo' => $platillo], 200);
     }
     public function store(Request $request)
