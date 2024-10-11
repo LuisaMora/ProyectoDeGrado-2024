@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empleado;
+use App\Models\Propietario;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,12 +33,14 @@ class EmpleadoController extends Controller
             }
             $usuario->save();
 
+            $idPropietario = Propietario::where('id_usuario',auth()->user()->id)->get()[0]->id;
+
             // Create new Empleado
             $empleado = new Empleado();
             $empleado->id_usuario = $usuario->id;
             $empleado->id_rol = $request->input('id_rol'); // 1: Waiter, 2: Cashier, 3: Cook
 
-            $empleado->id_propietario = auth()->user()->id;
+            $empleado->id_propietario = $idPropietario;
             $empleado->fecha_nacimiento = $request->input('fecha_nacimiento');
             $empleado->fecha_contratacion = $request->input('fecha_contratacion');
             $empleado->ci = $request->input('ci');

@@ -31,6 +31,7 @@ class FormularioPreRegistro extends Model
         'estado',
         'pais',
         'departamento',
+        'numero_mesas'
     ];
 
     // Configurar timestamps si no quieres usar created_at y updated_at

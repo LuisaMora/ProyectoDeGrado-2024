@@ -7,6 +7,8 @@ use App\Mail\ConfirmacionPreRegistro;
 use App\Mail\RechazoPreRegistro;
 use App\Utils\ImageHandler;
 use App\Models\FormularioPreRegistro;
+use App\Models\Menu;
+use App\Models\Mesa;
 use App\Models\Propietario;
 use App\Models\Restaurante;
 use App\Models\User;
@@ -87,6 +89,12 @@ class PreRegistroController extends Controller
             $usuario->nickname = str_replace(' ', '', $formPreRegistro->nombre_restaurante) . $formPreRegistro->nit;
             $usuario->foto_perfil = $formPreRegistro->fotografia_propietario;
             $usuario->save();
+
+            $menu = new Menu();
+            $menu->tema = 'light-theme';
+            $menu->disponible = true;
+            $menu->save();
+
             // Crear restaurante
             $restaurante = new Restaurante();
             $restaurante->nombre = str_replace(' ', '', $formPreRegistro->nombre_restaurante);
@@ -97,6 +105,7 @@ class PreRegistroController extends Controller
             $restaurante->longitud = $formPreRegistro->longitud;
             $restaurante->licencia_funcionamiento = $formPreRegistro->licencia_funcionamiento;
             $restaurante->tipo_establecimiento = $formPreRegistro->tipo_establecimiento;
+            $restaurante->id_menu = $menu->id;
             $restaurante->save();
 
             // Asignar restaurante al propietario
@@ -110,14 +119,16 @@ class PreRegistroController extends Controller
             $propietario->departamento = $formPreRegistro->departamento;
             $propietario->save();
 
+            $this->crearMesas($formPreRegistro->numero_mesas, $restaurante->id);
+
             FormularioPreRegistro::where(function ($query) use ($formPreRegistro) {
                 $query->where('nit', $formPreRegistro->nit)->orWhere('correo_propietario', $formPreRegistro->correo_propietario)->orWhere('cedula_identidad_propietario', $formPreRegistro->cedula_identidad_propietario);
             })->where('estado', '!=', 'aceptado')->update(['estado' => 'rechazado']);
             
             //enviar correo de confirmacion con credenciales de acceso
-            Mail::to($usuario->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
+            // Mail::to($usuario->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
 
-            Mail::to($restaurante->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
+            // Mail::to($restaurante->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
             DB::commit();
 
             return response()->json(['status' => 'success', 'data' => $formPreRegistro], 200);
@@ -138,6 +149,18 @@ class PreRegistroController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+        
+    }
+
+    private function crearMesas(int $numeroMesas, int $idRestaurante){
+        $idMesa = 1;
+        for ($i=0; $i < $numeroMesas; $i++) { 
+            $mesa = new Mesa();
+            $mesa->nombre = 'Mesa '.$idMesa;
+            $mesa->id_restaurante = $idRestaurante;
+            $mesa->save();
+            $idMesa++;
         }
     }
 }

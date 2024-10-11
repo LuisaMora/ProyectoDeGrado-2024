@@ -32,6 +32,7 @@ class StorePreRegistroRequest extends FormRequest
             'fotografia_propietario' => 'required|image',
             'pais' => 'required|string|max:50',
             'departamento' => 'required|string|max:50',
+            'numero_mesas' => 'required|numeric|min:1|max:20'
         ];
     }
 

@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('estado', 20)->default('pendiente');
             $table->string('pais', 50);
             $table->string('departamento', 50);
+            $table->integer('numero_mesas');
             $table->timestamps(); // Automatically adds created_at and updated_at columns
         });
     }
