@@ -111,7 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/cuenta/close/{id}', 'App\Http\Controllers\Pedido\CuentaController@close');
 
         Route::get('/cuentas/abiertas/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@index');
-        Route::get('/cuentas/cerradas', 'App\Http\Controllers\Pedido\CuentaController@showCerradas');
+        Route::get('/cuentas/cerradas/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@showCerradas');
 
     });
 

@@ -128,10 +128,10 @@ class CuentaController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Cuenta cerrada con éxito.', 'cuenta' => $cuenta], 200);
     }
 
-    public function showCerradas()
+    public function showCerradas($idRestaurante)
     {
         // Query to get all accounts with estado 'Pagada'
-        $idRestaurante = '2';
+        // $idRestaurante = '2';
         $cuentasCerradas = Cuenta::with(['mesa', 'pedidos' => function ($query) {
             $query->whereDate('fecha_hora_pedido', now())
                 ->with(['platos' => function ($query) {

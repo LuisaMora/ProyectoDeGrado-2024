@@ -20,8 +20,9 @@ class CuentaUsuarioController extends Controller
 
     public function empleados()
     {
+        $idPropietario = Propietario::where('id_usuario', auth()->user()->id)->value('id');
         $empleados = Empleado::with('usuario')
-            ->where('id_propietario', auth()->user()->id)->orderBy('created_at', 'desc')->get();
+            ->where('id_propietario', $idPropietario)->orderBy('created_at', 'desc')->get();
         return response()->json(['status' => 'success', 'data' => $empleados], 200);
     }
 
