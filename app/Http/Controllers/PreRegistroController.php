@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePreRegistroRequest;
 use App\Mail\ConfirmacionPreRegistro;
 use App\Mail\RechazoPreRegistro;
+use App\Models\Categoria;
 use App\Utils\ImageHandler;
 use App\Models\FormularioPreRegistro;
 use App\Models\Menu;
@@ -94,6 +95,12 @@ class PreRegistroController extends Controller
             $menu->tema = 'light-theme';
             $menu->disponible = true;
             $menu->save();
+
+            $categoria = new Categoria();
+            $categoria-> nombre = 'Otros';
+            $categoria-> imagen = 'default_dir';
+            $categoria->id_menu = $menu->id;
+            $categoria-> save();
 
             // Crear restaurante
             $restaurante = new Restaurante();

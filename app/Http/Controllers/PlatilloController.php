@@ -49,6 +49,7 @@ class PlatilloController extends Controller
         }
         $id_restaurante = $request->input('id_restaurante');
         $id_categoria = $request->input('id_categoria');
+        
         if ($id_restaurante == null || $id_categoria == null) {
             return response()->json(['message' => 'Datos incompletos.'], 422);
         }
@@ -56,8 +57,8 @@ class PlatilloController extends Controller
         $imagen = $request->file('imagen');
         $platilloImg = md5_file($imagen->getRealPath()) .'.'. $imagen->getClientOriginalExtension();
         $path = $imagen->storeAs('public/platillos', $platilloImg);
-
-        $request->merge(['id_menu' => Restaurante::find($id_restaurante)->first()->id_menu]);
+        $restaurante = Restaurante::find($id_restaurante);
+        $request->merge(['id_menu' => $restaurante->id_menu]);
         $platillo = Platillo::create($request->all());
         $platillo->imagen = Storage::url($path);
         $platillo->save();
