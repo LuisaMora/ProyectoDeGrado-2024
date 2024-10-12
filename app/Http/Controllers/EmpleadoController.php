@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ConfirmacionPreRegistro;
+use App\Mail\RegistroEmpleado;
 use App\Models\Empleado;
 use App\Models\Propietario;
+use App\Models\Restaurante;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class EmpleadoController extends Controller
 {
@@ -33,7 +37,9 @@ class EmpleadoController extends Controller
             }
             $usuario->save();
 
-            $idPropietario = Propietario::where('id_usuario',auth()->user()->id)->get()[0]->id;
+            $propietario = Propietario::where('id_usuario',auth()->user()->id)->get()[0];
+            $idPropietario = $propietario->id;
+            $restaurante = Restaurante::find($propietario->id_restaurante);
 
             // Create new Empleado
             $empleado = new Empleado();
@@ -46,6 +52,8 @@ class EmpleadoController extends Controller
             $empleado->ci = $request->input('ci');
             $empleado->direccion = $request->input('direccion');
             $empleado->save();
+
+            Mail::to($usuario->correo)->send(new RegistroEmpleado($usuario, $restaurante));
 
             DB::commit();
             return response()->json(['status' => 'success', 'data' => $empleado], 201);

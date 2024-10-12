@@ -133,9 +133,9 @@ class PreRegistroController extends Controller
             })->where('estado', '!=', 'aceptado')->update(['estado' => 'rechazado']);
             
             //enviar correo de confirmacion con credenciales de acceso
-            // Mail::to($usuario->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
+            Mail::to($usuario->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
 
-            // Mail::to($restaurante->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
+            Mail::to($restaurante->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
             DB::commit();
 
             return response()->json(['status' => 'success', 'data' => $formPreRegistro], 200);
