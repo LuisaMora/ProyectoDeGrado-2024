@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Validator;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
+use App\Utils\ImageHandler;
+use Illuminate\Support\Facades\File;
 
 class MenuController extends Controller
 {
@@ -85,42 +87,57 @@ class MenuController extends Controller
     }
 
     function generateQr(Request $request){
+        // Validar la URL del menú
         $validate = Validator::make($request->all(), [
             'direccion_url_menu' => 'required|url',
         ]);
         if ($validate->fails()) {
             return response()->json(['status' => 'error', 'error' => $validate->errors()], 400);
         }
+    
         $id_usuario = auth()->user()->id;
         $propietario = Propietario::where('id_usuario', $id_usuario)->first();
+    
         if ($propietario) {
             $menu = $propietario->restaurante->menu;
             $tiempo = time().'_'.$menu->id;
-            $path = storage_path('app\public\codigos_qr\qr_'.$tiempo . '.png');
+            
+            // Verificar si la carpeta existe, y si no, crearla
+            $qrDirectory = storage_path('app/public/codigos_qr');
+            if (!File::exists($qrDirectory)) {
+                File::makeDirectory($qrDirectory, 0755, true); // Crear la carpeta con permisos
+            }
+    
+            $path = $qrDirectory . '/qr_' . $tiempo . '.png';
+            
             $writer = new PngWriter();
             $qrCode = QrCode::create($request->direccion_url_menu)
-            ->setEncoding(new Encoding('UTF-8'))
-            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
-            ->setSize(300)
-            ->setMargin(10)
-            ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
-            ->setForegroundColor(new Color(0, 0, 0))
-            ->setBackgroundColor(new Color(255, 255, 255)   );
+                ->setEncoding(new Encoding('UTF-8'))
+                ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
+                ->setSize(300)
+                ->setMargin(10)
+                ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
+                ->setForegroundColor(new Color(0, 0, 0))
+                ->setBackgroundColor(new Color(255, 255, 255));
+    
             $label = Label::create('Escanee el código QR')
-            ->setTextColor(new Color(186, 50, 23));
-            // $logo = Logo::create(public_path('storage\codigos_qr\logo.png'));
-            $result = $writer->write($qrCode,null,$label);
+                ->setTextColor(new Color(186, 50, 23));
+    
+            // Generar el código QR
+            $result = $writer->write($qrCode, null, $label);
             $result->saveToFile($path);
-            $url_codigo_qr = '/storage/codigos_qr/qr_'.$tiempo. '.png';
+    
+            // Guardar la URL del código QR en la base de datos
+            $url_codigo_qr = '/storage/codigos_qr/qr_' . $tiempo . '.png';
             $menu->qr = $url_codigo_qr;
             $menu->save();
+    
             return response()->json(['status' => 'success', 'qr' => $url_codigo_qr], 200);
-
-        }else{
+        } else {
             return response()->json(['message' => 'Usuario no encontrado.'], 404);
         }
-
     }
+    
 
     function qr(){
         $id_usuario = auth()->user()->id;
