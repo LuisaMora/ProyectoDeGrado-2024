@@ -36,8 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/menu/generar/qr', 'App\Http\Controllers\MenuController@generateQr');
         
-        Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
-
         Route::post('/reporte/pedidos', 'App\Http\Controllers\ReporteController@getReporte');
         
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
@@ -126,7 +124,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
         Route::post('/empleado', 'App\Http\Controllers\EmpleadoController@store');
-
+        Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
     });
     
 });

@@ -108,6 +108,6 @@ class CategoriaController extends Controller
         $categoria->save();
         Platillo::where('id_categoria', $id)
             ->update(['id_categoria' => 1]);
-        return response()->json(['status' => 'success', 'message' => 'Categoria eliminada.'], 200);
+        return response()->json(['status' => 'success', 'message' => 'Categoria eliminada.','categoria' => $categoria], 200);
     }
 }

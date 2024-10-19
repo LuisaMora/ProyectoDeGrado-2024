@@ -73,7 +73,7 @@ class PreRegistroController extends Controller
             if ($estado == 'rechazado') {
                 $mensaje  = $request->query('motivo_rechazo');
                 Mail::to($formPreRegistro->correo_propietario)->send(new RechazoPreRegistro($formPreRegistro, $mensaje));
-                sleep(5);
+                
                 Mail::to($formPreRegistro->correo_restaurante)->send(new RechazoPreRegistro($formPreRegistro, $mensaje));
                 DB::commit();
                 return response()->json(['status' => 'success', 'data' => $formPreRegistro], 200);
@@ -133,9 +133,9 @@ class PreRegistroController extends Controller
             })->where('estado', '!=', 'aceptado')->update(['estado' => 'rechazado']);
             
             //enviar correo de confirmacion con credenciales de acceso
-            Mail::to($usuario->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
+            // Mail::to($usuario->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
 
-            Mail::to($restaurante->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
+            // Mail::to($restaurante->correo)->send(new ConfirmacionPreRegistro($usuario, $restaurante));
             DB::commit();
 
             return response()->json(['status' => 'success', 'data' => $formPreRegistro], 200);
