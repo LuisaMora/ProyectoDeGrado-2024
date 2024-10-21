@@ -26,7 +26,7 @@ class RestauranteFactory extends Factory
             'celular' => $this->faker->numberBetween(40000000, 99999999),
             'correo' => $this->faker->email(),
             'licencia_funcionamiento' =>fake()->imageUrl(),
-            'tipo_establecimiento' => $this->faker->word(),
+            'tipo_establecimiento' => $this->faker->randomElement(['Restaurante','Cafeteria','Bar','Pasteleria', 'Pizzeria','Otro']) ,
         ];
     }
 }
