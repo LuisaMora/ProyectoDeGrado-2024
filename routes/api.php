@@ -39,7 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/reporte/pedidos', 'App\Http\Controllers\ReporteController@getReporte');
         
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
-        Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
+        Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show'); // borrar esto despiues de probar con front
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
         Route::get('/empleados', 'App\Http\Controllers\Auth\CuentaUsuarioController@empleados');
 

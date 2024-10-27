@@ -43,7 +43,7 @@ class AuthController extends Controller
         } else {
             // Implementar un sistema de rate limiting o captchas para múltiples intentos fallidos
             return response()->json([
-                'message' => 'Credenciales inválidas'
+                'message' => 'Usuario o contraseña invalidos.'
             ], 401);
         }
     }
