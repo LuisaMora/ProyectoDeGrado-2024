@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Platillo;
 use App\Models\Restaurante;
+use App\Utils\ImageHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -40,6 +41,7 @@ class PlatilloController extends Controller
             'precio' => 'required|numeric',
             'imagen' => 'required|image',
             'id_categoria' => 'required|numeric',
+            'id_restaurante' => 'required|numeric',
         ]);
         if ($validarDatos->fails()) {
             return response()->json([
@@ -48,21 +50,14 @@ class PlatilloController extends Controller
             ], 422);
         }
         $id_restaurante = $request->input('id_restaurante');
-        $id_categoria = $request->input('id_categoria');
         
-        if ($id_restaurante == null || $id_categoria == null) {
-            return response()->json(['message' => 'Datos incompletos.'], 422);
-        }
-
-        $imagen = $request->file('imagen');
-        $platilloImg = md5_file($imagen->getRealPath()) .'.'. $imagen->getClientOriginalExtension();
-        $path = $imagen->storeAs('public/platillos', $platilloImg);
+        $path = ImageHandler::guardarArchivo($request->file('imagen'),'platillos');
         $restaurante = Restaurante::find($id_restaurante);
         $request->merge(['id_menu' => $restaurante->id_menu]);
         $platillo = Platillo::create($request->all());
-        $platillo->imagen = Storage::url($path);
+        $platillo->imagen = $path;
         $platillo->save();
-        return response()->json(['status' => 'success', 'platillo' => $platillo], 200);
+        return response()->json(['status' => 'success', 'platillo' => $platillo, 'message' => 'Plato registrado exitosamente !'], 201);
     }
     public function show($id)
     {

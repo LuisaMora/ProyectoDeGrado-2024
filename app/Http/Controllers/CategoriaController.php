@@ -10,7 +10,6 @@ use App\Models\Restaurante;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class CategoriaController extends Controller
 {
@@ -44,9 +43,12 @@ class CategoriaController extends Controller
         ]);
 
         if ($validarDatos->fails()) {
-            return response()->json(['status' => 'error', 'error' => $validarDatos->errors()], 400);
+            return response()->json(['status' => 'error', 'errors' => $validarDatos->errors()], 422);
         }
         $restaurante=Restaurante::find($request->id_restaurante);
+        if ($restaurante == null){
+            return response()->json(['status' => 'error', 'message' => 'restaurante no encontrado'], 404);
+        }
         $imagen = ImageHandler::guardarArchivo($request->file('imagen'), 'categorias');
 
         $categoria = new Categoria();
@@ -72,6 +74,9 @@ class CategoriaController extends Controller
     function update(Request $request, $id)
     {
         DB::beginTransaction();
+        if ((int)$id === 1) {
+            return response()->json(['message' => 'No se puede editar la categoria por defecto.'], 400);
+        }
         $categoria = Categoria::find($id);
         if ($categoria == null) {
             return response()->json(['message' => 'Categoria no encontrada.'], 404);
