@@ -2,6 +2,11 @@
 
 namespace Tests\Feature\Sprint1;
 
+use App\Models\Categoria;
+use App\Models\Empleado;
+use App\Models\Platillo;
+use App\Models\Propietario;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -36,11 +41,11 @@ class VisualizarPlatillosTest extends TestCase
             'Postres',
         ];
         foreach ($categorias as $categoria) {
-            \App\Models\Categoria::factory()->create(['nombre' => $categoria]);
+            Categoria::factory()->create(['nombre' => $categoria]);
         }
 
-        \App\Models\Empleado::create([
-            'id_usuario' => \App\Models\User::factory()
+        Empleado::create([
+            'id_usuario' => User::factory()
                 ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create()->id,
             'id_rol' => 1,
             'id_propietario' => 1,
@@ -51,17 +56,17 @@ class VisualizarPlatillosTest extends TestCase
         ]);
 
         // Creación de usuario para el restaurante 2
-        \App\Models\Propietario::factory()
+        Propietario::factory()
             ->asignarDatosSesion('propietarioA2', 'propietario2@gmail.com')
             ->create();
         // Crear categorías para los platillos
-        \App\Models\Categoria::create([
+        Categoria::create([
             'nombre' => 'Entradas',
             'id_menu' => 2,
             'imagen' => '/img.jpg',
             'estado' => true,
         ]);
-        \App\Models\Categoria::create([
+        Categoria::create([
             'nombre' => 'Plato Fuerte',
             'id_menu' => 2,
             'imagen' => '/img.jpg',
@@ -69,7 +74,7 @@ class VisualizarPlatillosTest extends TestCase
         ]);
 
         // Crear 2 platillos en la base de datosasociados al menú del restaurante
-        \App\Models\Platillo::factory(2)->asignarMenu(1)->create();
+        Platillo::factory(2)->asignarMenu(1)->create();
     }
 
     /** @test */

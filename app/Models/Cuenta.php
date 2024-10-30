@@ -13,7 +13,7 @@ class Cuenta extends Model
         'nit',
         'monto_total',
         'estado',
-         'nombre_razon_social'
+        'nombre_razon_social'
     ];
 
     public function pedidos()
