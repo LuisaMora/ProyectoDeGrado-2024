@@ -129,26 +129,29 @@ class RegistrarPedidoTest extends TestCase
 
     public function test_store_pedido_guarda_correctamente()
     {
-        // Crear platillos
-        Platillo::factory(3)->asignarMenu(1)->create();
+        // Crear platillos y obtener sus IDs
+        $platillos = Platillo::factory(3)->asignarMenu(1)->create();
+        $platilloIds = $platillos->pluck('id')->toArray();
+
+        // Estructura de datos para el pedido usando los IDs obtenidos
         $data = [
             'id_mesa' => 1,
             'id_empleado' => 1,
             'platillos' => json_encode([
                 [
-                    'id_platillo' => 1,
+                    'id_platillo' => $platilloIds[0],
                     'cantidad' => 2,
                     'precio_unitario' => 15,
                     'detalle' => 'Este platillo es sin sal'
                 ],
                 [
-                    'id_platillo' => 2,
+                    'id_platillo' => $platilloIds[1],
                     'cantidad' => 1,
                     'precio_unitario' => 100,
                     'detalle' => ''
                 ],
                 [
-                    'id_platillo' => 3,
+                    'id_platillo' => $platilloIds[2],
                     'cantidad' => 3,
                     'precio_unitario' => 5,
                     'detalle' => ''

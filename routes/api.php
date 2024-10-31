@@ -72,16 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
                         ->cambiarEstadoUsuario($id_usuario, true, 'propietario');
         });
     }); 
-    
-    // Route::middleware('empleado')->group(function () {
-    //     Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
-    //     Route::get('/menu/pedido/platillos', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
-    //     Route::get('/prueba_empleado', function () {
-    //         return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
-    //     });
-    //     Route::get('/pedidos', 'App\Http\Controllers\PedidoController@index');
-    // });
-    //por ahora solo existe mesero , cocinero y cajero
+
     Route::middleware('empleado:mesero,cajero')->group(function () {
         Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
         Route::get('/menu/pedido/platillos', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
@@ -91,7 +82,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
         });
-        Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\PedidoController@index');
     });
 
 
@@ -102,6 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/notificaciones/cantidad', 'App\Http\Controllers\NotificacionController@obtenerNotificacionesCantidad');
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
         Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
+        //para cocinero
         Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
         Route::post('/actualizar/datos-empleado', 'App\Http\Controllers\Auth\AuthController@updateDatosEmpleado');
         
