@@ -252,7 +252,8 @@ class PedidoController extends Controller
                 $pedidosMesa['pedidos'][] = [
                     'id_pedido' => $pedido->id,
                     'estado' => $pedido->estado->nombre, // Suponiendo que tienes una relación con estado
-                    'platos' => [] // Inicializar el arreglo de platos
+                    'platos' => [], // Inicializar el arreglo de platos
+                    'monto' => $pedido->monto,
                 ];
     
                 // Agregar los platos al pedido

@@ -7,9 +7,11 @@ use App\Models\Categoria;
 use App\Models\Empleado;
 use App\Models\EstadoPedido;
 use App\Models\Mesa;
+use App\Models\Pedido;
 use App\Models\Platillo;
 use App\Models\Propietario;
 use App\Models\User;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
@@ -22,9 +24,9 @@ class VisualizarPedidoMeseroTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Event::fake();         // Finge los eventos para que no se emitan realmente
         $this->setUpDatosIniciales();
         // Storage::fake('public'); // Simular el sistema de archivos
-        // Event::fake();         // Finge los eventos para que no se emitan realmente
     }
 
     private function setUpDatosIniciales(): void
@@ -73,7 +75,7 @@ class VisualizarPedidoMeseroTest extends TestCase
             'direccion' => 'Cochabamba',
         ]);
 
-        $this->resgistrarPedidos();
+        
     }
 
     // Es igual que el registro del pedido en el Sprint2
@@ -133,20 +135,47 @@ class VisualizarPedidoMeseroTest extends TestCase
 
     public function testMeseroPuedeVerPedidosDelDia()
     {
+        $this->resgistrarPedidos();
+        print_r(Pedido::get());
         // Crea un mesero y realiza el login para obtener el token de autorización
         $token = $this->loginComoMesero();
 
-        // Realiza una solicitud GET al endpoint `index` con el ID del mesero y restaurante
+        // Realizar solicitud GET y verificar que la respuesta es correcta
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-            // id_empleado/id_restaurante
-        ])->getJson("/api/pedidos/2/1"); // Reemplaza con el ID del restaurante según tu setup
+           // id_empleado/id_restaurante
+        ])->getJson("/api/pedidos/1/1"); // Reemplaza con el ID del restaurante según tu setup
 
+        // Imprimir la respuesta en el log de pruebas para depuración
         $response->dump();
-        dd($response);
-        // Asegura que la respuesta sea exitosa y contenga la estructura esperada
+    
+        // Verifica que la respuesta sea exitosa y tenga la estructura esperada
         $response->assertStatus(200)
-            ->assertJson(['status' => 'success']);
+                 ->assertJsonStructure([
+                     'status',
+                     'pedidos' => [
+                         '*' => [
+                             'id_cuenta',
+                             'monto_total',
+                             'nombreMesa',
+                             'pedidos' => [
+                                 '*' => [
+                                     'id_pedido',
+                                     'estado',
+                                     'platos' => [
+                                         '*' => [
+                                             'nombre',
+                                             'precio_fijado',
+                                             'cantidad',
+                                             'detalle'
+                                         ]
+                                     ],
+                                     'monto'
+                                 ]
+                             ]
+                         ]
+                     ]
+                 ]);
             
     }
 }
