@@ -4,11 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
-use App\Models\Empleado;
 use App\Models\Mesa;
-use App\Models\Pedido;
-use App\Models\Restaurante;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +23,7 @@ class ReporteController extends Controller
             return response()->json(['status' => 'error', 'error' => $validate->errors()], 400);
         }
         $idRestaurante = $request->id_restaurante;
-        //pedidos de hace una semana hasta hoy
+        //pedidos desde hace una fecha dada hasta una fecha limite
         if ($request->fecha_inicio && $request->fecha_fin) {
             $fechaInicio = Carbon::parse($request->fecha_inicio);
             $fechaFin = Carbon::parse($request->fecha_fin);
@@ -43,7 +39,7 @@ class ReporteController extends Controller
             ->whereBetween('created_at', [$fechaInicio, $fechaFin])
             ->whereIn('id_mesa', $mesas)
             ->get();
-
+        //  falta cantidad de cuentas cerradas por día
         $agrupar_pedidos = $this->agruparPedidosPorCuenta($fechaInicio, $fechaFin, $cuentas);
 
 
@@ -77,16 +73,21 @@ class ReporteController extends Controller
 
 
         return response()->json([
-            'status' => 'success', 'montoTotalPedidosPorDia' => $montoTotalClientesDia,
-            'cantidadPedidosPorDia' => $cantidadClientePorDia, 'cantidadPedidosPorMesa' => $cantidadClientesPorMesa, 'cuentas' => $cuentas,
+            'status' => 'success',
+            'montoTotalPedidosPorDia' => $montoTotalClientesDia,
+            'cantidadPedidosPorDia' => $cantidadClientePorDia,
+            'cantidadPedidosPorMesa' => $cantidadClientesPorMesa,
+            'cuentas' => $cuentas,
             'pedidoPorCuenta' => $agrupar_pedidos
         ], 200);
     }
 
     function agruparPedidosPorCuenta($fechaInicio, $fechaFin, $cuentas)
     {
-        // Obtener los pedidos con los platos relacionados
-        $pedidos = DB::table('cuentas')
+        $dbDriver = DB::getDriverName();
+
+        // Selecciona la consulta según el tipo de base de datos
+        $pedidosQuery = DB::table('cuentas')
             ->join('pedidos', 'pedidos.id_cuenta', '=', 'cuentas.id')
             ->join('empleados', 'empleados.id', '=', 'pedidos.id_empleado')
             ->join('usuarios', 'usuarios.id', '=', 'empleados.id_usuario')
@@ -102,22 +103,33 @@ class ReporteController extends Controller
                 'usuarios.apellido_paterno as apellido',
                 'estado_pedidos.nombre as estado_pedido',
                 'pedidos.monto',
-                'cuentas.created_at as fecha_hora_cuenta',
-                DB::raw('json_agg(json_build_object(
+                'cuentas.created_at as fecha_hora_cuenta'
+            );
+
+        if ($dbDriver === 'pgsql') {
+            $pedidosQuery->selectRaw('json_agg(json_build_object(
             \'id_platillo\', platillos.id,
             \'nombre\', platillos.nombre,
             \'precio\', platillos.precio,
             \'cantidad\', plato_pedido.cantidad,
             \'detalle\', plato_pedido.detalle
-        )) as platillos')
-            )
-            ->groupBy('cuentas.id', 'pedidos.id', 'usuarios.nombre', 'usuarios.apellido_paterno', 'estado_pedidos.nombre')
-            ->get();
+        )) as platillos');
+        } else {
+            $pedidosQuery->selectRaw("group_concat(
+            platillos.id || ':' || platillos.nombre || ':' || platillos.precio || ':' || plato_pedido.cantidad || ':' || plato_pedido.detalle, '|'
+        ) as platillos");
+        }
 
-        $agrupar_pedido_por_cuenta = [];
+        $pedidos = $pedidosQuery->groupBy('cuentas.id', 'pedidos.id', 'usuarios.nombre', 'usuarios.apellido_paterno', 'estado_pedidos.nombre')->get();
 
-        foreach ($pedidos as $pedido) {
-            $agrupar_pedido_por_cuenta[$pedido->id_cuenta][$pedido->id_pedido] = [
+        return $pedidos->map(function ($pedido) use ($dbDriver) {
+            $platillos = $dbDriver === 'pgsql'
+                ? json_decode($pedido->platillos)
+                : $this->descomponerPlatillos($pedido->platillos);
+
+            return [
+                'id_cuenta' => $pedido->id_cuenta,
+                'id_pedido' => $pedido->id_pedido,
                 'empleado' => [
                     'nombre' => $pedido->nombre,
                     'apellido' => $pedido->apellido,
@@ -125,10 +137,27 @@ class ReporteController extends Controller
                 'monto' => $pedido->monto,
                 'fecha_hora_cuenta' => $pedido->fecha_hora_cuenta,
                 'estado_pedido' => $pedido->estado_pedido,
-                'platillos' => json_decode($pedido->platillos)
+                'platillos' => $platillos
             ];
-        }
+        })->groupBy('id_cuenta');
+    }
 
-        return $agrupar_pedido_por_cuenta;
+    private function descomponerPlatillos($platillosString)
+    {
+        $platillos = [];
+        if ($platillosString) {
+            $platillosData = explode('|', $platillosString);
+            foreach ($platillosData as $platillo) {
+                list($id, $nombre, $precio, $cantidad, $detalle) = explode(':', $platillo);
+                $platillos[] = [
+                    'id_platillo' => (int)$id,
+                    'nombre' => $nombre,
+                    'precio' => (float)$precio,
+                    'cantidad' => (int)$cantidad,
+                    'detalle' => $detalle,
+                ];
+            }
+        }
+        return $platillos;
     }
 }
