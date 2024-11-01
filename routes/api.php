@@ -78,7 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu/pedido/platillos', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
 
         Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
-        Route::delete('/pedidos/{id}', 'App\Http\Controllers\PedidoController@destroy');
+        // Route::delete('/pedidos/{id}', 'App\Http\Controllers\PedidoController@destroy');
         Route::get('/prueba_empleado', function () {
             return response()->json(['message' => 'Bienvenido empleado','auth' => auth()->user()]);
         });
@@ -92,20 +92,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/notificaciones/cantidad', 'App\Http\Controllers\NotificacionController@obtenerNotificacionesCantidad');
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
         Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
-        //para cocinero
-        Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
+        
         Route::post('/actualizar/datos-empleado', 'App\Http\Controllers\Auth\AuthController@updateDatosEmpleado');
         
         Route::post('/cuenta/store/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@store');
-        Route::post('/cuenta/close/{id}', 'App\Http\Controllers\Pedido\CuentaController@close');
-
-        Route::get('/cuentas/abiertas/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@index');
-        Route::get('/cuentas/cerradas/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@showCerradas');
-
     });
 
     Route::middleware('empleado:cajero')->group(function () {
+        Route::get('/cuentas/abiertas/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@index');
+        Route::get('/cuentas/cerradas/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@showCerradas');
         Route::get('/show/cuenta/{id}', 'App\Http\Controllers\Pedido\CuentaController@show');
+        Route::post('/cuenta/close/{id}', 'App\Http\Controllers\Pedido\CuentaController@close');
+    });
+
+    Route::middleware('empleado:cocinero')->group(function () {
+       Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
     });
     
     Route::middleware('propietarioOempleado')->group(function () {

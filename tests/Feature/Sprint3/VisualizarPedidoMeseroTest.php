@@ -4,6 +4,7 @@ namespace Tests\Feature\Sprint3;
 
 use App\Models\Administrador;
 use App\Models\Categoria;
+use App\Models\Cuenta;
 use App\Models\Empleado;
 use App\Models\EstadoPedido;
 use App\Models\Mesa;
@@ -63,6 +64,7 @@ class VisualizarPedidoMeseroTest extends TestCase
         // Inserción de mesas
         Mesa::factory(2)->registrar_a_restaurante(1)->create();
 
+        Platillo::factory(10)->asignarMenu(1)->create();
         // Creación de empleado asociado al propietario
         Empleado::create([
             'id_usuario' => User::factory()
@@ -124,7 +126,7 @@ class VisualizarPedidoMeseroTest extends TestCase
 
     private function loginComoMesero(): string
     {
-        // Realiza el login del propietario y devuelve el token
+        // Realiza el login del mesero y devuelve el token
         $response = $this->postJson('/api/login', [
             'usuario' => 'empleado1',
             'password' => '12345678',
@@ -133,49 +135,45 @@ class VisualizarPedidoMeseroTest extends TestCase
         return $response['token'];
     }
 
-    public function testMeseroPuedeVerPedidosDelDia()
+    public function test_mesero_puede_ver_pedidos_del_dia()
     {
         $this->resgistrarPedidos();
-        print_r(Pedido::get());
         // Crea un mesero y realiza el login para obtener el token de autorización
         $token = $this->loginComoMesero();
 
         // Realizar solicitud GET y verificar que la respuesta es correcta
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-           // id_empleado/id_restaurante
+            // id_empleado/id_restaurante
         ])->getJson("/api/pedidos/1/1"); // Reemplaza con el ID del restaurante según tu setup
 
-        // Imprimir la respuesta en el log de pruebas para depuración
-        $response->dump();
-    
+
         // Verifica que la respuesta sea exitosa y tenga la estructura esperada
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'status',
-                     'pedidos' => [
-                         '*' => [
-                             'id_cuenta',
-                             'monto_total',
-                             'nombreMesa',
-                             'pedidos' => [
-                                 '*' => [
-                                     'id_pedido',
-                                     'estado',
-                                     'platos' => [
-                                         '*' => [
-                                             'nombre',
-                                             'precio_fijado',
-                                             'cantidad',
-                                             'detalle'
-                                         ]
-                                     ],
-                                     'monto'
-                                 ]
-                             ]
-                         ]
-                     ]
-                 ]);
-            
+            ->assertJsonStructure([
+                'status',
+                'pedidos' => [
+                    '*' => [
+                        'id_cuenta',
+                        'monto_total',
+                        'nombreMesa',
+                        'pedidos' => [
+                            '*' => [
+                                'id_pedido',
+                                'estado',
+                                'platos' => [
+                                    '*' => [
+                                        'nombre',
+                                        'precio_fijado',
+                                        'cantidad',
+                                        'detalle'
+                                    ]
+                                ],
+                                'monto'
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
     }
 }
