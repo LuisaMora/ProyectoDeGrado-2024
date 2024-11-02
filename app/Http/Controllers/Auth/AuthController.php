@@ -238,8 +238,6 @@ class AuthController extends Controller
 
             return response()->json(['message' => 'Correo de restablecimiento enviado.']);
         }
-
-        return response()->json(['message' => 'Error al solicitar el cambio de contraseña.'], 500);
     }
 
     public function restablecerContrasenia(Request $request)

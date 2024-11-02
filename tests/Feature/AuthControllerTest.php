@@ -76,6 +76,28 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
+    public function test_logout()
+    {
+        $response = $this->postJson('/api/login', [
+            'usuario' => 'propietarioA1',
+            'password' => '12345678',
+        ]);
+        $token = $response['token'];
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'message',
+            ]);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->getJson('/api/logout');
+
+        // Verificar respuesta exitosa
+        $response->assertStatus(200)
+            ->assertJson(['success' => 'Sesion finalizada exitosamente.']);
+    }
+
 
     public function test_login_entrada_no_valida()
     {
@@ -123,9 +145,25 @@ class AuthControllerTest extends TestCase
             'password' => '12345678',
         ]);
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' .$responsePropietario['token'],
-        ])->get('/api/datos-personales?id_usuario='.$responsePropietario['user']['usuario']['id']);
+            'Authorization' => 'Bearer ' . $responsePropietario['token'],
+        ])->get('/api/datos-personales?id_usuario=' . $responsePropietario['user']['usuario']['id']);
 
         $response->assertStatus(200);
+    }
+
+    public function test_get_datos_personales_error()
+    {
+        $responsePropietario = $this->postJson('/api/login', [
+            'usuario' => 'propietarioA1',
+            'password' => '12345678',
+        ]);
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $responsePropietario['token'],
+        ])->get('/api/datos-personales?id_usuario=99');
+
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                'message',
+            ]);
     }
 }

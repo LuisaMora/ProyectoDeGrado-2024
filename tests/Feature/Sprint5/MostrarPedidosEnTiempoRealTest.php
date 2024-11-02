@@ -1,13 +1,12 @@
 <?php
 
-namespace Tests\Feature\Sprint4;
+namespace Tests\Feature\Sprint5;
 
 use App\Events\PedidoCompletado;
 use App\Events\PedidoCreado;
 use App\Events\PedidoEliminado;
 use App\Events\PedidoEnPreparacion;
 use App\Events\PedidoServido;
-use App\Events\Notificacion as NotificacionEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Administrador;
 use App\Models\Categoria;
@@ -21,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
-class NotificarEstadosDelPedidoPedidoTest extends TestCase
+class MostrarPedidosEnTiempoRealTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -171,22 +170,71 @@ class NotificarEstadosDelPedidoPedidoTest extends TestCase
         return $response;
     }
 
-    public function test_cambiar_y_notificar_estado_en_preparacion()
+    public function test_crear_pedido_y_despachar_evento()
+    {
+        $platillos = Platillo::get();
+        $platilloIds = $platillos->pluck('id')->toArray();
+        $data = [
+            'id_mesa' => 1,
+            'id_empleado' => 1,
+            'platillos' => json_encode([
+                [
+                    'id_platillo' => $platilloIds[0],
+                    'cantidad' => 2,
+                    'precio_unitario' => 15,
+                    'detalle' => 'Este platillo es sin sal'
+                ],
+                [
+                    'id_platillo' => $platilloIds[1],
+                    'cantidad' => 1,
+                    'precio_unitario' => 100,
+                    'detalle' => ''
+                ],
+                [
+                    'id_platillo' => $platilloIds[2],
+                    'cantidad' => 3,
+                    'precio_unitario' => 5,
+                    'detalle' => ''
+                ],
+            ]),
+            'id_restaurante' => 1,
+            'tipo' => 'local',
+        ];
+
+        $token = $this->postJson('/api/login', [
+            'usuario' => 'empleado1',
+            'password' => '12345678',
+        ])['token'];
+
+        // Realizar petición para mostrar platillos disponibles
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson('/api/pedido', $data);
+
+        $idPedido = $response['pedido']['id'];
+        $idRestaurante = 1;
+
+        Event::assertDispatched(PedidoCreado::class, function ($event) use ($idPedido, $idRestaurante) {
+            return $event->id === $idPedido && $event->idRestaurante === $idRestaurante;
+        });
+    }
+
+    public function test_cambiar_y_despachar_evento_estado_en_preparacion()
     {
         $this->ejecutarCambioEstadoPedido(1, 2, 'En preparación');
     }
 
-    public function test_cambiar_y_notificar_estado_listo_para_servir()
+    public function test_cambiar_y_despachar_evento_estado_listo_para_servir()
     {
         $this->ejecutarCambioEstadoPedido(1, 3, 'Listo para servir');
     }
 
-    public function test_cambiar_y_notificar_estado_servido()
+    public function test_cambiar_y_despachar_evento_estado_servido()
     {
         $this->ejecutarCambioEstadoPedido(1, 4, 'Servido');
     }
 
-    public function test_cambiar_y_notificar_estado_cancelado()
+    public function test_cambiar_y_despachar_evento_estado_cancelado()
     {
         $this->ejecutarCambioEstadoPedido(1, 5, 'Cancelado');
     }
@@ -207,21 +255,35 @@ class NotificarEstadosDelPedidoPedidoTest extends TestCase
         ]);
 
         // Verificar respuesta de éxito y cambio de estado en DB
+        // $response->dump();
         $response->assertStatus(200)
             ->assertJson(['status' => 'success']);
         $idRestaurante = 1;
-        $idUsuario = $cuentaCocinero['user']['usuario']['id'];
-        
-        Event::assertDispatched(NotificacionEvent::class, function ($event) use ($idUsuario, $idRestaurante) {
-            return( $event->id_creador === $idUsuario ) ;
-        });
-
-        $this->assertDatabaseHas('notificaciones', [
-            'id_pedido' => $idPedido,
-            'id_creador' => $idUsuario,
-            'id_restaurante' => $idRestaurante,
-            'tipo' => 'pedido',
-            'read_at' => null, // Cambia esto según tu lógica
-        ]);
+        switch ($nuevoEstado) {
+            case 2: // En preparación
+                Event::assertDispatched(PedidoEnPreparacion::class, function ($event) use ($idPedido, $idRestaurante) {
+                    return $event->idPedido === $idPedido && $event->idRestaurante === $idRestaurante;
+                });
+                break;
+            case 3: // Listo para servir
+                Event::assertDispatched(PedidoCompletado::class, function ($event) use ($idPedido, $idRestaurante) {
+                    return $event->idPedido === $idPedido && $event->idRestaurante === $idRestaurante;
+                });
+                break;
+            case 4: // Servido
+                Event::assertDispatched(PedidoServido::class, function ($event) use ($idPedido, $idRestaurante) {
+                    return $event->idPedido === $idPedido && $event->idRestaurante === $idRestaurante;
+                });
+                break;
+            case 5: // Cancelado
+                Event::assertDispatched(PedidoEliminado::class, function ($event) use ($idPedido, $idRestaurante) {
+                    return $event->idPedido === $idPedido && $event->idRestaurante === $idRestaurante;
+                });
+                break;
+            default:
+                // Aquí puedes manejar cualquier estado no reconocido
+                $this->fail("Estado de pedido no reconocido");
+                break;
+        }
     }
 }

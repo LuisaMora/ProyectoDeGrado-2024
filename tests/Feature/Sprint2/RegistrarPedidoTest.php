@@ -76,6 +76,70 @@ class RegistrarPedidoTest extends TestCase
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
         ]);
+
+        // Platillo::factory(10)->asignarMenu(1)->create();
+        // Inserción de cuentas
+        // DB::table('cuentas')->insert([
+        //     [
+        //         'id_mesa' => 1,
+        //         'estado' => 'Pagada',
+        //         'nombre_razon_social' => 'Cliente A',
+        //         'nit' => 12345678,
+        //         'monto_total' => 150.00,
+        //         'created_at' => now()->subDay(),
+        //         'updated_at' => now()->subDay(),
+        //     ],
+        //     [
+        //         'id_mesa' => 2,
+        //         'estado' => 'Pagada',
+        //         'nombre_razon_social' => 'Cliente B',
+        //         'nit' => 87654321,
+        //         'monto_total' => 80.00,
+        //         'created_at' => now()->subDay(),
+        //         'updated_at' => now()->subDay(),
+        //     ]
+        // ]);
+
+
+        // // Inserción de pedidos a las cuentas
+        // DB::table('pedidos')->insert([
+        //     [
+        //         'id_cuenta' => 1,
+        //         'tipo' => 'local',
+        //         'id_estado' => 1, // Estado 'En espera'
+        //         'id_empleado' => 1,
+        //         'fecha_hora_pedido' => now()->subDay(),
+        //         'monto' => 150.00,
+        //         'created_at' => now()->subDay(),
+        //         'updated_at' => now()->subDay(),
+        //     ],
+        //     [
+        //         'id_cuenta' => 2,
+        //         'tipo' => 'llevar',
+        //         'id_estado' => 2, // Estado 'En preparación'
+        //         'id_empleado' => 1,
+        //         'fecha_hora_pedido' => now()->subDay(),
+        //         'monto' => 80.00,
+        //         'created_at' => now()->subDay(),
+        //         'updated_at' => now()->subDay(),
+        //     ]
+        // ]);
+
+        // // Obtener platillos aleatorios
+        // $platillos = DB::table('platillos')->inRandomOrder()->take(2)->get();
+        // foreach ([1, 2] as $pedidoId) {
+        //     foreach ($platillos as $platillo) {
+        //         DB::table('plato_pedido')->insert([
+        //             'id_pedido' => $pedidoId,
+        //             'id_platillo' => $platillo->id,
+        //             'detalle' => 'Detalles adicionales aquí',
+        //             'cantidad' => 1,
+        //             'precio_fijado' => $platillo->precio,
+        //             'created_at' => now()->subDay(),
+        //             'updated_at' => now()->subDay(),
+        //         ]);
+        //     }
+        // }
     }
 
     private function loginComoMesero(): string
