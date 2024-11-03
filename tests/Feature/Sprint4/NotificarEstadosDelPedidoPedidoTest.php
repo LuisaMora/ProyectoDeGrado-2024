@@ -2,11 +2,6 @@
 
 namespace Tests\Feature\Sprint4;
 
-use App\Events\PedidoCompletado;
-use App\Events\PedidoCreado;
-use App\Events\PedidoEliminado;
-use App\Events\PedidoEnPreparacion;
-use App\Events\PedidoServido;
 use App\Events\Notificacion as NotificacionEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Administrador;
@@ -14,6 +9,7 @@ use App\Models\Categoria;
 use App\Models\Empleado;
 use App\Models\EstadoPedido;
 use App\Models\Mesa;
+use App\Models\Notificacion;
 use App\Models\Platillo;
 use App\Models\Propietario;
 use App\Models\User;
@@ -171,6 +167,15 @@ class NotificarEstadosDelPedidoPedidoTest extends TestCase
         return $response;
     }
 
+    private function loginComoEmpleado()
+    {
+        $response = $this->postJson('/api/login', [
+            'usuario' => 'empleado1',
+            'password' => '12345678',
+        ]);
+        return $response['token'];
+    }
+
     public function test_cambiar_y_notificar_estado_en_preparacion()
     {
         $this->ejecutarCambioEstadoPedido(1, 2, 'En preparación');
@@ -211,9 +216,9 @@ class NotificarEstadosDelPedidoPedidoTest extends TestCase
             ->assertJson(['status' => 'success']);
         $idRestaurante = 1;
         $idUsuario = $cuentaCocinero['user']['usuario']['id'];
-        
+
         Event::assertDispatched(NotificacionEvent::class, function ($event) use ($idUsuario, $idRestaurante) {
-            return( $event->id_creador === $idUsuario ) ;
+            return ($event->id_creador === $idUsuario);
         });
 
         $this->assertDatabaseHas('notificaciones', [
@@ -223,5 +228,82 @@ class NotificarEstadosDelPedidoPedidoTest extends TestCase
             'tipo' => 'pedido',
             'read_at' => null, // Cambia esto según tu lógica
         ]);
+    }
+
+    public function test_obtener_notificaciones()
+    {
+        $token = $this->loginComoEmpleado();
+
+        // Notificaciones para el test
+        Notificacion::factory()->count(5)->create([
+            'id_restaurante' => 1,
+            'id_creador' => 3, // usuario id 3
+            'id_pedido' => 1,
+        ]);
+
+        // Hacer una solicitud para obtener notificaciones
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->getJson('/api/notificaciones?id_restaurante=1'); // Enviando el id_restaurante como parámetro de consulta
+
+        // Verificar que la respuesta sea exitosa y que contenga las notificaciones
+        $response->assertStatus(200)
+            ->assertJsonStructure(['status', 'notificaciones']);
+    }
+
+    public function test_obtener_notificaciones_cantidad()
+    {
+        $token = $this->loginComoEmpleado();
+
+        // Crea notificaciones para el test
+        Notificacion::factory()->count(5)->create([
+            'id_restaurante' => 1,
+            'id_creador' => 3, // usuario id 3
+            'id_pedido' => 1,
+        ]);
+
+        // Hacer una solicitud para obtener una cantidad específica de notificaciones
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->getJson('/api/notificaciones/cantidad?id_restaurante=1&cantidad=3'); // Pasar parámetros en la URL
+
+        // Verificar que la respuesta sea exitosa y que contenga las notificaciones
+        $response->assertStatus(200)
+            ->assertJsonStructure(['status', 'notificaciones'])
+            ->assertJsonCount(3, 'notificaciones'); // Verifica que se devuelvan exactamente 3 notificaciones
+    }
+
+    public function test_marcar_notificaciones_como_leidas()
+    {
+        $token = $this->loginComoEmpleado();
+
+        // Crea notificaciones para el test
+        $notificaciones = Notificacion::factory()->count(5)->create([
+            'id_restaurante' => 1,
+            'id_creador' => 3, // usuario id 3
+            'id_pedido' => 1,
+        ]);
+
+        // Hacer una solicitud para marcar las notificaciones como leídas
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->putJson('/api/notificaciones/leidas', [
+            'id_notificaciones' => [$notificaciones[0]->id, $notificaciones[1]->id],
+            'id_restaurante' => 1,
+        ]);
+        // Verificar que la respuesta sea exitosa
+        $response->assertStatus(200)
+            ->assertJson(['status' => 'success']);
+
+        // Verificar que las notificaciones se hayan marcado como leídas
+        foreach ([$notificaciones[0]->id, $notificaciones[1]->id] as $id) {
+            $this->assertDatabaseHas('notificaciones', [
+                'id' => $id,
+                'read_at' => now()->format('Y-m-d H:i:s'), // Verifica que read_at se actualice correctamente
+            ]);
+        }
     }
 }

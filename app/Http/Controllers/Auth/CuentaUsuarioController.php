@@ -67,17 +67,5 @@ class CuentaUsuarioController extends Controller
     }
 
 
-    // public function store(StoreUserRequest $request)
-    // {
-    //     try {
-    //         $user = new User($request->all());
-
-    //         $user->save();
-
-    //         return response()->json(['status' => 'success', 'data' => $user], 201);
-    //     } catch (\Throwable $th) {
-    //         return response()->json(['status' => 'error', 'message' => $th->getMessage()], 500);
-    //     }
-    // }
 
 }
