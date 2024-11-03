@@ -176,9 +176,6 @@ class ValidarFormularioPreRegistroTest extends TestCase
         $this->assertEquals('success', $response['status']);
     }
 
-
-
-
     public function test_rechazar_pre_registro_cambia_estado_y_envia_correos_correctamente()
     {
         // Configuración inicial y autenticación
