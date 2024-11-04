@@ -2,8 +2,12 @@
 
 namespace Tests\Feature\Sprint1;
 
+use App\Models\Administrador;
+use App\Models\Empleado;
+use App\Models\Propietario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -16,15 +20,15 @@ class RegistrarPlatilloRestauranteTest extends TestCase
         parent::setUp();
 
         // Inserción de roles y categorías
-        \Illuminate\Support\Facades\DB::table('rol_empleados')->insert([
+        DB::table('rol_empleados')->insert([
             ['nombre' => 'Mesero'],
             ['nombre' => 'Cajero'],
             ['nombre' => 'Cocinero'],
         ]);
 
         // Creación de usuarios
-        \App\Models\Administrador::factory()->asignarDatosSesion('administrador', 'admin@gmail.com')->create();
-        \App\Models\Propietario::factory()->asignarDatosSesion('propietarioA1', 'propietario@gmail.com')->create();
+        Administrador::factory()->asignarDatosSesion('administrador', 'admin@gmail.com')->create();
+        Propietario::factory()->asignarDatosSesion('propietarioA1', 'propietario@gmail.com')->create();
 
         $categorias = [
             'Otros',
@@ -38,7 +42,7 @@ class RegistrarPlatilloRestauranteTest extends TestCase
             \App\Models\Categoria::factory()->create(['nombre' => $categoria]);
         }
 
-        \App\Models\Empleado::create([
+        Empleado::create([
             'id_usuario' => \App\Models\User::factory()
                 ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create()->id,
             'id_rol' => 1,
@@ -52,7 +56,7 @@ class RegistrarPlatilloRestauranteTest extends TestCase
         Storage::fake('public');
     }
 
-    public function test_registrar_platillo(): void
+    public function test_registrar_platillo_exitosamente(): void
     {
         // Configuramos lo necesario para registrar el platillo, preparamos los datos
         $responsePropietario = $this->postJson('/api/login', [
@@ -133,12 +137,11 @@ class RegistrarPlatilloRestauranteTest extends TestCase
             'nombre' => '', // nombre vacío
             'descripcion' => 'Pique grande con porciones de papa descomunales.',
             'precio' => 'invalid_price', // precio inválido
-            'id_categoria' => 2, 
+            'id_categoria' => 2,
             // 'id_restaurante' => 1, // id_restaurante ausente
             'imagen' => null, // imagen no proporcionada
         ]);
 
         $response2->assertStatus(422);
-         
     }
 }

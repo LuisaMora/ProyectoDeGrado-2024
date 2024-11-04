@@ -13,7 +13,7 @@ use Tests\TestCase;
 class EditarCategoriaMenuTest extends TestCase
 {
     use RefreshDatabase;
-    // solo lo qu esta en setup se puede usar en las demas metodos, cada metodo es aislado
+    // cada metodo es aislado y debemos configurar los datos de prueba para todos los casos
     protected function setUp(): void
     {
         parent::setUp();
@@ -157,7 +157,7 @@ class EditarCategoriaMenuTest extends TestCase
             ->assertJson(['message' => 'No se puede editar la categoria por defecto.']);
     }
 
-    public function test_editar_categoria_sin_cambiar_imagen(): void
+    public function test_editar_categoria_solo_algunos_campos(): void
     {
         $categoria = Categoria::create([
             'nombre' => 'Bebidas',

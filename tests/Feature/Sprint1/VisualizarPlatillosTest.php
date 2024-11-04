@@ -8,7 +8,6 @@ use App\Models\Platillo;
 use App\Models\Propietario;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class VisualizarPlatillosTest extends TestCase
@@ -124,7 +123,7 @@ class VisualizarPlatillosTest extends TestCase
             'Authorization' => 'Bearer ' . $token,
         ])->getJson('/api/menu/platillos/' . $otroRestaurante);
 
-        // Verificamos que no hay platillos disponibles para el restaurante
+        // Verificamos que no hay platillos disponibles para el restaurante si respuesta 200
         $this->assertEmpty($response->json('platillos'));
     }
 }
