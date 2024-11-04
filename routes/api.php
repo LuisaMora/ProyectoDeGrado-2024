@@ -52,6 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
             return app('App\Http\Controllers\Auth\CuentaUsuarioController')
                         ->cambiarEstadoUsuario($id_usuario, true, 'empleado');
         });
+
+        Route::post('/empleado', 'App\Http\Controllers\EmpleadoController@store');
     });
     
     Route::middleware('administrador')->group(function () {
@@ -115,7 +117,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/restaurante/mesas', 'App\Http\Controllers\MesaController@index');
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
-        Route::post('/empleado', 'App\Http\Controllers\EmpleadoController@store');
         Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
     });
     

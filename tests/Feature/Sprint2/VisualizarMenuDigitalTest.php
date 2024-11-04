@@ -6,8 +6,10 @@ use App\Models\Administrador;
 use App\Models\Categoria;
 use App\Models\Platillo;
 use App\Models\Propietario;
+use Illuminate\Support\Facades\File;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class VisualizarMenuDigitalTest extends TestCase
@@ -17,6 +19,7 @@ class VisualizarMenuDigitalTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Storage::fake('public'); // Simular el sistema de archivos
         $this->setUpDatosIniciales();
     }
 
@@ -60,6 +63,17 @@ class VisualizarMenuDigitalTest extends TestCase
         Platillo::factory(8)->asignarMenu(1)->create();
     }
 
+    private function loginComoPropietario(): string
+    {
+        // Realiza el login del propietario y devuelve el token
+        $response = $this->postJson('/api/login', [
+            'usuario' => 'propietarioA1',
+            'password' => '12345678',
+        ]);
+
+        return $response['token'];
+    }
+
     public function test_mostrar_menu_correctamente()
     {
         // El menu con id 1 existe con 10 platillos 8 validos 2 no validos
@@ -88,5 +102,38 @@ class VisualizarMenuDigitalTest extends TestCase
         $response->assertStatus(404)
             ->assertJson(['message' => 'Menu no encontrado.']);
     }
+
+    public function test_generar_qr_exitosamente()
+    {
+        $token = $this->loginComoPropietario();
+
+        $response = $this->withHeader('Authorization', "Bearer $token")
+        ->postJson('/api/menu/generar/qr', [
+            'direccion_url_menu' => 'https://example.com/menu'
+        ]);
+
+        // Verificar que se creó el archivo QR
+        $this->assertTrue(File::exists(storage_path('app/public/codigos_qr')));
+
+        // Verificar que el estado sea exitoso y la URL del QR esté en la respuesta
+        $response->assertStatus(200)
+            ->assertJsonStructure(['status', 'qr']);
+    }
+
+    public function test_generar_qr_con_url_invalida()
+    {
+        $token = $this->loginComoPropietario();
+
+        $response = $this->withHeader('Authorization', "Bearer $token")
+        ->postJson('/api/menu/generar/qr', [
+            'direccion_url_menu' => 'no-es-una-url'
+        ]);
+
+        // Verificar que se retorne un error de validación
+        $response->assertStatus(400)
+            ->assertJsonStructure(['status', 'error']);
+    }
+
+
 
 }

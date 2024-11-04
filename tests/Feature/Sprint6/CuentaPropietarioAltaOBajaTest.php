@@ -56,7 +56,7 @@ class CuentaPropietarioAltaOBajaTest extends TestCase
 
     private function loginComoAdmin(): string
     {
-        // Realiza el login del propietario y devuelve el token
+        // Realiza el login del administrador y devuelve el token
         $response = $this->postJson('/api/login', [
             'usuario' => 'administrador',
             'password' => '12345678',

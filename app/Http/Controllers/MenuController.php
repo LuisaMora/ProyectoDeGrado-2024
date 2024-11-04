@@ -131,19 +131,4 @@ class MenuController extends Controller
         }
     }
 
-
-    function qr()
-    {
-        $id_usuario = auth()->user()->id;
-        $propietario = Propietario::where('id_usuario', $id_usuario)->first();
-        if ($propietario) {
-            $menu = $propietario->restaurante->menu;
-            if ($menu->qr == '') {
-                return response()->json(['message' => 'No se ha generado el QR'], 404);
-            }
-            return response()->json(['status' => 'success', 'qr' => '$qr'], 200);
-        } else {
-            return response()->json(['message' => 'Usuario no encontrado.'], 404);
-        }
-    }
 }

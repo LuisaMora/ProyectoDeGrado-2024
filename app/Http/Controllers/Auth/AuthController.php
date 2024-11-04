@@ -137,7 +137,6 @@ class AuthController extends Controller
             'correo' => 'required|email|max:150',
             'nickname' => 'required|max:100|min:2',
             'foto_perfil' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // La imagen es opcional
-            'ci' => 'required|integer|min:1'
         ]);
 
         // Verificar si la validación falló
@@ -152,17 +151,13 @@ class AuthController extends Controller
             DB::beginTransaction();
 
             $user = $this->actualizarDatosUsuario([''], $request);
-            $user_data = $this->getDatosPersonales($user);
-            $user_data->ci = $request->ci;
-            //quitar tipo del user_data
-            unset($user_data->tipo);
+            
 
             DB::commit();
 
             return response()->json([
                 'message' => 'Datos actualizados correctamente',
                 'user' => $user,
-                'user_data' => $user_data
             ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
