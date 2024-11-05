@@ -129,7 +129,7 @@ class EditarMenuDigitalTest extends TestCase
         }
     }
 
-    public function test_editar_menu_exitosamente_sin_imagen()
+    public function test_editar_menu_exitosamente_ningun_plato_disponible()
     {
         $token = $this->loginComoPropietario();
         $platillos = Platillo::where('id_menu', 1)->pluck('id')->toArray(); // Obtén IDs de los platillos
@@ -139,7 +139,7 @@ class EditarMenuDigitalTest extends TestCase
             'id_menu' => 1,
             'tema' => 'Nuevo Tema Sin Imagen',
             'platillos' => json_encode(array_map(function ($id) {
-                return ['id' => $id, 'plato_disponible_menu' => true];
+                return ['id' => $id, 'plato_disponible_menu' => false];
             }, $platillos)),
         ]);
 
@@ -152,11 +152,11 @@ class EditarMenuDigitalTest extends TestCase
             'tema' => 'Nuevo Tema Sin Imagen',
         ]);
 
-        // Verificar que los platillos tengan el nuevo estado (plato_disponible_menu = true)
+        // Verificar que los platillos tengan el nuevo estado (plato_disponible_menu = false)
         foreach ($platillos as $platilloId) {
             $this->assertDatabaseHas('platillos', [
                 'id' => $platilloId,
-                'plato_disponible_menu' => true,
+                'plato_disponible_menu' => false,
             ]);
         }
     }

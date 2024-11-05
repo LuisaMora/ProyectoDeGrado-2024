@@ -178,25 +178,25 @@ class NotificarEstadosDelPedidoPedidoTest extends TestCase
 
     public function test_cambiar_y_notificar_estado_en_preparacion()
     {
-        $this->ejecutarCambioEstadoPedido(1, 2, 'En preparación');
+        $this->ejecutarCambioEstadoPedido(1, 2);
     }
 
     public function test_cambiar_y_notificar_estado_listo_para_servir()
     {
-        $this->ejecutarCambioEstadoPedido(1, 3, 'Listo para servir');
+        $this->ejecutarCambioEstadoPedido(1, 3);
     }
 
     public function test_cambiar_y_notificar_estado_servido()
     {
-        $this->ejecutarCambioEstadoPedido(1, 4, 'Servido');
+        $this->ejecutarCambioEstadoPedido(1, 4);
     }
 
     public function test_cambiar_y_notificar_estado_cancelado()
     {
-        $this->ejecutarCambioEstadoPedido(1, 5, 'Cancelado');
+        $this->ejecutarCambioEstadoPedido(1, 5);
     }
 
-    private function ejecutarCambioEstadoPedido($idPedido, $nuevoEstado, $nombreEstado)
+    private function ejecutarCambioEstadoPedido($idPedido, $nuevoEstado)
     {
         // Iniciar sesión y obtener token
         $cuentaCocinero = $this->loginComoCocinero();
@@ -217,7 +217,8 @@ class NotificarEstadosDelPedidoPedidoTest extends TestCase
         $idRestaurante = 1;
         $idUsuario = $cuentaCocinero['user']['usuario']['id'];
 
-        Event::assertDispatched(NotificacionEvent::class, function ($event) use ($idUsuario, $idRestaurante) {
+        Event::assertDispatched(NotificacionEvent::class,
+         function ($event) use ($idUsuario, $idRestaurante) {
             return ($event->id_creador === $idUsuario);
         });
 

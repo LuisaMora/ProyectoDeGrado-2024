@@ -20,7 +20,7 @@ class CategoriaController extends Controller
         
         // Verifica que se haya encontrado un id_menu
         if (!$id_menu) {
-            return response()->json(['status' => 'error', 'message' => 'Menu not found for the given restaurant.'], 404);
+            return response()->json(['status' => 'error', 'message' => 'Menu no encontrado para el restaurante.'], 404);
         }
         
         // Obtén las categorías asociadas al id_menu y con estado true
@@ -28,7 +28,7 @@ class CategoriaController extends Controller
         
         // Verifica que se hayan encontrado categorías
         if ($categorias->isEmpty()) {
-            return response()->json(['status' => 'error', 'message' => 'No categories found for the given menu.'], 404);
+            return response()->json(['status' => 'error', 'message' => 'Categorias no encontradas para el menu.'], 404);
         }
         
         return response()->json(['status' => 'success', 'categorias' => $categorias], 200);

@@ -62,8 +62,8 @@ class VisualizarCategoriasTest extends TestCase
     public function test_obtener_categorias_exitosamente()
     {
         $token = $this->loginComoPropietario('propietarioA1', '12345678');
-
-        $restaurante = Restaurante::first(); // Obtener el restaurante creado en setUpDatosIniciales
+        // Obtener el restaurante creado en setUpDatosIniciales
+        $restaurante = Restaurante::first(); 
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
@@ -95,7 +95,7 @@ class VisualizarCategoriasTest extends TestCase
         $response->assertStatus(404)
                  ->assertJson([
                      'status' => 'error',
-                     'message' => 'Menu not found for the given restaurant.',
+                     'message' => 'Menu no encontrado para el restaurante.',
                  ]);
     }
 
@@ -111,7 +111,7 @@ class VisualizarCategoriasTest extends TestCase
         $response->assertStatus(404)
                  ->assertJson([
                      'status' => 'error',
-                     'message' => 'No categories found for the given menu.',
+                     'message' => 'Categorias no encontradas para el menu.',
                  ]);
     }
 

@@ -172,7 +172,6 @@ class EmitirReportePedidoTest extends TestCase
         ]);
 
         // Verificar que la respuesta sea exitosa
-        // $response->dump();
         $response->assertStatus(200);
 
         // Comprobar que la estructura de datos en la respuesta es la esperada

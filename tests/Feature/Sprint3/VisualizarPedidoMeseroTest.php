@@ -4,17 +4,14 @@ namespace Tests\Feature\Sprint3;
 
 use App\Models\Administrador;
 use App\Models\Categoria;
-use App\Models\Cuenta;
 use App\Models\Empleado;
 use App\Models\EstadoPedido;
 use App\Models\Mesa;
-use App\Models\Pedido;
 use App\Models\Platillo;
 use App\Models\Propietario;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
