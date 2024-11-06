@@ -58,6 +58,7 @@ class EliminarPlatilloTest extends TestCase
             'disponible' => true,
             'plato_disponible_menu' => true,
             'id_menu' => 1,
+            'id_restaurante' => 1
         ]);
         // Realizar la solicitud DELETE para eliminar el platillo existente
         $response =  $this->withHeaders([

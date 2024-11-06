@@ -53,7 +53,9 @@ class PedidoSeeder extends Seeder
             $idCuentaActual = $idCuenta;
             if ($idCuenta === 0) {
                 $idMesa = $idMesas[array_rand($idMesas)];
-                $idCuentaActual = Cuenta::factory()->asignarDatosCuenta($idMesa,0,$fecha,$fecha)->create()->id;
+                $idCuentaActual = Cuenta::factory()->asignarDatosCuenta($idMesa,0,$fecha,$fecha)->create([
+                    'id_restaurante' => 1
+                ])->id;
             }
 
             $pedido = Pedido::factory()->asignarDatos($empleadoIdAleatorio, $fecha, $monto, $idCuentaActual)->create();

@@ -96,7 +96,6 @@ class RegistrarEmpleadoTest extends TestCase
             ->postJson('/api/empleado', $data);
 
         // Aserciones de respuesta exitosa y estructura de JSON
-        $response->dump($response->json());
         $response->assertStatus(201)
             ->assertJson(['status' => 'success']);
 

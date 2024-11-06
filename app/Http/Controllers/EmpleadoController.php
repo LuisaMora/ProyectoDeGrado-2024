@@ -28,7 +28,7 @@ class EmpleadoController extends Controller
             $usuario->correo = $request->input('correo');
             $usuario->nickname = $request->input('nickname');
             $usuario->password = Hash::make('12345678'); // Default password
-           
+            $usuario->tipo_usuario = 'Empleado';
             // Verifica si se ha enviado una imagen
             if ($request->hasFile('foto_perfil')) {
              $file = $request->file('foto_perfil');
@@ -39,6 +39,7 @@ class EmpleadoController extends Controller
 
             $propietario = Propietario::where('id_usuario',auth()->user()->id)->get()[0];
             $idPropietario = $propietario->id;
+            $idRestaurante = $propietario->id_restaurante;
             $restaurante = Restaurante::find($propietario->id_restaurante);
 
             // Create new Empleado
@@ -51,6 +52,7 @@ class EmpleadoController extends Controller
             $empleado->fecha_contratacion = $request->input('fecha_contratacion');
             $empleado->ci = $request->input('ci');
             $empleado->direccion = $request->input('direccion');
+            $empleado->id_restaurante = $idRestaurante;
             $empleado->save();
 
             Mail::to($usuario->correo)->send(new RegistroEmpleado($usuario, $restaurante));

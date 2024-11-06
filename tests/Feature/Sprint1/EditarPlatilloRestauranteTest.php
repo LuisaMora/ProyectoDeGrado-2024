@@ -54,6 +54,7 @@ class EditarPlatilloRestauranteTest extends TestCase
             'fecha_contratacion' => now(),
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
     }
 
@@ -80,6 +81,7 @@ class EditarPlatilloRestauranteTest extends TestCase
             'disponible' => true,
             'plato_disponible_menu' => true,
             'id_menu' => 1,
+            'id_restaurante' => 1
         ]);
 
         $token = $this->loginComoPropietario();
@@ -123,6 +125,7 @@ class EditarPlatilloRestauranteTest extends TestCase
             'disponible' => true,
             'plato_disponible_menu' => true,
             'id_menu' => 1,
+            'id_restaurante' => 1
         ]);
 
         $imagenFalsa = UploadedFile::fake()->image('pique_macho_actualizado.jpg');

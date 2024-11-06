@@ -53,22 +53,28 @@ class VisualizarMesasTest extends TestCase
         // Creación de empleado asociado al propietario
         Empleado::create([
             'id_usuario' => User::factory()
-                ->asignarNicknameCorreo('mesero1', 'empleado1@gmail.com')->create()->id,
+                ->asignarNicknameCorreo('mesero1', 'empleado1@gmail.com')->create([
+                    'tipo_usuario' => 'Empleado'
+                ])->id,
             'id_rol' => 1,
             'id_propietario' => 1,
             'fecha_nacimiento' => '1990-01-01',
             'fecha_contratacion' => now(),
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
         Empleado::create([
-            'id_usuario' => User::factory()->asignarNicknameCorreo('cocinero1', 'cocinero1@gmail.com')->create()->id,
+            'id_usuario' => User::factory()->asignarNicknameCorreo('cocinero1', 'cocinero1@gmail.com')->create([
+                'tipo_usuario' => 'Empleado'
+            ])->id,
             'id_rol' => 3, // Rol de mesero
             'id_propietario' => 1,
             'fecha_nacimiento' => '1990-01-01',
             'fecha_contratacion' => now(),
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
     }
 

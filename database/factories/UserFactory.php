@@ -41,6 +41,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('12345678'),
             'remember_token' => Str::random(10),
             'correo' => fake()->unique()->safeEmail(),
+            'tipo_usuario' => 'Propietario'
         ];
     }
 

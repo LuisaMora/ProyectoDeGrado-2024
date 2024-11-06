@@ -12,14 +12,17 @@ class RestauranteController extends Controller
 {
     public function show()
     {
-        $usuario = User::find(auth()->user()->id);
-        $tipoUsuario = $usuario->getTipoUsuario();
-        if($tipoUsuario == 'Propietario'){
-            $idRestaurante = Propietario::where('id_usuario', $usuario->id)->first()->restaurante->id;
-        }elseif ($tipoUsuario == 'Empleado') {
-            $empleado = Empleado::where('id_usuario', $usuario->id)->first();
-            $idRestaurante = Propietario::find($empleado->id_propietario)->restaurante->id;
-        }else{
+        $usuario = auth()->user();
+        $tipoUsuario = auth()->user()->tipo_usuario;
+        if ($tipoUsuario == 'Propietario') {
+            $idRestaurante = Propietario::select('id_restaurante')
+            ->where('id_usuario', $usuario->id)
+            ->first()->id_restaurante;
+        } elseif ($tipoUsuario == 'Empleado') {
+            $idRestaurante = Empleado::select('id_restaurante')
+            ->where('id_usuario', $usuario->id)
+            ->first()->id_restaurante;
+        } else {
             return response()->json(['message' => 'No puedes acceder a esta ruta.'], 403);
         }
         $restaurante = Restaurante::find($idRestaurante);

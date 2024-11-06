@@ -29,7 +29,7 @@ class User extends Authenticatable
         'apellido_paterno',
         'apellido_materno',
         'estado',
-
+        'tipo_usuario'
     ];
 
     /**
@@ -82,19 +82,6 @@ class User extends Authenticatable
         END AS es_emp
         ")->where('id', $this->id)->first();
         return $esEmp->es_emp;
-    }
-
-    public function getTipoUsuario(): string
-    {
-        $nameoftype = User::selectRaw("
-        CASE 
-            WHEN EXISTS (SELECT * FROM administradores WHERE id_usuario = usuarios.id) THEN 'Administrador'
-            WHEN EXISTS (SELECT * FROM propietarios WHERE id_usuario = usuarios.id) THEN 'Propietario'
-            WHEN EXISTS (SELECT * FROM empleados WHERE id_usuario = usuarios.id) THEN 'Empleado'
-            ELSE ''
-        END AS type_user
-        ")->where('id', $this->id)->value('type_user');
-        return $nameoftype;
     }
 
     public function getTipoEmpleado(): int

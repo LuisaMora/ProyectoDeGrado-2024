@@ -101,6 +101,7 @@ class EliminarCategoriaMenuTest extends TestCase
             'imagen' => '/storage/platillos/tiramisu.jpg',
             'disponible' => true,
             'plato_disponible_menu' => true,
+            'id_restaurante' => 1,
         ]);
 
         // Obtener el token de autenticación

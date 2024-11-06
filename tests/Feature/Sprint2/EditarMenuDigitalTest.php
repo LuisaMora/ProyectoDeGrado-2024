@@ -52,14 +52,18 @@ class EditarMenuDigitalTest extends TestCase
             'id_menu' => 1,
             'disponible' => false,
             'plato_disponible_menu' => true,
+            'id_restaurante' => 1
         ]);
         // plato no habilitado en el manu
         Platillo::factory()->create([
             'id_menu' => 1,
             'disponible' => true,
             'plato_disponible_menu' => false,
+            'id_restaurante' => 1
         ]);
-        Platillo::factory(8)->asignarMenu(1)->create();
+        Platillo::factory(8)->asignarMenu(1)->create([
+            'id_restaurante' => 1
+        ]);
         //en total 9 platillos disponibles para editar
     }
 

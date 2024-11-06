@@ -61,17 +61,22 @@ class VisualizarPedidoMeseroTest extends TestCase
         // Inserción de mesas
         Mesa::factory(2)->registrar_a_restaurante(1)->create();
 
-        Platillo::factory(10)->asignarMenu(1)->create();
+        Platillo::factory(10)->asignarMenu(1)->create([
+            'id_restaurante' => 1
+        ]);
         // Creación de empleado asociado al propietario
         Empleado::create([
             'id_usuario' => User::factory()
-                ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create()->id,
+                ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create([
+                    'tipo_usuario' => 'Empleado' 
+                ])->id,
             'id_rol' => 1,
             'id_propietario' => 1,
             'fecha_nacimiento' => '1990-01-01',
             'fecha_contratacion' => now(),
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
 
         
@@ -81,7 +86,9 @@ class VisualizarPedidoMeseroTest extends TestCase
     private function resgistrarPedidos()
     {
         // Crear platillos y obtener sus IDs
-        $platillos = Platillo::factory(3)->asignarMenu(1)->create();
+        $platillos = Platillo::factory(3)->asignarMenu(1)->create([
+            'id_restaurante' => 1
+        ]);
         $platilloIds = $platillos->pluck('id')->toArray();
 
         // Estructura de datos para el pedido usando los IDs obtenidos

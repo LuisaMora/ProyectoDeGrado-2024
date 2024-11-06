@@ -141,6 +141,7 @@ class PedidoController extends Controller
             $cuenta = new Cuenta();
             $cuenta->id_mesa = $request->id_mesa;
             $cuenta->monto_total = 0;
+            $cuenta->id_restaurante = $request->id_restaurante;
             $cuenta->save();
             $cuentas->push($cuenta);
             

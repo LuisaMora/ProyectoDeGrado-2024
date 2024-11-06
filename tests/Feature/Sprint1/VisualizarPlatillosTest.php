@@ -52,6 +52,7 @@ class VisualizarPlatillosTest extends TestCase
             'fecha_contratacion' => now(),
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
 
         // Creación de usuario para el restaurante 2
@@ -73,7 +74,9 @@ class VisualizarPlatillosTest extends TestCase
         ]);
 
         // Crear 2 platillos en la base de datosasociados al menú del restaurante
-        Platillo::factory(2)->asignarMenu(1)->create();
+        Platillo::factory(2)->asignarMenu(1)->create([
+            'id_restaurante' => 1
+        ]);
     }
 
     /** @test */

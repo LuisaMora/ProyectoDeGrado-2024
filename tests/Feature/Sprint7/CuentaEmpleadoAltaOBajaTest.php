@@ -57,35 +57,45 @@ class CuentaEmpleadoAltaOBajaTest extends TestCase
         // Creación de empleado mesero asociado al propietario
         Empleado::create([
             'id_usuario' => User::factory()
-                ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create()->id,
+                ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create([
+                    'tipo_usuario' => 'Empleado'
+                ]
+                )->id,
             'id_rol' => 1,
             'id_propietario' => 1,
             'fecha_nacimiento' => '1999-01-01',
             'fecha_contratacion' => now(),
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
         // se crea cajero
         Empleado::create([
             'id_usuario' => User::factory()
-                ->asignarNicknameCorreo('cajero1', 'cajero1@gmail.com')->create()->id,
+                ->asignarNicknameCorreo('cajero1', 'cajero1@gmail.com')->create([
+                    'tipo_usuario' => 'Empleado'
+                ])->id,
             'id_rol' => 2,
             'id_propietario' => 1,
             'fecha_nacimiento' => '1999-01-01',
             'fecha_contratacion' => now(),
             'ci' => '153351529',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
         // se crea cocinero
         Empleado::create([
             'id_usuario' => User::factory()
-                ->asignarNicknameCorreo('cocinero1', 'cocinero1@gmail.com')->create()->id,
+                ->asignarNicknameCorreo('cocinero1', 'cocinero1@gmail.com')->create([
+                    'tipo_usuario' => 'Empleado'
+                ])->id,
             'id_rol' => 3,
             'id_propietario' => 1,
             'fecha_nacimiento' => '1999-01-01',
             'fecha_contratacion' => now(),
             'ci' => '70951561',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
     }
 

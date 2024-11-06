@@ -51,6 +51,7 @@ class RegistrarPlatilloRestauranteTest extends TestCase
             'fecha_contratacion' => now(),
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
         // Simular el sistema de archivos para pruebas
         Storage::fake('public');

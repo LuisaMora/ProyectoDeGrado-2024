@@ -62,41 +62,52 @@ class VisualizarPedidoCocineroTest extends TestCase
         Mesa::factory(2)->registrar_a_restaurante(1)->create();
 
         //  Insertar platillos al restaurante1
-        Platillo::factory(10)->asignarMenu(1)->create();
+        Platillo::factory(10)->asignarMenu(1)->create([
+            'id_restaurante' => 1
+        ]);
 
         // Creación de empleado asociado al propietario
         Empleado::create([
             'id_usuario' => User::factory()
-                ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create()->id,
+                ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create([
+                    'tipo_usuario' => 'Empleado' 
+                ])->id,
             'id_rol' => 1,
             'id_propietario' => 1,
             'fecha_nacimiento' => '1990-01-01',
             'fecha_contratacion' => now(),
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
-        // se crea cocinero
-        Empleado::create([
+         // se crea cocinero
+         Empleado::create([
             'id_usuario' => User::factory()
-                ->asignarNicknameCorreo('cocinero1', 'cocinero1@gmail.com')->create()->id,
+                ->asignarNicknameCorreo('cocinero1', 'cocinero1@gmail.com')->create([
+                    'tipo_usuario' => 'Empleado' 
+                ])->id,
             'id_rol' => 3,
             'id_propietario' => 1,
             'fecha_nacimiento' => '1990-01-01',
             'fecha_contratacion' => now(),
             'ci' => '70951561',
             'direccion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
 
         // se crea cajero
         Empleado::create([
             'id_usuario' => User::factory()
-                ->asignarNicknameCorreo('cajero1', 'cajero1@gmail.com')->create()->id,
+                ->asignarNicknameCorreo('cajero1', 'cajero1@gmail.com')->create([
+                    'tipo_usuario' => 'Empleado' 
+                ])->id,
             'id_rol' => 2,
             'id_propietario' => 1,
             'fecha_nacimiento' => '1990-01-01',
             'fecha_contratacion' => now(),
             'ci' => '70952261',
-            'direccion' => 'Cochabamba',
+            'direcion' => 'Cochabamba',
+            'id_restaurante' => 1
         ]);
 
         // crear las cuentas de los pedidos
@@ -110,6 +121,7 @@ class VisualizarPedidoCocineroTest extends TestCase
                 'monto_total' => 150.00,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'id_restaurante' =>1
             ],
             [
                 'id_mesa' => 2,
@@ -119,6 +131,7 @@ class VisualizarPedidoCocineroTest extends TestCase
                 'monto_total' => 80.00,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'id_restaurante' =>1
             ]
         ]);
 

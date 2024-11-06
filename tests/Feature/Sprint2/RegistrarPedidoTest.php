@@ -68,13 +68,16 @@ class RegistrarPedidoTest extends TestCase
         // Creación de empleado asociado al propietario
         Empleado::create([
             'id_usuario' => User::factory()
-                ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create()->id,
+                ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create([
+                    'tipo_usuario' => 'Empleado' 
+                ])->id,
             'id_rol' => 1,
             'id_propietario' => 1,
             'fecha_nacimiento' => '1990-01-01',
             'fecha_contratacion' => now(),
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
+            'id_restaurante' =>1
         ]);
 
         // Platillo::factory(10)->asignarMenu(1)->create();
@@ -160,18 +163,21 @@ class RegistrarPedidoTest extends TestCase
             'id_menu' => 1,
             'disponible' => true,
             'plato_disponible_menu' => true,
+            'id_restaurante' => 1,
         ]);
         // plato eliminado
         Platillo::factory()->create([
             'id_menu' => 1,
             'disponible' => false,
             'plato_disponible_menu' => true,
+            'id_restaurante' => 1,
         ]);
         // plato no habilitado en el manu
         Platillo::factory()->create([
             'id_menu' => 1,
             'disponible' => true,
             'plato_disponible_menu' => false,
+            'id_restaurante' => 1,
         ]);
 
         $token = $this->loginComoMesero();
@@ -194,7 +200,9 @@ class RegistrarPedidoTest extends TestCase
     public function test_store_pedido_guarda_correctamente()
     {
         // Crear platillos y obtener sus IDs
-        $platillos = Platillo::factory(3)->asignarMenu(1)->create();
+        $platillos = Platillo::factory(3)->asignarMenu(1)->create([
+            'id_restaurante' => 1
+        ]);
         $platilloIds = $platillos->pluck('id')->toArray();
 
         // Estructura de datos para el pedido usando los IDs obtenidos
@@ -355,7 +363,9 @@ class RegistrarPedidoTest extends TestCase
     public function test_store_pedido_asignar_pedidos_misma_mesa_misma_cuenta()
     {
         // Crear platillos
-        Platillo::factory(3)->asignarMenu(1)->create();
+        Platillo::factory(3)->asignarMenu(1)->create([
+            'id_restaurante' => 1
+        ]);
 
         $token = $this->loginComoMesero();
 
@@ -437,12 +447,14 @@ class RegistrarPedidoTest extends TestCase
             'nit' => 0,
             'monto_total' => 50, // Puedes establecer cualquier monto
             'estado' => 'Abierta', // Asegúrate de que la cuenta esté abierta
+            'id_restaurante' => 1
         ]);
         $cuenta = Cuenta::create([
             'id_mesa' => 1,
             'nit' => 0,
             'monto_total' => 50, // Puedes establecer cualquier monto
             'estado' => 'Abierta', // Asegúrate de que la cuenta esté abierta
+            'id_restaurante' => 1
         ]);
 
         $cuenta->created_at = now()->subDay(); // Fecha de un día anterior
@@ -450,7 +462,9 @@ class RegistrarPedidoTest extends TestCase
 
 
         // Crear platillos
-        Platillo::factory(3)->asignarMenu(1)->create();
+        Platillo::factory(3)->asignarMenu(1)->create([
+            'id_restaurante' => 1
+        ]);
 
         // Datos para el pedido que intentaremos crear
         $data = [

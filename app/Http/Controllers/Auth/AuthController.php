@@ -78,29 +78,25 @@ class AuthController extends Controller
         ], 200);
     }
 
-
-
     private function getDatosPersonales(User $user)
     {
-        $nameoftype = $user->getTipoUsuario();
-        switch ($nameoftype) {
-            case 'Administrador':
-                $user_data = Administrador::where('id_usuario', $user->id)->first();
-                break;
+        switch ($user->tipo_usuario) {
             case 'Propietario':
-                $user_data = Propietario::where('id_usuario', $user->id)->first();
+                $user_data = Propietario::select('id', 'id_administrador', 'ci', 'fecha_registro', 'pais', 'departamento', 'id_restaurante')
+                    ->where('id_usuario', $user->id)->first();
                 break;
             case 'Empleado':
-                $user_data = Empleado::where('id_usuario', $user->id)->first();
-                $user_data->id_restaurante = Propietario::select('id_restaurante')->where('id', $user_data->id_propietario)->first()->id_restaurante;
+                $user_data = Empleado::select('id', 'ci', 'fecha_nacimiento', 'fecha_contratacion', 'direccion', 'id_rol', 'id_restaurante')
+                    ->where('id_usuario', $user->id)->first();
                 break;
-            default:
-                return null;
+            case 'Administrador':
+                $user_data = Administrador::select('id')->where('id_usuario', $user->id)->first();
                 break;
+                // Agregar otros casos según sea necesario
         }
-        $user_data->tipo = $nameoftype;
         return $user_data;
     }
+
 
     private function attemptLogin($usuario, $password)
     {
@@ -151,7 +147,7 @@ class AuthController extends Controller
             DB::beginTransaction();
 
             $user = $this->actualizarDatosUsuario([''], $request);
-            
+
 
             DB::commit();
 

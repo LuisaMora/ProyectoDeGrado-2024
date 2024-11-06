@@ -87,6 +87,7 @@ class PreRegistroController extends Controller
             $usuario->apellido_paterno = $formPreRegistro->apellido_paterno_propietario;
             $usuario->apellido_materno = $formPreRegistro->apellido_materno_propietario;
             // Generar nickname
+            $usuario->tipo_usuario = 'Propietario';
             $usuario->nickname = str_replace(' ', '', $formPreRegistro->nombre_restaurante) . $formPreRegistro->nit;
             $usuario->foto_perfil = $formPreRegistro->fotografia_propietario;
             $usuario->save();
