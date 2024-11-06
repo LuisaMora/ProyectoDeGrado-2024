@@ -73,7 +73,6 @@ class RegistrarEmpleadoTest extends TestCase
 
     public function test_registro_exitoso_empleado()
     {
-        // Loguearse como propietario
         $token = $this->loginComoPropietario();
         $imagenFalsa = UploadedFile::fake()->image('foto.jpg');
 

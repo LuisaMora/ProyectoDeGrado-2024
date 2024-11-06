@@ -82,7 +82,8 @@ class VisualizarFormularioPreRegistroTest extends TestCase
                 'status' => 'success',
             ]);
 
-        // Verifica que los formularios están en el orden correcto (por fecha de actualización descendente)
+        // Verifica que los formularios están en el orden correcto 
+        //(por fecha de actualización descendente)
         $data = $response->json('data');
         $this->assertEquals('Restaurante Dos', $data[0]['nombre_restaurante']);
         $this->assertEquals('Restaurante Uno', $data[1]['nombre_restaurante']);

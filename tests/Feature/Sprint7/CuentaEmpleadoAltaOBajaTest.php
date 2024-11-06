@@ -100,7 +100,7 @@ class CuentaEmpleadoAltaOBajaTest extends TestCase
         return $response['token'];
     }
 
-    public function test_darDeBajaEmpleado()
+    public function test_dar_de_baja_empleado()
     {
         $token = $this->loginComoPropietario();
         $empleado = Empleado::first();
@@ -122,7 +122,7 @@ class CuentaEmpleadoAltaOBajaTest extends TestCase
         });
     }
 
-    public function test_darDeAltaEmpleado()
+    public function test_dar_de_alta_empleado()
     {
         $token = $this->loginComoPropietario();
         $empleado = Empleado::first();

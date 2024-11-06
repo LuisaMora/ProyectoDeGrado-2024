@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Sprint6;
 
-use App\Mail\ConfirmacionPreRegistro;
-use App\Mail\RechazoPreRegistro;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Administrador;
 use App\Models\EstadoPedido;
@@ -97,10 +95,8 @@ class CrearCuentaPropietarioTest extends TestCase
         return $response['token'];
     }
 
-    public function test_crea_cuenta_de_propietario_restaurante_y_menu_automaticamente()
+    public function test_crear_cuenta_de_propietario_restaurante_y_menu_automaticamente()
     {
-
-
         // Ejecutar la confirmación del formulario
         $token = $this->loginComoAdmin();
         $response = $this->withHeader('Authorization', "Bearer $token")

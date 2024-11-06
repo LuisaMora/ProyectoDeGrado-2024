@@ -68,7 +68,10 @@ class CuentaPropietarioAltaOBajaTest extends TestCase
     public function test_dar_baja_a_propietario()
     {
         // Obtener un propietario creado
-        $propietario = Propietario::first(); // Asegúrate de que hay un propietario en la base de datos
+        // Asegúrate de que hay un propietario en
+        // la base de datos
+        $propietario = Propietario::first(); 
+        
 
         // Asumimos que el propietario está activo
         $this->assertTrue($propietario->usuario->estado == '1');
@@ -93,7 +96,8 @@ class CuentaPropietarioAltaOBajaTest extends TestCase
 
         // Aquí verificar si se envió el correo de baja
         Mail::assertSent(BajaUsuario::class, function ($mail) use ($propietario) {
-            return $mail->usuario->id === $propietario->id_usuario; // Verifica el destinatario del correo
+            return $mail->usuario->id === $propietario->id_usuario; // Verifica el 
+            //destinatario del correo
         });
     }
 

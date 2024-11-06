@@ -4,8 +4,6 @@ namespace Tests\Feature\Sprint7;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Administrador;
-use App\Models\Categoria;
-use App\Models\Empleado;
 use App\Models\EstadoPedido;
 use App\Models\Mesa;
 use App\Models\Propietario;

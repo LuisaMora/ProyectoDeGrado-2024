@@ -114,7 +114,8 @@ class ValidarFormularioPreRegistroTest extends TestCase
             'estado' => 'aceptado'
         ]);
 
-        // Confirmamos que otros formularios del mismo propietario han sido marcados como 'rechazado'
+        // Confirmamos que otros formularios del mismo propietario han sido marcados 
+        // como 'rechazado'
         $this->assertDatabaseHas('formulario_pre_registro', [
             'id' => 4,
             'estado' => 'rechazado'
