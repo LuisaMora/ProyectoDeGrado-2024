@@ -22,11 +22,9 @@ use Illuminate\Support\Facades\File;
 
 class MenuController extends Controller
 {
-    public function index()
+    public function index($idRestaurante )
     {
-        $id_usuario = auth()->user()->id;
-        $propietario = Propietario::where('id_usuario', $id_usuario)->first();
-        $menu = $propietario->restaurante->menu;
+        $menu = Restaurante::find($idRestaurante)->menu;
         $platillos = Platillo::with('categoria')->where('id_menu', $menu->id)->where('disponible', true)->get();
         return response()->json(['status' => 'success', 'menu' => $menu, 'platillos' => $platillos], 200);
     }

@@ -84,7 +84,7 @@ class EditarMenuDigitalTest extends TestCase
         $token = $this->loginComoPropietario();
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->getJson('/api/menu');
+        ])->getJson('/api/menu/datos/1');
 
         // Verificar la respuesta
         $response->assertStatus(200)

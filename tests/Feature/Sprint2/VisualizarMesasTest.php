@@ -95,7 +95,7 @@ class VisualizarMesasTest extends TestCase
         $tokenPropietario =  $this->loginComoUsuario('propietarioA1', '12345678');
         $responsePropietario = $this->withHeaders([
             'Authorization' => 'Bearer ' . $tokenPropietario,
-        ])->getJson('/api/restaurante/mesas');
+        ])->getJson('/api/restaurante/mesas/1');
 
         $responsePropietario->assertStatus(200)
             ->assertJson(['status' => 'success']);
@@ -107,7 +107,7 @@ class VisualizarMesasTest extends TestCase
         $tokenMesero = $this->loginComoUsuario('mesero1', '12345678');
         $responseMesero = $this->withHeaders([
             'Authorization' => 'Bearer ' . $tokenMesero,
-        ])->getJson('/api/restaurante/mesas');
+        ])->getJson('/api/restaurante/mesas/1');
 
         $responseMesero->assertStatus(200)
             ->assertJson(['status' => 'success']);
@@ -116,7 +116,7 @@ class VisualizarMesasTest extends TestCase
         $tokenCocinero =  $this->loginComoUsuario('cocinero1', '12345678');
         $responseCocinero = $this->withHeaders([
             'Authorization' => 'Bearer ' . $tokenCocinero,
-        ])->getJson('/api/restaurante/mesas');
+        ])->getJson('/api/restaurante/mesas/1');
 
         $responseCocinero->assertStatus(200)
             ->assertJson(['status' => 'success']);
@@ -128,7 +128,7 @@ class VisualizarMesasTest extends TestCase
         $token = $this->loginComoUsuario('administrador', '12345678');
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->getJson('/api/restaurante/mesas');
+        ])->getJson('/api/restaurante/mesas/1');
 
         $response->assertStatus(403)
             ->assertJson(['status' => 'error']);

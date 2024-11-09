@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@show');
         Route::delete('/menu/categoria/{id}', 'App\Http\Controllers\CategoriaController@destroy');
 
-        Route::get('/menu', 'App\Http\Controllers\MenuController@index');
+        Route::get('/menu/datos/{idRestaurante}', 'App\Http\Controllers\MenuController@index');
         Route::post('/menu', 'App\Http\Controllers\MenuController@storeMenu');
 
         Route::post('/menu/generar/qr', 'App\Http\Controllers\MenuController@generateQr');
