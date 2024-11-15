@@ -45,15 +45,15 @@ class NotificacionController extends Controller
         if ($validarDatos->fails()) {
             return response()->json(['status' => 'error', 'message' => $validarDatos->errors()], 400);
         }
-        // if (in_array('all', $request->id_notificaciones)) {
-        //     $notificaciones = Notificacion::where('id_restaurante', $request->id_restaurante)
-        //         // ->where('id_creador', $userId)
-        //         ->update(['read_at' => now()]);
-        //     if ($notificaciones == 0) {
-        //         return response()->json(['status' => 'error', 'message' => 'No se encontraron notificaciones para marcar como leídas'], 404);
-        //     }
-        //     return response()->json(['status' => 'success', 'message' => 'Notificaciones marcadas como leídas'], 200);
-        // }
+        if (in_array('all', $request->id_notificaciones)) {
+            $notificaciones = Notificacion::where('id_restaurante', $request->id_restaurante)
+                // ->where('id_creador', $userId)
+                ->update(['read_at' => now()]);
+            if ($notificaciones == 0) {
+                return response()->json(['status' => 'error', 'message' => 'No se encontraron notificaciones para marcar como leídas'], 404);
+            }
+            return response()->json(['status' => 'success', 'message' => 'Notificaciones marcadas como leídas'], 200);
+        }
 
         $notificaciones = Notificacion::whereIn('id', $request->id_notificaciones)
             ->where('id_restaurante', $request->id_restaurante)
