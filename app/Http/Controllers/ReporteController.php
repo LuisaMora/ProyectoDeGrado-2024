@@ -116,13 +116,22 @@ class ReporteController extends Controller
         )) as platillos');
         } else {
             $pedidosQuery->selectRaw("group_concat(
-                CONCAT(platillos.id, ':', platillos.nombre, ':', platillos.precio, ':', plato_pedido.cantidad, ':', plato_pedido.detalle)
-                SEPARATOR '|'
-            ) as platillos");
+            CONCAT(platillos.id, ':', platillos.nombre, ':', platillos.precio, ':', plato_pedido.cantidad, ':', plato_pedido.detalle)
+            SEPARATOR '|'
+        ) as platillos");
         }
 
-        $pedidos = $pedidosQuery->groupBy('cuentas.id', 'pedidos.id', 'usuarios.nombre', 'usuarios.apellido_paterno', 'estado_pedidos.nombre')->get();
-
+        // Añade las columnas al GROUP BY
+        $pedidos = $pedidosQuery->groupBy(
+            'cuentas.id',
+            'pedidos.id',
+            'usuarios.nombre',
+            'usuarios.apellido_paterno',
+            'estado_pedidos.nombre',
+            'pedidos.monto',
+            'cuentas.created_at'
+        );
+        
         return $pedidos->map(function ($pedido) use ($dbDriver) {
             $platillos = $dbDriver === 'pgsql'
                 ? json_decode($pedido->platillos)
