@@ -40,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
         
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show'); // borrar esto despiues de probar con front
-        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
+        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
         Route::get('/empleados', 'App\Http\Controllers\Auth\CuentaUsuarioController@empleados');
 
         Route::put('/empleado/dar-baja/{id_usuario}', function($id_usuario) {
@@ -116,7 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
         Route::get('/restaurante/mesas/{idRestaurante}', 'App\Http\Controllers\MesaController@index');
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
-        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
+        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
         Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
     });
     
@@ -128,8 +128,8 @@ Route::post('/login', 'App\Http\Controllers\Auth\AuthController@login');
 
 Route::post('/pre-registro', 'App\Http\Controllers\PreRegistroController@store');
 
-Route::post('solicitar-cambio-contrasenia', 'App\Http\Controllers\auth\AuthController@solicitarCambioContrasenia');
-Route::post('/restablecer-contrasenia-olvidada', 'App\Http\Controllers\auth\AuthController@restablecerContrasenia');
+Route::post('solicitar-cambio-contrasenia', 'App\Http\Controllers\Auth\AuthController@solicitarCambioContrasenia');
+Route::post('/restablecer-contrasenia-olvidada', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
 
 
 Route::get('/prohibido', function () {

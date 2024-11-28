@@ -116,9 +116,9 @@ class ReporteController extends Controller
         )) as platillos');
         } else {
             $pedidosQuery->selectRaw("group_concat(
-                CONCAT(platillos.id, ':', platillos.nombre, ':', platillos.precio, ':', plato_pedido.cantidad, ':', plato_pedido.detalle)
-                SEPARATOR '|'
-            ) as platillos");
+            CONCAT(platillos.id, ':', platillos.nombre, ':', platillos.precio, ':', plato_pedido.cantidad, ':', plato_pedido.detalle)
+            SEPARATOR '|'
+        ) as platillos");
         }
 
         $pedidos = $pedidosQuery->groupBy(
