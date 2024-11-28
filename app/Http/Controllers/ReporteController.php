@@ -121,7 +121,15 @@ class ReporteController extends Controller
             ) as platillos");
         }
 
-        $pedidos = $pedidosQuery->groupBy('cuentas.id', 'pedidos.id', 'usuarios.nombre', 'usuarios.apellido_paterno', 'estado_pedidos.nombre')->get();
+        $pedidos = $pedidosQuery->groupBy(
+            'cuentas.id', 
+            'pedidos.id', 
+            'usuarios.nombre', 
+            'usuarios.apellido_paterno', 
+            'estado_pedidos.nombre', 
+            'pedidos.monto', 
+            'cuentas.created_at'
+        )->get();
 
         return $pedidos->map(function ($pedido) use ($dbDriver) {
             $platillos = $dbDriver === 'pgsql'
