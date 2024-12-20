@@ -9,6 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    // debe existir 4 estados: 1.-En espera 2.-En preparacion 3.-Listo para servir 4.-Servido
     public function up(): void
     {
         Schema::create('estado_pedidos', function (Blueprint $table) {

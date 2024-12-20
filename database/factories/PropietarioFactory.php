@@ -19,11 +19,15 @@ class PropietarioFactory extends Factory
     public function asignarDatosSesion($nickname, $correo){
         if($nickname && $correo)
         return $this->state( [
-            'id_usuario' => User::factory()->asignarNicknameCorreo($nickname, $correo),
+            'id_usuario' => User::factory()->asignarNicknameCorreo($nickname, $correo)->create([
+                'tipo_usuario' => 'Propietario'
+            ]),
         ]);
         else
         return $this->state( [
-            'id_usuario' => User::factory(),
+            'id_usuario' => User::factory()->create([
+                'tipo_usuario' => 'Propietario'
+            ]),
         ]);
     }
     public function definition(): array

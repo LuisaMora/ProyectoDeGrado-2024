@@ -22,6 +22,7 @@ class PlatilloFactory extends Factory
     public function asignarMenu($id_menu){
         return $this->state( [
             'id_menu' => $id_menu,
+            'id_restaurante'=>$id_menu
         ]);
     }
     public function definition(): array

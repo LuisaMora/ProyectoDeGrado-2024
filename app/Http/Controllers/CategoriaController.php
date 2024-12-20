@@ -10,7 +10,6 @@ use App\Models\Restaurante;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class CategoriaController extends Controller
 {
@@ -21,7 +20,7 @@ class CategoriaController extends Controller
         
         // Verifica que se haya encontrado un id_menu
         if (!$id_menu) {
-            return response()->json(['status' => 'error', 'message' => 'Menu not found for the given restaurant.'], 404);
+            return response()->json(['status' => 'error', 'message' => 'Menu no encontrado para el restaurante.'], 404);
         }
         
         // Obtén las categorías asociadas al id_menu y con estado true
@@ -29,7 +28,7 @@ class CategoriaController extends Controller
         
         // Verifica que se hayan encontrado categorías
         if ($categorias->isEmpty()) {
-            return response()->json(['status' => 'error', 'message' => 'No categories found for the given menu.'], 404);
+            return response()->json(['status' => 'error', 'message' => 'Categorias no encontradas para el menu.'], 404);
         }
         
         return response()->json(['status' => 'success', 'categorias' => $categorias], 200);
@@ -44,10 +43,13 @@ class CategoriaController extends Controller
         ]);
 
         if ($validarDatos->fails()) {
-            return response()->json(['status' => 'error', 'error' => $validarDatos->errors()], 400);
+            return response()->json(['status' => 'error', 'errors' => $validarDatos->errors()], 422);
         }
         $restaurante=Restaurante::find($request->id_restaurante);
-        $imagen = ImageHandler::guardarImagen($request->file('imagen'), 'categorias');
+        if ($restaurante == null){
+            return response()->json(['status' => 'error', 'message' => 'restaurante no encontrado'], 404);
+        }
+        $imagen = ImageHandler::guardarArchivo($request->file('imagen'), 'categorias');
 
         $categoria = new Categoria();
         $categoria->nombre=$request->nombre;
@@ -72,6 +74,9 @@ class CategoriaController extends Controller
     function update(Request $request, $id)
     {
         DB::beginTransaction();
+        if ((int)$id === 1) {
+            return response()->json(['message' => 'No se puede editar la categoria por defecto.'], 400);
+        }
         $categoria = Categoria::find($id);
         if ($categoria == null) {
             return response()->json(['message' => 'Categoria no encontrada.'], 404);
@@ -81,13 +86,13 @@ class CategoriaController extends Controller
         $categoria->update($request->all());
         if ($request->imagen != null) {
             //$categoria->imagen = '/storage/categorias/05bc509bb2added0a71009299593455a1715808837.jpeg'
-            $res = ImageHandler::eliminarImagenes([$rutaImagen]);
+            $res = ImageHandler::eliminarArchivos([$rutaImagen]);
             // if (!$res) {
                 // DB::rollBack();
                 // return response()->json(['message' => 'Error al eliminar la imagen.'], 500);
 
             // }
-            $imagen = ImageHandler::guardarImagen($request->file('imagen'), 'categorias');
+            $imagen = ImageHandler::guardarArchivo($request->file('imagen'), 'categorias');
             $categoria->imagen = $imagen;
         }
         $categoria->save();
@@ -108,6 +113,6 @@ class CategoriaController extends Controller
         $categoria->save();
         Platillo::where('id_categoria', $id)
             ->update(['id_categoria' => 1]);
-        return response()->json(['status' => 'success', 'message' => 'Categoria eliminada.'], 200);
+        return response()->json(['status' => 'success', 'message' => 'Categoria eliminada.','categoria' => $categoria], 200);
     }
 }

@@ -32,28 +32,28 @@ class EmpleadoSeeder extends Seeder
 
         $empleado = Empleado::where('id_propietario', 2)->where('id_rol', 1)->first();
         $usuario = $empleado->User;
-        $usuario->nickname = 'meseror2';
+        $usuario->nickname = 'mesero2';
         $usuario->save();
         $empleado = Empleado::where('id_propietario', 2)->where('id_rol', 2)->first();
         $usuario = $empleado->User;
-        $usuario->nickname = 'cajeror2';
+        $usuario->nickname = 'cajero2';
         $usuario->save();
         $empleado = Empleado::where('id_propietario', 2)->where('id_rol', 3)->first();
         $usuario = $empleado->User;
-        $usuario->nickname = 'cocineror2';
+        $usuario->nickname = 'cocinero2';
         $usuario->save();
 
         $empleado = Empleado::where('id_propietario', 3)->where('id_rol', 1)->first();
         $usuario = $empleado->User;
-        $usuario->nickname = 'meseror3';
+        $usuario->nickname = 'mesero3';
         $usuario->save();
         $empleado = Empleado::where('id_propietario', 3)->where('id_rol', 2)->first();
         $usuario = $empleado->User;
-        $usuario->nickname = 'cajeror3';
+        $usuario->nickname = 'cajero3';
         $usuario->save();
         $empleado = Empleado::where('id_propietario', 3)->where('id_rol', 3)->first();
         $usuario = $empleado->User;
-        $usuario->nickname = 'cocineror3';
+        $usuario->nickname = 'cocinero3';
         $usuario->save();
     }
 }

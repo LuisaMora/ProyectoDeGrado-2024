@@ -16,6 +16,7 @@ class Categoria extends Model
         'nombre',
         'imagen',
         'estado',
+        'id_menu'
     ];
     public function platillos()
     {

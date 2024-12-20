@@ -20,6 +20,7 @@ class Empleado extends Model
         'fecha_contratacion',
         'ci',
         'direccion',
+        'id_restaurante'
     ];
 
     public function User()

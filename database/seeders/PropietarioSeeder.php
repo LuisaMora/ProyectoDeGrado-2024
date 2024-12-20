@@ -13,7 +13,7 @@ class PropietarioSeeder extends Seeder
     public function run(): void
     {
         Propietario::factory(1)->asignarDatosSesion('propietario', 'propietario@gmail.com')->create();
-        Propietario::factory(1)->asignarDatosSesion('propietarior2','propietarior2@gmail.com')->create();
-        Propietario::factory(1)->asignarDatosSesion('propietarior3','propietarior3@gmail.com')->create();
+        Propietario::factory(1)->asignarDatosSesion('propietario2','propietario2@gmail.com')->create();
+        Propietario::factory(1)->asignarDatosSesion('propietario3','propietario3@gmail.com')->create();
     }
 }

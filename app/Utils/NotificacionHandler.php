@@ -53,7 +53,7 @@ class NotificacionHandler
             }
 
             // Verificar que $mensaje no esté vacío antes de crear la notificación
-            if (!empty($mensaje)) {
+            if (!empty($mensaje) && $idEstado != 1) {
                 $notificacion = new Notificacion();
                 $notificacion->id_pedido = $pedido->id;
                 $notificacion->id_creador = $user->id;
@@ -68,11 +68,7 @@ class NotificacionHandler
                 $notificacion->save();
                 $creado_hace = $notificacion->created_at->diffForHumans();
                 NotificacionEvent::dispatch($notificacion, $idRestaurante, $creado_hace, $idPedidoEmpleado);
-            } else {
-                // Manejar el caso en el que $mensaje esté vacío
-                print_r('No se generó un mensaje de notificación');
-                return response()->json(['status' => 'error', 'message' => 'No se generó un mensaje de notificación'], 400);
-            }
+            } 
         } else {
             // Manejar el caso en el que no hay un usuario autenticado
             return response()->json(['status' => 'error', 'message' => 'Usuario no autenticado'], 401);

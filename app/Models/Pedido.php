@@ -25,7 +25,8 @@ class Pedido extends Model
     public function platos()
     {
         return $this->belongsToMany(Platillo::class, 'plato_pedido', 'id_pedido', 'id_platillo')
-            ->withPivot('detalle', 'cantidad');
+            ->withPivot('precio_fijado', 'cantidad', 'detalle') // Asegúrate de que este campo existe en tu tabla pivot
+            ->withTimestamps(); // Solo si usas timestamps, puedes omitir si no
     }
 
     public function estado()
