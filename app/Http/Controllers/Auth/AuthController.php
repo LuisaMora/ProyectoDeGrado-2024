@@ -43,7 +43,7 @@ class AuthController extends Controller
         } else {
             // Implementar un sistema de rate limiting o captchas para múltiples intentos fallidos
             return response()->json([
-                'message' => 'Credenciales inválidas'
+                'message' => 'Usuario o contraseña invalidos.'
             ], 401);
         }
     }
@@ -78,29 +78,25 @@ class AuthController extends Controller
         ], 200);
     }
 
-
-
     private function getDatosPersonales(User $user)
     {
-        $nameoftype = $user->getTipoUsuario();
-        switch ($nameoftype) {
-            case 'Administrador':
-                $user_data = Administrador::where('id_usuario', $user->id)->first();
-                break;
+        switch ($user->tipo_usuario) {
             case 'Propietario':
-                $user_data = Propietario::where('id_usuario', $user->id)->first();
+                $user_data = Propietario::select('id', 'id_administrador', 'ci', 'fecha_registro', 'pais', 'departamento', 'id_restaurante')
+                    ->where('id_usuario', $user->id)->first();
                 break;
             case 'Empleado':
-                $user_data = Empleado::where('id_usuario', $user->id)->first();
-                $user_data->id_restaurante = Propietario::select('id_restaurante')->where('id', $user_data->id_propietario)->first()->id_restaurante;
+                $user_data = Empleado::select('id', 'ci', 'fecha_nacimiento', 'fecha_contratacion', 'direccion', 'id_rol', 'id_restaurante')
+                    ->where('id_usuario', $user->id)->first();
                 break;
-            default:
-                return null;
+            case 'Administrador':
+                $user_data = Administrador::select('id')->where('id_usuario', $user->id)->first();
                 break;
+                // Agregar otros casos según sea necesario
         }
-        $user_data->tipo = $nameoftype;
         return $user_data;
     }
+
 
     private function attemptLogin($usuario, $password)
     {
@@ -137,7 +133,6 @@ class AuthController extends Controller
             'correo' => 'required|email|max:150',
             'nickname' => 'required|max:100|min:2',
             'foto_perfil' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // La imagen es opcional
-            'ci' => 'required|integer|min:1'
         ]);
 
         // Verificar si la validación falló
@@ -152,17 +147,13 @@ class AuthController extends Controller
             DB::beginTransaction();
 
             $user = $this->actualizarDatosUsuario([''], $request);
-            $user_data = $this->getDatosPersonales($user);
-            $user_data->ci = $request->ci;
-            //quitar tipo del user_data
-            unset($user_data->tipo);
+
 
             DB::commit();
 
             return response()->json([
                 'message' => 'Datos actualizados correctamente',
                 'user' => $user,
-                'user_data' => $user_data
             ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -238,8 +229,6 @@ class AuthController extends Controller
 
             return response()->json(['message' => 'Correo de restablecimiento enviado.']);
         }
-
-        return response()->json(['message' => 'Error al solicitar el cambio de contraseña.'], 500);
     }
 
     public function restablecerContrasenia(Request $request)

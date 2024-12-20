@@ -24,28 +24,23 @@ class PedidoController extends Controller
     {
         $tipoEmpleado = User::find(auth()->user()->id)->getTipoEmpleado();
         if ($tipoEmpleado == 1) {
-            $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
-                ->whereDate('fecha_hora_pedido', now())
-                ->where('id_empleado', $idEmpleado)
-                ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
-                    $query->where('id_restaurante', $idRestaurante);
-                })
-                ->whereHas('cuenta', function ($query) {
-                    $query->where('estado', '!=', 'Pagada');
-                })
-                ->get();
+            $pedidosPorMesa = Pedido::with([
+                'cuenta.mesa', 
+                'platos', // Ahora puedes acceder a precio_fijado directamente en la relación
+                'estado'
+            ])
+            ->whereDate('fecha_hora_pedido', now())
+            ->where('id_empleado', $idEmpleado)
+            ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
+                $query->where('id_restaurante', $idRestaurante);
+            })
+            ->whereHas('cuenta', function ($query) {
+                $query->where('estado', '!=', 'Pagada');
+            })
+            ->get()
+            ->groupBy('cuenta.mesa.id'); // Agrupar pedidos por ID de mesa
+        $pedidos = $this->transformarDatosPedido($pedidosPorMesa);
         } else if ($tipoEmpleado == 3) {
-            $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
-                ->whereDate('fecha_hora_pedido', now())
-                ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
-                    $query->where('id_restaurante', $idRestaurante);
-                })
-                ->whereHas('cuenta', function ($query) {
-                    $query->where('estado', '!=', 'Pagada');
-                })
-                ->get();
-        } else 
-            if ($tipoEmpleado == 2) {
             $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
                 ->whereDate('fecha_hora_pedido', now())
                 ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
@@ -135,24 +130,6 @@ class PedidoController extends Controller
         }
     }
 
-    function delete($id)
-    {
-        $pedido = Pedido::find($id);
-        if ($pedido == null) {
-            return response()->json(['status' => 'error', 'error' => 'El pedido no existe.'], 404);
-        }
-        $estadoCuenta = $pedido->cuenta->estado;
-        if ($estadoCuenta != 1) {
-            return response()->json(['status' => 'error', 'error' => 'No se puede cancelar un pedido de una cuenta pagada.'], 400);
-        }
-
-        $platosPedidos = PlatoPedido::where('id_pedido', $id)->get();
-        foreach ($platosPedidos as $platoPedido) {
-            $platoPedido->delete();
-        }
-        $pedido->delete();
-        return response()->json(['status' => 'success', 'message' => 'Pedido cancelado.'], 200);
-    }
 
     protected function obtenerOCrearCuenta(Request $request)
     {
@@ -164,6 +141,7 @@ class PedidoController extends Controller
             $cuenta = new Cuenta();
             $cuenta->id_mesa = $request->id_mesa;
             $cuenta->monto_total = 0;
+            $cuenta->id_restaurante = $request->id_restaurante;
             $cuenta->save();
             $cuentas->push($cuenta);
             
@@ -202,37 +180,81 @@ class PedidoController extends Controller
         return $monto;
     }
 
-    public function destroy($id)
-    {
-        $pedido = Pedido::find($id);
+    // public function destroy($id)
+    // {
+    //     $pedido = Pedido::find($id);
 
-        if (!$pedido) {
-            return response()->json(['status' => 'error', 'error' => 'Pedido no encontrado.'], 404);
+    //     if (!$pedido) {
+    //         return response()->json(['status' => 'error', 'error' => 'Pedido no encontrado.'], 404);
+    //     }
+
+    //     $cuenta = $pedido->cuenta;
+
+    //     // Verifica el estado de la cuenta antes de eliminar el pedido
+    //     if (in_array($cuenta->estado, ['Pagada', 'Cancelada'])) {
+    //         return response()->json(['status' => 'error', 'error' => 'No se puede eliminar un pedido de una cuenta pagada o cancelada.'], 400);
+    //     }
+    //     $montoPedido = $pedido->monto;
+
+    //     // Obtener los platos del pedido
+    //     $platosPedidos = PlatoPedido::where('id_pedido', $pedido->id)->get();
+
+    //     // Eliminar los platos asociados al pedido
+    //     foreach ($platosPedidos as $platoPedido) {
+    //         $platoPedido->delete();
+    //     }
+
+    //     // Eliminar el pedido
+    //     $pedido->delete();
+
+    //     // Actualizar el monto total de la cuenta
+    //     $cuenta->monto_total -= $montoPedido;
+    //     $cuenta->save();
+
+    //     return response()->json(['status' => 'success', 'message' => 'Pedido eliminado correctamente.'], 200);
+    // }
+
+    private function transformarDatosPedido($pedidosPorMesa) {
+        $resultados = [];
+    
+        foreach ($pedidosPorMesa as $idMesa => $pedidos) {
+            // Obtener los datos de la cuenta
+            $primero = $pedidos->first(); // Tomar el primer pedido para obtener los datos de la cuenta y la mesa
+    
+            // Crear la estructura para cada mesa
+            $pedidosMesa = [
+                'id_cuenta' => $primero->cuenta->id,
+                'monto_total' => $primero->cuenta->monto_total, // Asumiendo que esta propiedad está disponible
+                'nombreMesa' => $primero->cuenta->mesa->nombre, // Asumiendo que la relación está disponible
+                'estado_cuenta' => $primero->cuenta->estado,
+                'pedidos' => [] // Inicializar el arreglo de pedidos
+            ];
+    
+            // Iterar sobre los pedidos y transformar a la estructura deseada
+            foreach ($pedidos as $pedido) {
+                $pedidosMesa['pedidos'][] = [
+                    'id_pedido' => $pedido->id,
+                    'estado' => $pedido->estado->nombre, // Suponiendo que tienes una relación con estado
+                    'platos' => [], // Inicializar el arreglo de platos
+                    'monto' => $pedido->monto,
+                ];
+    
+                // Agregar los platos al pedido
+                foreach ($pedido->platos as $plato) {
+                    $pedidosMesa['pedidos'][count($pedidosMesa['pedidos']) - 1]['platos'][] = [
+                        'nombre' => $plato->nombre, // Suponiendo que esta propiedad existe
+                        'precio_fijado' => $plato->pivot->precio_fijado, // Asegúrate de que el precio_fijado esté en la tabla pivot
+                        'cantidad' => $plato->pivot->cantidad, // Asegúrate de que la cantidad esté en la tabla pivot
+                        'detalle' => $plato->detalle // Asumiendo que tienes un detalle del plato
+                    ];
+                }
+            }
+    
+            $resultados[] = $pedidosMesa; // Agregar el objeto de mesa al resultado final
         }
-
-        $cuenta = $pedido->cuenta;
-
-        // Verifica el estado de la cuenta antes de eliminar el pedido
-        if (in_array($cuenta->estado, ['Pagada', 'Cancelada'])) {
-            return response()->json(['status' => 'error', 'error' => 'No se puede eliminar un pedido de una cuenta pagada o cancelada.'], 400);
-        }
-        $montoPedido = $pedido->monto;
-
-        // Obtener los platos del pedido
-        $platosPedidos = PlatoPedido::where('id_pedido', $pedido->id)->get();
-
-        // Eliminar los platos asociados al pedido
-        foreach ($platosPedidos as $platoPedido) {
-            $platoPedido->delete();
-        }
-
-        // Eliminar el pedido
-        $pedido->delete();
-
-        // Actualizar el monto total de la cuenta
-        $cuenta->monto_total -= $montoPedido;
-        $cuenta->save();
-
-        return response()->json(['status' => 'success', 'message' => 'Pedido eliminado correctamente.'], 200);
+    
+        return $resultados; // Retornar la estructura transformada
     }
+    
+
 }

@@ -4,21 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Empleado;
+use App\Models\Mesa;
 use App\Models\Propietario;
-use App\Models\User;
 
 class MesaController extends Controller
 {
-    public function index()
+    public function index($idRestaurante)
     {
         $id_usuario = auth()->user()->id;
-        $usuario = User::find($id_usuario);
-        $tipo_usuario = $usuario->getTipoUsuario();
+        $tipo_usuario = auth()->user()->tipo_usuario;
 
-        if($tipo_usuario == 'Propietario'){
-            $mesas = Propietario::where('id_usuario', $id_usuario)->first()->restaurante->mesas;
-        }elseif($tipo_usuario == 'Empleado') {
-            $mesas = Empleado::where('id_usuario', $id_usuario)->first()->propietario->restaurante->mesas;
+        if($tipo_usuario == 'Propietario' || $tipo_usuario == 'Empleado'){
+            $mesas = Mesa::select('id','id_restaurante','nombre')->where('id_restaurante', $idRestaurante)->get();
         }else{
             return response()->json(['status' => 'error', 'message' => 'Este usuario no puede ver las mesas'], 403);
         }

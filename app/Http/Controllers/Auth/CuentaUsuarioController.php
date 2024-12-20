@@ -33,9 +33,8 @@ class CuentaUsuarioController extends Controller
         if (!$usuario) {
             return response()->json(['status' => 'error', 'message' => 'Usuario no encontrado'], 404);
         }
-
         if ($rol === 'empleado') {
-            $relacion = Empleado::where('id_usuario', $id_usuario)->where('id_propietario', auth()->user()->id)->first();
+            $relacion = Empleado::where('id_usuario', $id_usuario)->first();
         } else if ($rol === 'propietario') {
             $relacion = Propietario::where('id_usuario', $id_usuario)->first();
         }
@@ -67,17 +66,5 @@ class CuentaUsuarioController extends Controller
     }
 
 
-    // public function store(StoreUserRequest $request)
-    // {
-    //     try {
-    //         $user = new User($request->all());
-
-    //         $user->save();
-
-    //         return response()->json(['status' => 'success', 'data' => $user], 201);
-    //     } catch (\Throwable $th) {
-    //         return response()->json(['status' => 'error', 'message' => $th->getMessage()], 500);
-    //     }
-    // }
 
 }

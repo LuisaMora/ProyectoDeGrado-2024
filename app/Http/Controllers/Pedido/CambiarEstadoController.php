@@ -20,22 +20,22 @@ class CambiarEstadoController extends Controller
         $this->notificacionHandler = new NotificacionHandler();
     }
 
-    function cambiarid_estadoPedido($idPedido, $id_estado)
-    {
-        $validate = Validator::make(['id_estado' => $id_estado], ['id_estado' => 'required|string|in:local,llevar'],[
-            'id_estado.in' => 'El campo id_estado debe ser "local" o "llevar".',
-        ]);
-        if ($validate->fails()) {
-            return response()->json(['status' => 'error', 'error' => $validate->errors()], 400);
-        }
-        $pedido = Pedido::find($idPedido);
-        if ($pedido == null) {
-            return response()->json(['status' => 'error', 'message' => 'Pedido no encontrado'], 404);
-        }
-        $pedido->id_estado = $id_estado;
-        $pedido->save();
-        return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
-    }
+    // function cambiarid_estadoPedido($idPedido, $id_estado)
+    // {
+    //     $validate = Validator::make(['id_estado' => $id_estado], ['id_estado' => 'required|string|in:local,llevar'],[
+    //         'id_estado.in' => 'El campo id_estado debe ser "local" o "llevar".',
+    //     ]);
+    //     if ($validate->fails()) {
+    //         return response()->json(['status' => 'error', 'error' => $validate->errors()], 400);
+    //     }
+    //     $pedido = Pedido::find($idPedido);
+    //     if ($pedido == null) {
+    //         return response()->json(['status' => 'error', 'message' => 'Pedido no encontrado'], 404);
+    //     }
+    //     $pedido->id_estado = $id_estado;
+    //     $pedido->save();
+    //     return response()->json(['status' => 'success', 'pedido' => $pedido], 200);
+    // }
 
     function update(Request $request)
     {

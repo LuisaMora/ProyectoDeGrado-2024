@@ -34,13 +34,14 @@ class UserFactory extends Factory
         return [
             'nombre' => $this->faker->firstName(),
             'apellido_paterno' => $this->faker->lastName(),
-            'apellido_materno' => $this->faker->optional()->lastName(),
+            'apellido_materno' => $this->faker->lastName(),
             'nickname' => $this->faker->unique()->userName(),
             'foto_perfil' => '/storage/imagenes/usuarios/default.png',
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('12345678'),
+            'password' => static::$password ??= Hash::make('Furiosa12345678'),
             'remember_token' => Str::random(10),
             'correo' => fake()->unique()->safeEmail(),
+            'tipo_usuario' => 'Propietario'
         ];
     }
 
