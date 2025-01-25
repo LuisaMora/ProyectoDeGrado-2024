@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('fecha_contratacion')->nullable();
             $table->integer('ci')->nullable();
             $table->string('direccion', 150)->nullable();
+            $table->foreignId('id_restaurante')->constrained('restaurantes')->onDelete('restrict')->onUpdate('restrict');
             $table->timestamps();
         });
     }

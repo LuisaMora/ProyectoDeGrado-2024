@@ -25,6 +25,8 @@ return new class extends Migration
 
             $table->foreign('id_menu')->references('id')->on('menus')->onDelete('restrict')->onUpdate('restrict');
             $table->foreign('id_categoria')->references('id')->on('categorias')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreignId('id_restaurante')->constrained('restaurantes')->onDelete('restrict')->onUpdate('restrict');
+
         });
     }
 

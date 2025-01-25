@@ -15,11 +15,13 @@ return new class extends Migration
             $table->id(); // Columna autoincrementable para la clave primaria
             $table->unsignedBigInteger('id_menu')->nullable();
             $table->string('nombre', 100);
-            $table->bigInteger('nit');
-            $table->string('direccion', 100);
-            $table->integer('telefono');
-            $table->string('correo', 100);
+            $table->bigInteger('nit')->unique();
+            $table->decimal('latitud', 9, 6);
+            $table->decimal('longitud', 9, 6);
+            $table->string('celular', 20);
+            $table->string('correo', 100)->unique( );
             $table->string('licencia_funcionamiento', 100);
+            $table->string('tipo_establecimiento', 100);
             $table->timestamps();
 
             // Clave foránea

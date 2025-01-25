@@ -16,4 +16,9 @@ class Mesa extends Model
         'nombre',
         'id_restaurante',
     ];
-}
+        // Relación con el modelo Restaurante
+        public function restaurante()
+        {
+            return $this->belongsTo(Restaurante::class, 'id_restaurante');
+        }
+    }

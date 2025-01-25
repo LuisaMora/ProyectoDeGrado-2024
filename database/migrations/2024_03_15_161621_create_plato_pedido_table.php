@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_platillo');
             $table->unsignedBigInteger('id_pedido');
-            $table->unsignedBigInteger('id_estado');
+            
             $table->text('detalle')->nullable();
             $table->integer('cantidad');
             $table->timestamps();
+            $table->integer('precio_fijado');
 
             $table->foreign('id_platillo')->references('id')->on('platillos')->onDelete('restrict')->onUpdate('restrict');
             $table->foreign('id_pedido')->references('id')->on('pedidos')->onDelete('restrict')->onUpdate('restrict');
-            $table->foreign('id_estado')->references('id')->on('estado_pedidos')->onDelete('restrict')->onUpdate('restrict');
+        
         });
     }
 

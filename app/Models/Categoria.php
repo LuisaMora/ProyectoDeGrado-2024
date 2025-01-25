@@ -16,5 +16,15 @@ class Categoria extends Model
         'nombre',
         'imagen',
         'estado',
+        'id_menu'
     ];
+    public function platillos()
+    {
+        return $this->hasMany(Platillo::class, 'id_categoria');
+    }
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class, 'id_menu');
+    }
+    
 }

@@ -20,9 +20,14 @@ class Empleado extends Model
         'fecha_contratacion',
         'ci',
         'direccion',
+        'id_restaurante'
     ];
 
     public function User()
+    {
+        return $this->belongsTo(User::class, 'id_usuario');
+    }
+    public function usuario()
     {
         return $this->belongsTo(User::class, 'id_usuario');
     }
@@ -35,5 +40,9 @@ class Empleado extends Model
     public function propietario()
     {
         return $this->belongsTo(Propietario::class, 'id_propietario');
+    }
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class, 'id_empleado');
     }
 }

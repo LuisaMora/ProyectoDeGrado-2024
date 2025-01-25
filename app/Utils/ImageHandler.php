@@ -6,14 +6,18 @@ use Illuminate\Support\Facades\Storage;
 
 class ImageHandler
 {
-    public static function guardarImagen($imagen,$nombreCarpeta)
+    public static function guardarArchivo($archivo ,$nombreCarpeta)
     {
-        $categoriaImg = md5_file($imagen->getRealPath()).time() .'.'. $imagen->getClientOriginalExtension();
-        $path = $imagen->storeAs('public/'.$nombreCarpeta, $categoriaImg);
+        //crear carpeta si no existe
+        if (!Storage::exists('public/'.$nombreCarpeta)) {
+            Storage::makeDirectory('public/'.$nombreCarpeta);
+        }
+        $categoriaImg = md5_file($archivo ->getRealPath()).time() .'.'. $archivo ->getClientOriginalExtension();
+        $path = $archivo ->storeAs('public/'.$nombreCarpeta, $categoriaImg);
         return Storage::url($path);
     }
 
-    public static function eliminarImagenes(array $directions)
+    public static function eliminarArchivos(array $directions)
 {
     $eliminados = true;
 

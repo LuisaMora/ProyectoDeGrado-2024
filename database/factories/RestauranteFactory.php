@@ -21,10 +21,12 @@ class RestauranteFactory extends Factory
             'nombre' => $this->faker->name(),
             'id_menu' => Menu::factory(),
             'nit' => $this->faker->numberBetween(10000000000, 99999999999),
-            'direccion' => $this->faker->address(),
-            'telefono' => $this->faker->numberBetween(40000000, 99999999),
+            'latitud' => $this->faker->latitude(),
+            'longitud' => $this->faker->longitude(),
+            'celular' => $this->faker->numberBetween(40000000, 99999999),
             'correo' => $this->faker->email(),
             'licencia_funcionamiento' =>fake()->imageUrl(),
+            'tipo_establecimiento' => $this->faker->randomElement(['Restaurante','Cafeteria','Bar','Pasteleria', 'Pizzeria','Otro']) ,
         ];
     }
 }
