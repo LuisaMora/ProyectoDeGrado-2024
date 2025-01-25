@@ -114,11 +114,20 @@ class ReporteController extends Controller
             \'cantidad\', plato_pedido.cantidad,
             \'detalle\', plato_pedido.detalle
         )) as platillos');
-        } else {
+        } else if ($dbDriver === 'mysql') {
             $pedidosQuery->selectRaw("group_concat(
             CONCAT(platillos.id, ':', platillos.nombre, ':', platillos.precio, ':', plato_pedido.cantidad, ':', plato_pedido.detalle)
             SEPARATOR '|'
         ) as platillos");
+        }
+        else if($dbDriver === 'sqlite'){
+            $pedidosQuery->selectRaw('json_group_array(json_object(
+            \'id_platillo\', platillos.id,
+            \'nombre\', platillos.nombre,
+            \'precio\', platillos.precio,
+            \'cantidad\', plato_pedido.cantidad,
+            \'detalle\', plato_pedido.detalle
+        )) as platillos');
         }
 
         $pedidos = $pedidosQuery->groupBy(

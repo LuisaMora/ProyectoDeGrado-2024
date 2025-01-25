@@ -25,7 +25,7 @@ class PedidoSeeder extends Seeder
         $empleadoIdsRestaurante3 = Empleado::where('id_propietario', 3)->where('id_rol', 1)->pluck('id')->toArray();
 
         $fechaHaceSieteDias = date('Y-m-d', strtotime('-7 days'));
-        $cantidadFechas = 1;
+        $cantidadFechas = 7;
         $arregloFechas = [];
 
         for ($i = 0; $i < $cantidadFechas; $i++) {

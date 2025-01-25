@@ -185,7 +185,7 @@ class RegistrarPedidoTest extends TestCase
         // Realizar petición para mostrar platillos disponibles
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->getJson("/api/menu/pedido/platillos");
+        ])->getJson("/api/menu/pedido/platillos/1");
 
         // Obtener los IDs de los platillos que deberían estar en la respuesta
         $expectedIds = [$platilloDisponible->id];
