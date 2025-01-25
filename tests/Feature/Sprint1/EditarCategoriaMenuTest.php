@@ -45,6 +45,40 @@ class EditarCategoriaMenuTest extends TestCase
         return $response['token'];
     }
 
+    public function test_crear_categoria(): void
+    {
+        // Simular una imagen
+        $imagen = UploadedFile::fake()->image('bebida.jpg');
+
+        // Realizar login y obtener el token
+        $token = $this->loginComoPropietario();
+
+        // Enviar la solicitud para crear una categoría
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson('/api/menu/categoria', [
+            'nombre' => 'Postres',
+            'imagen' => $imagen,
+            'id_restaurante' => 1,
+        ]);
+
+        // Verificar la respuesta
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                'status',
+                'categoria' => [
+                    'id',
+                    'nombre',
+                    'imagen',
+                ],
+            ]);
+
+        // Verificar en la base de datos
+        $this->assertDatabaseHas('categorias', [
+            'nombre' => 'Postres',
+        ]);
+    }
+
     public function test_obtener_categoria_para_editar(): void
     {
         // Crear una categoría de ejemplo para el menu 1
@@ -125,6 +159,46 @@ class EditarCategoriaMenuTest extends TestCase
         ]);
 
     }
+
+    public function test_error_crear_categoria_campos_incorrectos(): void
+    {
+        $imagen = UploadedFile::fake()->image('bebida.jpg');
+        $token = $this->loginComoPropietario();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            ])->postJson('/api/menu/categoria', [
+                'nombre' => 'Postres',
+                'imagen' => $imagen
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['id_restaurante']);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            ])->postJson('/api/menu/categoria', [
+                'nombre' => 'Postres',
+                'id_restaurante' => 1
+            ]);
+        
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['imagen']);
+
+            $response = $this->withHeaders([
+                'Authorization' => 'Bearer ' . $token,
+                ])->postJson('/api/menu/categoria', [
+                    'nombre' => '',
+                    'imagen' => $imagen,
+                    'id_restaurante' => 1
+                ]);
+            
+            $response->assertStatus(422)
+                ->assertJsonValidationErrors(['nombre']);
+                
+
+    }
+
 
     public function test_editar_categoria_no_encontrada(): void
     {

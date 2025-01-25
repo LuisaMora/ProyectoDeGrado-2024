@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Models\Categoria;
+
+class CategoriaRepository
+{
+    public function getCategoriasByMenuId($id_menu)
+    {
+        return Categoria::where('id_menu', $id_menu)->where('estado', true)->get();
+    }
+
+    public function getCategoriaById($id)
+    {
+        return Categoria::where('estado', true)->find($id);
+    }
+
+    public function createCategoria(array $data)
+    {
+        return Categoria::create($data);
+    }
+
+    public function updateCategoria($id, array $data)
+    {
+        $categoria = Categoria::find($id);
+        if ($categoria) {
+            $categoria->update($data);
+        }
+        return $categoria;
+    }
+
+    public function softDeleteCategoria($id)
+    {
+        $categoria = Categoria::find($id);
+        if ($categoria) {
+            $categoria->estado = false;
+            $categoria->save();
+        }
+        return $categoria;
+    }
+}

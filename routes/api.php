@@ -113,7 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::middleware('propietarioOempleado')->group(function () {
         Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
-        Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index');
+        // Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index'); Estoy Borrando esto por que esta duplicado
         Route::get('/restaurante/mesas/{idRestaurante}', 'App\Http\Controllers\MesaController@index');
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
