@@ -87,15 +87,13 @@ class RegistrarCategoriaMenuTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-            ->assertJsonFragment([
-                'status' => 'error',
-            ])
-            ->assertJsonStructure([
-                'errors' => [
-                    'nombre',
-                    'imagen',
-                ],
-            ]);
+        ->assertJsonFragment([
+            'status' => 'error',
+        ])
+        ->assertJsonValidationErrors([
+            'nombre',
+            'imagen',
+        ]);
     }
 
     public function test_falla_si_restaurante_no_existe(): void
@@ -114,7 +112,7 @@ class RegistrarCategoriaMenuTest extends TestCase
         $response->assertStatus(404)
             ->assertJsonFragment([
                 'status' => 'error',
-                'message' => 'restaurante no encontrado',
+                'message' => 'Restaurante no encontrado',
             ]);
     }
 

@@ -52,7 +52,7 @@ class CategoriaService
         $restaurante = $this->restauranteRepository->findRestauranteById($data['id_restaurante']);
 
         if (!$restaurante) {
-            throw new \Exception('Restaurante no encontrado.', 404);
+            throw new \Exception('Restaurante no encontrado', 404);
         }
 
         $imagen = ImageHandler::guardarArchivo($data['imagen'], 'categorias');

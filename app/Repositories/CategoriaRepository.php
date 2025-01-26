@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Categoria;
+use App\Models\Platillo;
 
 class CategoriaRepository
 {
@@ -36,6 +37,8 @@ class CategoriaRepository
         if ($categoria) {
             $categoria->estado = false;
             $categoria->save();
+            Platillo::where('id_categoria', $id)
+            ->update(['id_categoria' => 1]);
         }
         return $categoria;
     }

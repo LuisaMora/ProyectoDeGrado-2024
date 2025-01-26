@@ -50,7 +50,7 @@ class CategoriaRequest extends FormRequest
     {
         throw new HttpResponseException(
             response()->json([
-                'message' => 'Datos inválidos',
+                'status' => 'error',
                 'errors' => $validator->errors()
             ], 422)
         );

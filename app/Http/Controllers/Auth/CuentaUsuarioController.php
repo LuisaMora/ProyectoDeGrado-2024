@@ -26,7 +26,7 @@ class CuentaUsuarioController extends Controller
         return response()->json(['status' => 'success', 'data' => $empleados], 200);
     }
 
-    public function cambiarEstadoUsuario($id_usuario, $estado, $rol)
+    public function cambiarEstadoUsuario(string $id_usuario,bool $estado,string $rol)
     {
         // Verificar si el usuario existe
         $usuario = User::find($id_usuario);
