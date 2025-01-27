@@ -12,19 +12,19 @@ use Illuminate\Support\Facades\Mail;
 
 class CuentaUsuarioController extends Controller
 {
-    public function propietarios()
-    {
-        $propietarios = Propietario::with('usuario')->orderBy('created_at', 'desc')->get();
-        return response()->json(['status' => 'success', 'data' => $propietarios], 200);
-    }
+    // public function propietarios()
+    // {
+    //     $propietarios = Propietario::with('usuario')->orderBy('created_at', 'desc')->get();
+    //     return response()->json(['status' => 'success', 'data' => $propietarios], 200);
+    // }
 
-    public function empleados()
-    {
-        $idPropietario = Propietario::where('id_usuario', auth()->user()->id)->value('id');
-        $empleados = Empleado::with('usuario')
-            ->where('id_propietario', $idPropietario)->orderBy('created_at', 'desc')->get();
-        return response()->json(['status' => 'success', 'data' => $empleados], 200);
-    }
+    // public function empleados()
+    // {
+    //     $idPropietario = Propietario::where('id_usuario', auth()->user()->id)->value('id');
+    //     $empleados = Empleado::with('usuario')
+    //         ->where('id_propietario', $idPropietario)->orderBy('created_at', 'desc')->get();
+    //     return response()->json(['status' => 'success', 'data' => $empleados], 200);
+    // }
 
     public function cambiarEstadoUsuario(string $id_usuario,bool $estado,string $rol)
     {

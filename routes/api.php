@@ -41,7 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show'); // borrar esto despiues de probar con front
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
-        Route::get('/empleados', 'App\Http\Controllers\Auth\CuentaUsuarioController@empleados');
+        Route::get('/empleados', 'App\Http\Controllers\Auth\UserManagementController@empleados');
 
         Route::put('/empleado/dar-baja/{id_usuario}', function($id_usuario) {
             return app('App\Http\Controllers\Auth\CuentaUsuarioController')
@@ -62,7 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
         Route::get('/pre-registros', 'App\Http\Controllers\PreRegistroController@index');
         Route::put('/pre-registro/confirmar', 'App\Http\Controllers\PreRegistroController@confirmar');
-        Route::get('/propietarios', 'App\Http\Controllers\Auth\CuentaUsuarioController@propietarios');
+        Route::get('/propietarios', 'App\Http\Controllers\Auth\UserManagementController@propietarios');
 
         Route::put('/propietario/dar-baja/{id_usuario}', function($id_usuario) {
             return app('App\Http\Controllers\Auth\CuentaUsuarioController')
