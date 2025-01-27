@@ -26,44 +26,44 @@ class CuentaUsuarioController extends Controller
     //     return response()->json(['status' => 'success', 'data' => $empleados], 200);
     // }
 
-    public function cambiarEstadoUsuario(string $id_usuario,bool $estado,string $rol)
-    {
-        // Verificar si el usuario existe
-        $usuario = User::find($id_usuario);
-        if (!$usuario) {
-            return response()->json(['status' => 'error', 'message' => 'Usuario no encontrado'], 404);
-        }
-        if ($rol === 'empleado') {
-            $relacion = Empleado::where('id_usuario', $id_usuario)->first();
-        } else if ($rol === 'propietario') {
-            $relacion = Propietario::where('id_usuario', $id_usuario)->first();
-        }
+    // public function cambiarEstadoUsuario(string $id_usuario,bool $estado,string $rol)
+    // {
+    //     // Verificar si el usuario existe
+    //     $usuario = User::find($id_usuario);
+    //     if (!$usuario) {
+    //         return response()->json(['status' => 'error', 'message' => 'Usuario no encontrado'], 404);
+    //     }
+    //     if ($rol === 'empleado') {
+    //         $relacion = Empleado::where('id_usuario', $id_usuario)->first();
+    //     } else if ($rol === 'propietario') {
+    //         $relacion = Propietario::where('id_usuario', $id_usuario)->first();
+    //     }
 
-        if (!$relacion) {
-            return response()->json(['status' => 'error', 'message' => ucfirst($rol) . ' no encontrado'], 404);
-        }
+    //     if (!$relacion) {
+    //         return response()->json(['status' => 'error', 'message' => ucfirst($rol) . ' no encontrado'], 404);
+    //     }
 
-        $usuario->estado = $estado;
-        $usuario->save();
+    //     $usuario->estado = $estado;
+    //     $usuario->save();
 
-        // Desactivar todos los tokens del usuario si el estado es activado
-        if ($estado) {
-            $usuario->tokens()->delete();
-            Mail::to($usuario->correo)->send(new AltaUsuario($usuario)); // Correo de activación
-        } else {
-            Mail::to($usuario->correo)->send(new BajaUsuario($usuario)); // Correo de baja
-        }
+    //     // Desactivar todos los tokens del usuario si el estado es activado
+    //     if ($estado) {
+    //         $usuario->tokens()->delete();
+    //         Mail::to($usuario->correo)->send(new AltaUsuario($usuario)); // Correo de activación
+    //     } else {
+    //         Mail::to($usuario->correo)->send(new BajaUsuario($usuario)); // Correo de baja
+    //     }
 
-        // Si el usuario es propietario, actualizar el estado del menú del restaurante
-        if ($rol === 'propietario') {
-            $menu = $relacion->restaurante->menu;
-            $menu->disponible = $estado;
-            $menu->save();
-        }
+    //     // Si el usuario es propietario, actualizar el estado del menú del restaurante
+    //     if ($rol === 'propietario') {
+    //         $menu = $relacion->restaurante->menu;
+    //         $menu->disponible = $estado;
+    //         $menu->save();
+    //     }
 
-        $message = $estado ? ucfirst($rol) . ' activado' : ucfirst($rol) . ' dado de baja';
-        return response()->json(['status' => 'success', 'message' => $message], 200);
-    }
+    //     $message = $estado ? ucfirst($rol) . ' activado' : ucfirst($rol) . ' dado de baja';
+    //     return response()->json(['status' => 'success', 'message' => $message], 200);
+    // }
 
 
 

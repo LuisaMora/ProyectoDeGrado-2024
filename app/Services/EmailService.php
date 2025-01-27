@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Support\Facades\Mail;
 
 class EmailService
@@ -15,10 +16,8 @@ class EmailService
      * @param array $data
      * @return void
      */
-    public function sendEmail(string $to, string $subject, string $view, array $data): void
+    public function sendEmail(string $to, Mailable $mail): void
     {
-        Mail::send($view, $data, function ($message) use ($to, $subject) {
-            $message->to($to)->subject($subject);
-        });
+        Mail::to($to)->send($mail);
     }
 }

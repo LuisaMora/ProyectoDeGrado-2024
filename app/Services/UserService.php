@@ -2,17 +2,29 @@
 
 namespace App\Services;
 
+use App\Mail\AltaUsuario;
+use App\Mail\BajaUsuario;
 use App\Repositories\EmpleadoRepository;
 use App\Repositories\PropietarioRepository;
+use App\Repositories\UsuarioRepository;
 
 class UserService
 {
     private $propietarioRepository;
     private $empleadoRepository;
-    public function __construct(PropietarioRepository $propietarioRepository, EmpleadoRepository $empleadoRepository)
-    {
+    private $usuarioRepository;
+    private $emailService;
+
+    public function __construct(
+        PropietarioRepository $propietarioRepository,
+        EmpleadoRepository $empleadoRepository,
+        UsuarioRepository $usuarioRepository,
+        EmailService $mailService
+    ) {
         $this->propietarioRepository = $propietarioRepository;
         $this->empleadoRepository = $empleadoRepository;
+        $this->usuarioRepository = $usuarioRepository;
+        $this->emailService = $mailService;
     }
 
     public function createUser(array $data)
@@ -22,7 +34,8 @@ class UserService
 
     public function getUserById(int $id)
     {
-        // Logic to get a user by ID
+        $usuario = $this->usuarioRepository->find($id);
+        return $usuario ? $usuario : throw new \Exception('Usuario no encontrado', 404);
     }
 
     public function updateUser(int $id, array $data)
@@ -30,12 +43,35 @@ class UserService
         // Logic to update a user
     }
 
-    public function deleteUser(int $id)
+    public function cambiarEstadoUsuario(int $id, bool $estado)
     {
-        // Logic to delete a user
+        $usuario = $this->usuarioRepository->update($id, ['estado' => $estado]);
+        if ($usuario) {
+            if ($estado) {
+                $usuario->tokens()->delete();
+                $this->emailService->sendEmail($usuario->correo,new AltaUsuario($usuario));
+            } else {
+                $this->emailService->sendEmail($usuario->correo,new BajaUsuario($usuario));
+            }
+            return $usuario;
+        }
+        throw new \Exception('Usuario no encontrado', 404);
     }
 
-    public function getPerfilUsuario(string $rol)
+    public function cambiarEstadoUsuarioEmpleado(int $id_propietario, bool $estado)
+    {
+        $empleados = $this->empleadoRepository->getAllFrom($id_propietario);
+        if ($empleados) {
+            foreach ($empleados as $empleado) {
+               $this->cambiarEstadoUsuario($empleado->id_usuario, $estado);
+            }
+            return $empleados;
+        }
+        throw new \Exception('No se pudo cambiar el estado de los empleados', 400);
+    }
+
+
+    public function getPerfilUsuarios(string $rol)
     {
 
         switch ($rol) {

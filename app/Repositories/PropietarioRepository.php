@@ -25,6 +25,11 @@ class PropietarioRepository
         return $this->model->find($id);
     }
 
+    public function findByUserId($id_usuario)
+    {
+        return $this->model->where('id_usuario', $id_usuario)->first();
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);

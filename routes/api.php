@@ -43,15 +43,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
         Route::get('/empleados', 'App\Http\Controllers\Auth\UserManagementController@empleados');
 
-        Route::put('/empleado/dar-baja/{id_usuario}', function($id_usuario) {
-            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
-                        ->cambiarEstadoUsuario($id_usuario, false, 'empleado');
-        });
+        Route::put('/empleado/dar-baja/{id_usuario}', 'App\Http\Controllers\Auth\UserManagementController@cambiarEstadoUsuario')
+        ->defaults('estado', false)
+        ->defaults('tipo', 'empleado');
 
-        Route::put('/empleado/dar-alta/{id_usuario}', function($id_usuario) {
-            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
-                        ->cambiarEstadoUsuario($id_usuario, true, 'empleado');
-        });
+        Route::put('/empleado/dar-alta/{id_usuario}', 'App\Http\Controllers\Auth\UserManagementController@cambiarEstadoUsuario')
+        ->defaults('estado', true)
+        ->defaults('tipo', 'empleado');
 
         Route::post('/empleado', 'App\Http\Controllers\EmpleadoController@store');
     });
@@ -64,15 +62,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/pre-registro/confirmar', 'App\Http\Controllers\PreRegistroController@confirmar');
         Route::get('/propietarios', 'App\Http\Controllers\Auth\UserManagementController@propietarios');
 
-        Route::put('/propietario/dar-baja/{id_usuario}', function($id_usuario) {
-            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
-                        ->cambiarEstadoUsuario($id_usuario, false, 'propietario');
-        });
+        Route::put('/propietario/dar-baja/{id_usuario}', 'App\Http\Controllers\Auth\UserManagementController@cambiarEstadoUsuario')
+        ->defaults('estado', false)
+        ->defaults('tipo', 'propietario');
         
-        Route::put('/propietario/dar-alta/{id_usuario}', function($id_usuario) {
-            return app('App\Http\Controllers\Auth\CuentaUsuarioController')
-                        ->cambiarEstadoUsuario($id_usuario, true, 'propietario');
-        });
+        Route::put('/propietario/dar-alta/{id_usuario}', 'App\Http\Controllers\Auth\UserManagementController@cambiarEstadoUsuario')
+        ->defaults('estado', true)
+        ->defaults('tipo', 'propietario');
     }); 
 
     Route::middleware('empleado:mesero,cajero')->group(function () {

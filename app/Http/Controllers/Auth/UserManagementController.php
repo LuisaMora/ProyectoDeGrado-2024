@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\MenuService;
+use App\Services\PropietarioService;
 use Illuminate\Http\Request;
 use App\Services\UserService;
 
@@ -10,17 +12,21 @@ class UserManagementController extends Controller
 {
     // Se encarga de la gestión y actualización de datos de los usuarios (propietarios y empleados)
 
-    protected $userService;
+    private $userService;
+    private $menuService;
+    private $propietarioService;
 
-    public function __construct(UserService $userService)
-    {
+    public function __construct(UserService $userService, MenuService $menuService, PropietarioService $propietarioService
+    ) {
         $this->userService = $userService;
+        $this->menuService = $menuService;
+        $this->propietarioService = $propietarioService;
     }
 
     public function propietarios()
     {
         try {
-            $propietarios = $this->userService->getPerfilUsuario('propietario');
+            $propietarios = $this->userService->getPerfilUsuarios('propietario');
             return response()->json(['status' => 'success', 'data' => $propietarios], 200);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
@@ -30,16 +36,30 @@ class UserManagementController extends Controller
     public function empleados()
     {
         try {
-            $empleados = $this->userService->getPerfilUsuario('empleado');
+            $empleados = $this->userService->getPerfilUsuarios('empleado');
             return response()->json(['status' => 'success', 'data' => $empleados], 200);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
         }
     }
 
-    public function cambiarEstadoUsuario(Request $request, $id)
+    public function cambiarEstadoUsuario(string $id_usuario, bool $estado, string $rol)
     {
-        // Implementar lógica para cambiar el estado de un usuario
+        try {
+            $usuario = $this->userService->cambiarEstadoUsuario($id_usuario, $estado);
+            if ($rol === 'propietario') {
+
+                $propietario = $this->propietarioService->getPropietarioByUserId($usuario->id);
+                $menu = $this->menuService->getMenuByRestaurantId($propietario->id_restaurante);
+                $this->menuService->updateMenu($menu->id, ['disponible' => $estado]);
+                $this->userService->cambiarEstadoUsuarioEmpleado($propietario->id, $estado);
+            }
+
+            $message = $estado ? ucfirst($rol) . ' activado' : ucfirst($rol) . ' dado de baja';
+            return response()->json(['status' => 'success', 'message' => $message], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
+        }
     }
 
     public function updateDatosPersonales(Request $request, $id)
