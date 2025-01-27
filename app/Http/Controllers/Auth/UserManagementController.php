@@ -4,9 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUsuarioRequest;
-use App\Services\MenuService;
-use App\Services\PropietarioService;
-use Illuminate\Http\Request;
 use App\Services\UserService;
 
 class UserManagementController extends Controller
