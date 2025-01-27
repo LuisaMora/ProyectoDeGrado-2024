@@ -38,7 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
         
         Route::post('/reporte/pedidos', 'App\Http\Controllers\ReporteController@getReporte');
         
-        Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\AuthController@updateDatosPersonales');
+        Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\UserManagementController@updateDatosUsuario')
+        ->defaults('esPropietario', true);
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show'); // borrar esto despiues de probar con front
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
         Route::get('/empleados', 'App\Http\Controllers\Auth\UserManagementController@empleados');
@@ -90,7 +91,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
         Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
         
-        Route::post('/actualizar/datos-empleado', 'App\Http\Controllers\Auth\AuthController@updateDatosEmpleado');
+        Route::post('/actualizar/datos-empleado', 'App\Http\Controllers\Auth\UserManagementController@updateDatosUsuario')
+        ->defaults('esPropietario', false);
         
         Route::post('/cuenta/store/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@store');
     });
