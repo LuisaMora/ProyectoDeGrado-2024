@@ -18,9 +18,18 @@ class UsuarioRepository
         return $this->model->all();
     }
 
-    public function find($id)
+    public function find(string $id)
     {
         return $this->model->find($id);
+    }
+
+    public function findBy(string $correoNick)
+    {
+        $user = User::where('correo', $correoNick)
+        ->orWhere('nickname', $correoNick) // Asumiendo que el campo 'nickname' existe en tu modelo
+        ->where('estado', true) // Asumiendo que el campo 'estado' existe en tu modelo
+        ->first();
+        return $user;
     }
 
     public function create(array $data)

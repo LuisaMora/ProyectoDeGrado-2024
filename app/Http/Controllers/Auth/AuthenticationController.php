@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
 
@@ -16,37 +17,30 @@ class AuthenticationController extends Controller
         $this->authService = $authService;
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $credentials)
     {
-        $credentials = $request->only('email', 'password');
-        $token = $this->authService->login($credentials);
-
-        if (!$token) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        try {
+            $data = $this->authService->login($credentials['usuario'], $credentials['password']);
+            return response()->json(['token' =>  $data['token'],'user' => $data['datosPersonales'],
+                'message' => 'Inicio de sesión exitoso.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
         }
-
-        return response()->json(['token' => $token]);
     }
 
     public function register(Request $request)
     {
-        $data = $request->all();
-        $user = $this->authService->register($data);
+        // $data = $request->all();
+        // $user = $this->authService->register($data);
 
-        return response()->json(['user' => $user], 201);
+        // return response()->json(['user' => $user], 201);
     }
 
     public function logout(Request $request)
     {
         $this->authService->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['success' => 'Sesion finalizada exitosamente.']);
     }
 
-    public function me(Request $request)
-    {
-        $user = $this->authService->me();
-
-        return response()->json(['user' => $user]);
-    }
 }

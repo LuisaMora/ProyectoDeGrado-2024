@@ -38,7 +38,7 @@ class AuthControllerTest extends TestCase
     {
         // Prueba de login para Administrador
         $responseAdmin = $this->postJson('/api/login', [
-            'usuario' => 'administrador',
+            'usuario' => 'propietarioA1',
             'password' => '12345678',
         ]);
 
@@ -118,6 +118,7 @@ class AuthControllerTest extends TestCase
             'usuario' => 'test_user_1',
             'password' => '12345678',
         ]);
+        $response->dump();
         $response->assertStatus(401)
             ->assertJsonStructure([
                 'message',

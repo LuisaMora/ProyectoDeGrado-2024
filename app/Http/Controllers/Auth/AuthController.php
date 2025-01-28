@@ -17,36 +17,36 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
-    {
-        $validarDatos = Validator::make($request->all(), [
-            'usuario' => 'required|max:60|min:6',
-            'password' => 'required|max:60|min:6',
-        ]);
-        if ($validarDatos->fails()) {
-            return response()->json([
-                'message' => 'Datos invalidos',
-                'errors' => $validarDatos->errors()
-            ], 422);
-        }
+    // public function login(Request $request)
+    // {
+    //     $validarDatos = Validator::make($request->all(), [
+    //         'usuario' => 'required|max:60|min:6',
+    //         'password' => 'required|max:60|min:6',
+    //     ]);
+    //     if ($validarDatos->fails()) {
+    //         return response()->json([
+    //             'message' => 'Datos invalidos',
+    //             'errors' => $validarDatos->errors()
+    //         ], 422);
+    //     }
 
-        $user = $this->attemptLogin($request->usuario, $request->password);
-        if ($user) {
-            $token = $user->createToken('personal-token', expiresAt: now()->addHours(12))->plainTextToken;
-            $datosPersonales = $this->getDatosPersonales($user);
-            $datosPersonales->usuario = $user;
-            return response()->json([
-                'token' => $token,
-                'user' => $datosPersonales, // Se asume que este método ya incluye el usuario
-                'message' => 'Inicio de sesión exitoso.'
-            ], 200);
-        } else {
-            // Implementar un sistema de rate limiting o captchas para múltiples intentos fallidos
-            return response()->json([
-                'message' => 'Usuario o contraseña invalidos.'
-            ], 401);
-        }
-    }
+    //     $user = $this->attemptLogin($request->usuario, $request->password);
+    //     if ($user) {
+    //         $token = $user->createToken('personal-token', expiresAt: now()->addHours(12))->plainTextToken;
+    //         $datosPersonales = $this->getDatosPersonales($user);
+    //         $datosPersonales->usuario = $user;
+    //         return response()->json([
+    //             'token' => $token,
+    //             'user' => $datosPersonales, // Se asume que este método ya incluye el usuario
+    //             'message' => 'Inicio de sesión exitoso.'
+    //         ], 200);
+    //     } else {
+    //         // Implementar un sistema de rate limiting o captchas para múltiples intentos fallidos
+    //         return response()->json([
+    //             'message' => 'Usuario o contraseña invalidos.'
+    //         ], 401);
+    //     }
+    // }
 
     public function show(Request $request)
     {
@@ -98,31 +98,31 @@ class AuthController extends Controller
     }
 
 
-    private function attemptLogin($usuario, $password)
-    {
-        $user = User::where('correo', $usuario)
-            ->orWhere('nickname', $usuario) // Asumiendo que el campo 'nickname' existe en tu modelo
-            ->where('estado', true) // Asumiendo que el campo 'estado' existe en tu modelo
-            ->first();
+    // private function attemptLogin($usuario, $password)
+    // {
+    //     $user = User::where('correo', $usuario)
+    //         ->orWhere('nickname', $usuario) // Asumiendo que el campo 'nickname' existe en tu modelo
+    //         ->where('estado', true) // Asumiendo que el campo 'estado' existe en tu modelo
+    //         ->first();
 
-        if ($user && Hash::check($password, $user->password)) {
-            return $user;
-        }
-        return null;
-    }
+    //     if ($user && Hash::check($password, $user->password)) {
+    //         return $user;
+    //     }
+    //     return null;
+    // }
 
-    public function logout()
-    {
-        $user = auth()->user();
-        // Revisa si el usuario está autenticado
-        if ($user) {
-            // Revoca todos los tokens del usuario
-            $user->tokens->each(function ($token, $key) {
-                $token->delete();
-            });
-        }
-        return response()->json(['success' => 'Sesion finalizada exitosamente.'], 200);
-    }
+    // public function logout()
+    // {
+    //     $user = auth()->user();
+    //     // Revisa si el usuario está autenticado
+    //     if ($user) {
+    //         // Revoca todos los tokens del usuario
+    //         $user->tokens->each(function ($token, $key) {
+    //             $token->delete();
+    //         });
+    //     }
+    //     return response()->json(['success' => 'Sesion finalizada exitosamente.'], 200);
+    // }
 
     // public function updateDatosPersonales(Request $request)
     // {

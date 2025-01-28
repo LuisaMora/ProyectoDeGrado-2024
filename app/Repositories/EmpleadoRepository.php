@@ -27,7 +27,8 @@ class EmpleadoRepository
 
     public function findByUserId($id_usuario)
     {
-        return $this->model->where('id_usuario', $id_usuario)->first();
+        return $this->model->select('id', 'ci', 'fecha_nacimiento', 'fecha_contratacion', 'direccion', 'id_rol', 'id_restaurante')
+        ->where('id_usuario', $id_usuario)->first();
     }
 
     public function create(array $data)
