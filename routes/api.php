@@ -114,7 +114,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index'); Estoy Borrando esto por que esta duplicado
         Route::get('/restaurante/mesas/{idRestaurante}', 'App\Http\Controllers\MesaController@index');
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
-        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
+        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthenticationController@restablecerContrasenia');
         Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
     });
     
@@ -127,7 +127,7 @@ Route::post('/login', 'App\Http\Controllers\Auth\AuthenticationController@login'
 Route::post('/pre-registro', 'App\Http\Controllers\PreRegistroController@store');
 
 Route::post('solicitar-cambio-contrasenia', 'App\Http\Controllers\Auth\AuthenticationController@solicitarCambioContrasenia');
-Route::post('/restablecer-contrasenia-olvidada', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
+Route::post('/restablecer-contrasenia-olvidada', 'App\Http\Controllers\Auth\AuthenticationController@restablecerContrasenia');
 
 
 Route::get('/prohibido', function () {

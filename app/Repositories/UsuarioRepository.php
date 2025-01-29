@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Support\Carbon;
 
 class UsuarioRepository
 {
@@ -16,6 +17,13 @@ class UsuarioRepository
     public function all()
     {
         return $this->model->all();
+    }
+
+    public function findByToken(string $token, $expiresAt)
+    {
+        return $this->model->where('reset_token', $token)
+            ->where('reset_token_expires_at', '>', $expiresAt)
+            ->first();
     }
 
     public function find(string $id)
@@ -51,13 +59,4 @@ class UsuarioRepository
         return $usuario;
     }
 
-
-    public function delete($id)
-    {
-        $usuario = $this->model->find($id);
-        if ($usuario) {
-            return $usuario->delete();
-        }
-        return false;
-    }
 }

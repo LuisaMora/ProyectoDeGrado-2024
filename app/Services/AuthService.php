@@ -71,8 +71,25 @@ class AuthService
         
     }
 
-    public function resetPassword(string $token, string $password)
+    public function resetPassword(string | null $token, string | null $oldPassword, string $password)
     {
+        
+        if ($token) {
+            $usuario = $this->usuarioRepository->findByToken($token, now());
+            if (!$usuario) {
+                throw new \Exception('Token inválido o expirado.', 400);
+            }
+            $data = ['password' => Hash::make($password), 'reset_token' => null, 'reset_token_expires_at' => null];
+        } elseif ($oldPassword) {
+            $usuario = auth()->user();
+            if (!Hash::check($oldPassword, $usuario->password)) {
+                throw new \Exception('La contraseña actual no coincide.', 401);
+            }
+            $data = ['password' => Hash::make($password)];
+        } else {
+            throw new \Exception('Datos faltantes.', 401);
+        }
+        $this->usuarioRepository->update($usuario->id, $data);
         // Implement password reset logic here
     }
 
