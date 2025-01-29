@@ -26,9 +26,9 @@ class UsuarioRepository
     public function findBy(string $correoNick)
     {
         $user = User::where('correo', $correoNick)
-        ->orWhere('nickname', $correoNick) // Asumiendo que el campo 'nickname' existe en tu modelo
-        ->where('estado', true) // Asumiendo que el campo 'estado' existe en tu modelo
-        ->first();
+            ->orWhere('nickname', $correoNick) // Asumiendo que el campo 'nickname' existe en tu modelo
+            ->where('estado', true) // Asumiendo que el campo 'estado' existe en tu modelo
+            ->first();
         return $user;
     }
 
@@ -40,12 +40,17 @@ class UsuarioRepository
     public function update($id, array $data)
     {
         $usuario = $this->model->find($id);
-        if ($usuario) {
-            $usuario->update($data);
-            return $usuario;
+        if (!$usuario) {
+            return null;
         }
-        return null;
+
+        foreach ($data as $key => $value) {
+            $usuario->$key = $value;
+        }
+        $usuario->save();
+        return $usuario;
     }
+
 
     public function delete($id)
     {

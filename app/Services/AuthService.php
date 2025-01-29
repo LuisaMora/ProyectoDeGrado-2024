@@ -59,16 +59,16 @@ class AuthService
     public function forgotPassword(string $correo, string $direccionFrontend)
     {
         $token = Str::random(60);
-        // Implement password reset logic here
         $usuario = $this->usuarioRepository->findBy($correo);
         if ($usuario) {
-            // Enviar correo con el token de recuperación
             $email = new \App\Mail\ResetPasswordMail($token, $direccionFrontend);
             $data = ['reset_token' => $token, 'reset_token_expires_at' => now()->addMinutes(60)];
             $usuario = $this->usuarioRepository->update($usuario->id, $data);
             $this->emailService->sendEmail($correo, $email);
+        } else{
+            throw new \Exception('Usuario no encontrado', 404);
         }
-        throw new \Exception('Usuario no encontrado', 404);
+        
     }
 
     public function resetPassword(string $token, string $password)

@@ -126,7 +126,7 @@ Route::post('/login', 'App\Http\Controllers\Auth\AuthenticationController@login'
 
 Route::post('/pre-registro', 'App\Http\Controllers\PreRegistroController@store');
 
-Route::post('solicitar-cambio-contrasenia', 'App\Http\Controllers\Auth\AuthController@solicitarCambioContrasenia');
+Route::post('solicitar-cambio-contrasenia', 'App\Http\Controllers\Auth\AuthenticationController@solicitarCambioContrasenia');
 Route::post('/restablecer-contrasenia-olvidada', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
 
 

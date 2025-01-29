@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CambioContraseniaRequest;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
@@ -36,7 +37,17 @@ class AuthenticationController extends Controller
         // return response()->json(['user' => $user], 201);
     }
 
-    public function logout(Request $request)
+    public function solicitarCambioContrasenia(CambioContraseniaRequest $request)
+    {
+       try {
+            $this->authService->forgotPassword($request['correo'] , $request['direccion_frontend']);
+            return response()->json(['message' => 'Correo de restablecimiento enviado.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
+    }
+
+    public function logout()
     {
         $this->authService->logout();
 

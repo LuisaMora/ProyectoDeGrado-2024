@@ -207,29 +207,29 @@ class AuthController extends Controller
     //     return $user;
     // }
 
-    public function solicitarCambioContrasenia(Request $request)
-    {
-        // Validar el correo electrónico
-        $request->validate([
-            'correo' => 'required|email|exists:usuarios,correo',
-            'direccion_frontend' => 'required|url'
-        ]);
+    // public function solicitarCambioContrasenia(Request $request)
+    // {
+    //     // Validar el correo electrónico
+    //     $request->validate([
+    //         'correo' => 'required|email|exists:usuarios,correo',
+    //         'direccion_frontend' => 'required|url'
+    //     ]);
 
-        $user = User::where('correo', $request->correo)->first();
+    //     $user = User::where('correo', $request->correo)->first();
 
-        if ($user) {
-            // Generar un token de restablecimiento
-            $token = Str::random(60);
-            $user->reset_token = $token;
-            $user->reset_token_expires_at = now()->addMinutes(60); // Token válido por 60 minutos
-            $user->save();
+    //     if ($user) {
+    //         // Generar un token de restablecimiento
+    //         $token = Str::random(60);
+    //         $user->reset_token = $token;
+    //         $user->reset_token_expires_at = now()->addMinutes(60); // Token válido por 60 minutos
+    //         $user->save();
 
-            // Enviar correo con el enlace de restablecimiento
-            Mail::to($user->correo)->send(new \App\Mail\ResetPasswordMail($token, $request->direccion_frontend));
+    //         // Enviar correo con el enlace de restablecimiento
+    //         Mail::to($user->correo)->send(new \App\Mail\ResetPasswordMail($token, $request->direccion_frontend));
 
-            return response()->json(['message' => 'Correo de restablecimiento enviado.']);
-        }
-    }
+    //         return response()->json(['message' => 'Correo de restablecimiento enviado.']);
+    //     }
+    // }
 
     public function restablecerContrasenia(Request $request)
     {
