@@ -37,10 +37,14 @@ class UserService
         // Logic to create a user
     }
 
-    public function getUserById(int $id)
+    public function getUserById(int | null $id)
     {
-        $usuario = $this->usuarioRepository->find($id);
-        return $usuario ? $usuario : throw new \Exception('Usuario no encontrado', 404);
+        if ($id) {
+            $usuario = $this->usuarioRepository->find($id);
+            return $usuario ? $usuario : throw new \Exception('Usuario no encontrado', 404);
+        } 
+
+        throw new \Exception('El ID del usuario es requerido', 400);
     }
 
     public function updateUser(array $data)

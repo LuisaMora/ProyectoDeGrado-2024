@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateUsuarioRequest;
 use App\Services\UserService;
 
 class UserManagementController extends Controller
@@ -50,18 +49,4 @@ class UserManagementController extends Controller
         }
     }
 
-    public function updateDatosUsuario(UpdateUsuarioRequest $request)
-    {
-        try {
-            if (!$request->esPropietario) {
-                $request->offsetUnset('correo');
-            }
-            $usuario = $this->userService->updateUser($request->all());
-            return response()->json(
-                    ['status' => 'success', 'data' => $usuario,
-                     'message' => 'Datos actualizados correctamente'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
-        }
-    }
 }

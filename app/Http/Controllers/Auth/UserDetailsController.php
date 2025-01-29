@@ -3,33 +3,43 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateUsuarioRequest;
 use Illuminate\Http\Request;
 use App\Services\UserDetailsService;
+use App\Services\UserService;
 
 class UserDetailsController extends Controller
 {
-    // Responsable de obtener datos específicos del usuario y de sus relaciones.
-    protected $userDetailsService;
 
-    public function __construct(UserDetailsService $userDetailsService)
-    {
-        $this->userDetailsService = $userDetailsService;
-    }
+
+    public function __construct(private UserService $userService)
+    { }
 
     public function getUserDetails(Request $request)
     {
-        $userId = $request->user()->id;
-        $userDetails = $this->userDetailsService->getUserDetails($userId);
-
-        return response()->json($userDetails);
+        try {
+            $userId = $request->query('id_usuario');
+            $userDetails = $this->userService->getUserById($userId);
+            return response()->json([
+                'user' => $userDetails
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
+        }
     }
 
-    public function updateUserDetails(Request $request)
+    public function updateUserDetails(UpdateUsuarioRequest $request)
     {
-        $userId = $request->user()->id;
-        $data = $request->all();
-        $updatedUserDetails = $this->userDetailsService->updateUserDetails($userId, $data);
-
-        return response()->json($updatedUserDetails);
+        try {
+            if (!$request->esPropietario) {
+                $request->offsetUnset('correo');
+            }
+            $usuario = $this->userService->updateUser($request->all());
+            return response()->json(
+                    ['status' => 'success', 'data' => $usuario,
+                     'message' => 'Datos actualizados correctamente'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
+        }
     }
 }

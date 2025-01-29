@@ -38,7 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
         
         Route::post('/reporte/pedidos', 'App\Http\Controllers\ReporteController@getReporte');
         
-        Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\UserManagementController@updateDatosUsuario')
+        Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\UserDetailsController@updateUserDetails')
         ->defaults('esPropietario', true);
         Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show'); // borrar esto despiues de probar con front
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
@@ -91,7 +91,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
         Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
         
-        Route::post('/actualizar/datos-empleado', 'App\Http\Controllers\Auth\UserManagementController@updateDatosUsuario')
+        Route::post('/actualizar/datos-empleado', 'App\Http\Controllers\Auth\UserDetailsController@updateUserDetails')
         ->defaults('esPropietario', false);
         
         Route::post('/cuenta/store/{idRestaurante}', 'App\Http\Controllers\Pedido\CuentaController@store');
@@ -113,7 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/menu/categoriaRestaurante/{id}', 'App\Http\Controllers\CategoriaController@index');
         // Route::get('/menu/categoria', 'App\Http\Controllers\CategoriaController@index'); Estoy Borrando esto por que esta duplicado
         Route::get('/restaurante/mesas/{idRestaurante}', 'App\Http\Controllers\MesaController@index');
-        Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show');
+        Route::get('/datos-personales', 'App\Http\Controllers\Auth\UserDetailsController@getUserDetails');
         Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthenticationController@restablecerContrasenia');
         Route::get('/restaurante', 'App\Http\Controllers\RestauranteController@show');
     });
