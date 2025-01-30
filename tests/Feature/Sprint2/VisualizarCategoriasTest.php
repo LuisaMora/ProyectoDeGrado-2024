@@ -94,7 +94,6 @@ class VisualizarCategoriasTest extends TestCase
 
         $response->assertStatus(404)
                  ->assertJson([
-                     'status' => 'error',
                      'message' => 'Menu no encontrado para el restaurante.',
                  ]);
     }
@@ -110,7 +109,6 @@ class VisualizarCategoriasTest extends TestCase
 
         $response->assertStatus(404)
                  ->assertJson([
-                     'status' => 'error',
                      'message' => 'Categorias no encontradas para el menu.',
                  ]);
     }

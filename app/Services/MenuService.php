@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\Restaurante;
 use App\Repositories\EmpleadoRepository;
 use App\Repositories\MenuRepository;
+use App\Repositories\ProductoRepository;
 use App\Repositories\PropietarioRepository;
+use App\Repositories\RestauranteRepository;
 
 class MenuService
 {
@@ -15,7 +18,9 @@ class MenuService
     public function __construct(
         MenuRepository $menuRepository,
         PropietarioRepository $propietarioRepository,
-        EmpleadoRepository $empleadoRepository
+        EmpleadoRepository $empleadoRepository,
+        private ProductoRepository $productoRepository,
+        private RestauranteRepository $restauranteRepository
     ) {
         $this->menuRepository = $menuRepository;
         $this->propietarioRepository = $propietarioRepository;
@@ -40,9 +45,13 @@ class MenuService
         // return $this->menuRepository->getMenuByRestaurantId($id_restaurante);
     }
 
-    public function getMenuProducts()
+    public function getMenuProducts($idRestaurante)
     {
-        // Logic to retrieve menu items
+        $idMenu =  $this->restauranteRepository->findRestauranteById($idRestaurante)->id_menu;
+        if (!$idMenu) {
+            throw new \Exception('Menu no encontrado.', 404);
+        }
+        return $this->productoRepository->getProductosMenu($idMenu);
     }
 
     public function addMenuProduct($item)

@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\PreRegistroController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,11 +17,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', 'App\Http\Controllers\Auth\AuthenticationController@logout');
 
     Route::middleware('propietario')->group(function () {
-        Route::get('/menu/platillos/{id}', 'App\Http\Controllers\PlatilloController@index');
-        Route::post('/menu/platillo', 'App\Http\Controllers\PlatilloController@store');
-        Route::post('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@update');
-        Route::get('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@show');
-        Route::delete('/menu/platillo/{id}', 'App\Http\Controllers\PlatilloController@destroy'); // Corregido el nombre de la ruta
+        Route::get('/menu/platillos/{id}', 'App\Http\Controllers\ProductoController@index');
+        Route::post('/menu/platillo', 'App\Http\Controllers\ProductoController@store');
+        Route::post('/menu/platillo/{id}', 'App\Http\Controllers\ProductoController@update');
+        Route::get('/menu/platillo/{id}', 'App\Http\Controllers\ProductoController@show');
+        Route::delete('/menu/platillo/{id}', 'App\Http\Controllers\ProductoController@destroy'); // Corregido el nombre de la ruta
    
         
         Route::post('/menu/categoria', 'App\Http\Controllers\CategoriaController@store');
@@ -40,8 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
         
         Route::post('/actualizar/datos-personales', 'App\Http\Controllers\Auth\UserDetailsController@updateUserDetails')
         ->defaults('esPropietario', true);
-        Route::get('/datos-personales', 'App\Http\Controllers\Auth\AuthController@show'); // borrar esto despiues de probar con front
-        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthController@restablecerContrasenia');
+        Route::get('/datos-personales', 'App\Http\Controllers\Auth\UserDetailsController@getUserDetails'); // borrar esto despiues de probar con front
+        Route::post('/restablecer-contrasenia', 'App\Http\Controllers\Auth\AuthenticationController@restablecerContrasenia');
         Route::get('/empleados', 'App\Http\Controllers\Auth\UserManagementController@empleados');
 
         Route::put('/empleado/dar-baja/{id_usuario}', 'App\Http\Controllers\Auth\UserManagementController@cambiarEstadoUsuario')
@@ -74,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('empleado:mesero,cajero')->group(function () {
         Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
-        Route::get('/menu/pedido/platillos/{idRestauante}', 'App\Http\Controllers\PlatilloController@platillosDisponibles');
+        Route::get('/menu/pedido/platillos/{idRestauante}', 'App\Http\Controllers\ProductoController@platillosDisponibles');
 
         Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
         // Route::delete('/pedidos/{id}', 'App\Http\Controllers\PedidoController@destroy');
@@ -85,7 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::middleware('empleado:cajero,mesero,cocinero')->group(function () {
-        Route::get('/menu/pedido', 'App\Http\Controllers\PlatilloController@index');
+        Route::get('/menu/pedido', 'App\Http\Controllers\ProductoController@index');
         Route::get('/notificaciones', 'App\Http\Controllers\NotificacionController@obtenerNotificaciones');
         Route::get('/notificaciones/cantidad', 'App\Http\Controllers\NotificacionController@obtenerNotificacionesCantidad');
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');

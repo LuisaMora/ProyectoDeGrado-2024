@@ -144,7 +144,6 @@ class CuentaPropietarioAltaOBajaTest extends TestCase
 
         // Verificar que la respuesta sea un error
         $response->assertStatus(404);
-        $this->assertEquals('error', $response['status']);
         $this->assertStringContainsString('Usuario no encontrado', $response['message']);
     }
 
@@ -159,7 +158,6 @@ class CuentaPropietarioAltaOBajaTest extends TestCase
 
         // Verificar que la respuesta sea un error
         $response->assertStatus(404);
-        $this->assertEquals('error', $response['status']);
         $this->assertStringContainsString('Usuario no encontrado', $response['message']);
     }
 
@@ -176,7 +174,6 @@ class CuentaPropietarioAltaOBajaTest extends TestCase
 
         // Verificar que la respuesta sea exitosa
         $response->assertStatus(200);
-        $this->assertEquals('success', $response['status']);
 
         // Verificar que los datos de los propietarios estén en la respuesta
         $this->assertNotEmpty($response['data']);

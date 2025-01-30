@@ -196,6 +196,8 @@ class RecuperarCuentaUsuarioTest extends TestCase
             'newPassword' => 'nuevaContrasenia123',
         ]);
 
+        $response->dump();
+
         // Verificar respuesta de error
         $response->assertStatus(400)
             ->assertJson(['message' => 'Token inválido o expirado.']);

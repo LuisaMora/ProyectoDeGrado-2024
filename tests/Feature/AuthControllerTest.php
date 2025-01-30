@@ -136,7 +136,6 @@ class AuthControllerTest extends TestCase
             'Authorization' => 'Bearer ' . $responsePropietario['token'],
         ])->get('/api/datos-personales');
 
-        $response->dump();
         $response->assertStatus(400);
     }
 
@@ -163,9 +162,9 @@ class AuthControllerTest extends TestCase
             'Authorization' => 'Bearer ' . $responsePropietario['token'],
         ])->get('/api/datos-personales?id_usuario=99');
 
-        $response->assertStatus(404)
-            ->assertJsonStructure([
-                'message',
-            ]);
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'Usuario no encontrado'
+        ]);
     }
 }
