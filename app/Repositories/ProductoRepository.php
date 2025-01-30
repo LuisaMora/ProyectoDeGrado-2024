@@ -7,7 +7,7 @@ use App\Models\Restaurante;
 
 class ProductoRepository
 {
-    public function getPlatillosByRestaurante($idRestaurante, $soloDisponibles = false)
+    public function getProductosByRestaurante($idRestaurante, $soloDisponibles = false)
     {
         $menuId = Restaurante::where('id', $idRestaurante)->value('id_menu');
 
@@ -22,7 +22,7 @@ class ProductoRepository
         return $query->orderBy('nombre')->get();
     }
 
-    public function getPlatilloById($id)
+    public function getProductoById($id)
     {
         return Platillo::with('categoria')->where('disponible', true)->find($id);
     }
@@ -37,12 +37,12 @@ class ProductoRepository
         ->get();
     }
 
-    public function createPlatillo($data)
+    public function createProducto($data)
     {
         return Platillo::create($data);
     }
 
-    public function updatePlatillo($id, $data)
+    public function updateProducto($id, $data)
     {
         $platillo = Platillo::find($id);
         if ($platillo) {
@@ -52,7 +52,7 @@ class ProductoRepository
         return null;
     }
 
-    public function deletePlatillo($id)
+    public function deleteProducto($id)
     {
         $platillo = Platillo::find($id);
         if ($platillo) {

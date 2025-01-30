@@ -12,19 +12,13 @@ use App\Repositories\RestauranteRepository;
 class MenuService
 {
     private $menuRepository;
-    private $propietarioRepository;
-    private $empleadoRepository;
 
     public function __construct(
         MenuRepository $menuRepository,
-        PropietarioRepository $propietarioRepository,
-        EmpleadoRepository $empleadoRepository,
         private ProductoRepository $productoRepository,
         private RestauranteRepository $restauranteRepository
     ) {
         $this->menuRepository = $menuRepository;
-        $this->propietarioRepository = $propietarioRepository;
-        $this->empleadoRepository = $empleadoRepository;
     }
 
     public function getMenuByRestaurantId(string $id_restaurante)

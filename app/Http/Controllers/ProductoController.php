@@ -10,27 +10,27 @@ use Illuminate\Http\Request;
 class ProductoController extends Controller
 {
 
-    public function __construct(private ProductoService $platilloService, private MenuService $menuService)
+    public function __construct(private ProductoService $productoService, private MenuService $menuService)
     { 
     }
 
     public function index($id_restaurante)
     {
-        $platillos = $this->platilloService->getPlatillosByRestaurante($id_restaurante);
-        return response()->json(['status' => 'success', 'platillos' => $platillos], 200);
+        $productos = $this->productoService->getProductosByRestaurante($id_restaurante);
+        return response()->json(['status' => 'success', 'platillos' => $productos], 200);
     }
 
-    public function platillosDisponibles($id_restaurante)
+    public function productosDisponibles($id_restaurante)
     {
-        $platillos = $this->menuService->getMenuProducts($id_restaurante);
-        return response()->json(['status' => 'success', 'platillo' => $platillos], 200);
+        $productos = $this->menuService->getMenuProducts($id_restaurante);
+        return response()->json(['status' => 'success', 'platillo' => $productos], 200);
     }
 
     public function store(RegistroProductoRequest $request)
     {
         try {
-            $platillo = $this->platilloService->createPlatillo($request->all());
-            return response()->json(['status' => 'success', 'platillo' => $platillo,
+            $producto = $this->productoService->createProducto($request->all());
+            return response()->json(['status' => 'success', 'platillo' => $producto,
                 'message' => 'Plato registrado exitosamente!'], 201);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
@@ -39,18 +39,18 @@ class ProductoController extends Controller
 
     public function show($id)
     {
-        $platillo = $this->platilloService->getPlatilloById($id);
-        if (!$platillo) {
+        $producto = $this->productoService->getProductoById($id);
+        if (!$producto) {
             return response()->json(['message' => 'Platillo no encontrado.'], 404);
         }
-        return response()->json(['status' => 'success', 'platillo' => $platillo], 200);
+        return response()->json(['status' => 'success', 'platillo' => $producto], 200);
     }
 
     public function update(Request $request, $id)
     {
         try {
-            $platillo = $this->platilloService->updatePlatillo($id, $request->all());
-            return response()->json(['status' => 'success', 'platillo' => $platillo], 200);
+            $producto = $this->productoService->updateProducto($id, $request->all());
+            return response()->json(['status' => 'success', 'platillo' => $producto], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
         }
@@ -59,7 +59,7 @@ class ProductoController extends Controller
     public function destroy($id)
     {
         try {
-            $this->platilloService->deletePlatillo($id);
+            $this->productoService->deleteProducto($id);
             return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);

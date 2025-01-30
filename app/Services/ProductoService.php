@@ -10,38 +10,25 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductoService
 {
-    protected $platilloRepository;
+    protected $productoRepository;
 
-    public function __construct(ProductoRepository $platilloRepository)
+    public function __construct(ProductoRepository $productoRepository)
     {
-        $this->platilloRepository = $platilloRepository;
+        $this->productoRepository = $productoRepository;
     }
 
-    public function getPlatillosByRestaurante($id_restaurante, $soloDisponibles = false)
+    public function getProductosByRestaurante($id_restaurante, $soloDisponibles = false)
     {
-        return $this->platilloRepository->getPlatillosByRestaurante($id_restaurante, $soloDisponibles);
+        return $this->productoRepository->getProductosByRestaurante($id_restaurante, $soloDisponibles);
     }
 
-    public function getPlatilloById($id)
+    public function getProductoById($id)
     {
-        return $this->platilloRepository->getPlatilloById($id);
+        return $this->productoRepository->getProductoById($id);
     }
 
-    public function createPlatillo($data)
+    public function createProducto($data)
     {
-        $validarDatos = Validator::make($data, [
-            'nombre' => 'required|max:100',
-            'descripcion' => 'required|max:255',
-            'precio' => 'required|numeric',
-            'imagen' => 'required|image',
-            'id_categoria' => 'required|numeric',
-            'id_restaurante' => 'required|numeric',
-        ]);
-
-        if ($validarDatos->fails()) {
-            throw new \Exception(json_encode($validarDatos->errors()), 422);
-        }
-
         $restaurante = Restaurante::find($data['id_restaurante']);
         if (!$restaurante) {
             throw new \Exception('Restaurante no encontrado.', 404);
@@ -50,12 +37,12 @@ class ProductoService
         $data['id_menu'] = $restaurante->id_menu;
         $data['imagen'] = ImageHandler::guardarArchivo($data['imagen'], 'platillos');
 
-        return $this->platilloRepository->createPlatillo($data);
+        return $this->productoRepository->createProducto($data);
     }
 
-    public function updatePlatillo($id, $data)
+    public function updateProducto($id, $data)
     {
-        $platillo = $this->platilloRepository->getPlatilloById($id);
+        $platillo = $this->productoRepository->getProductoById($id);
         if (!$platillo) {
             throw new \Exception('Platillo no encontrado.', 404);
         }
@@ -65,12 +52,12 @@ class ProductoService
             $data['imagen'] = ImageHandler::guardarArchivo($data['imagen'], 'platillos');
         }
 
-        return $this->platilloRepository->updatePlatillo($id, $data);
+        return $this->productoRepository->updateProducto($id, $data);
     }
 
-    public function deletePlatillo($id)
+    public function deleteProducto($id)
     {
-        $platillo = $this->platilloRepository->deletePlatillo($id);
+        $platillo = $this->productoRepository->deleteProducto($id);
         if (!$platillo) {
             throw new \Exception('Platillo no encontrado.', 404);
         }

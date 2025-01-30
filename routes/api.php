@@ -72,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('empleado:mesero,cajero')->group(function () {
         Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
-        Route::get('/menu/pedido/platillos/{idRestauante}', 'App\Http\Controllers\ProductoController@platillosDisponibles');
+        Route::get('/menu/pedido/platillos/{idRestauante}', 'App\Http\Controllers\ProductoController@productosDisponibles');
 
         Route::post('/pedido', 'App\Http\Controllers\Pedido\PedidoController@store');
         // Route::delete('/pedidos/{id}', 'App\Http\Controllers\PedidoController@destroy');
