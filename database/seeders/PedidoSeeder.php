@@ -25,14 +25,14 @@ class PedidoSeeder extends Seeder
         $empleadoIdsRestaurante3 = Empleado::where('id_propietario', 3)->where('id_rol', 1)->pluck('id')->toArray();
 
         $fechaHaceSieteDias = date('Y-m-d', strtotime('-7 days'));
-        $cantidadFechas = 7;
+        $cantidadFechas = 1;
         $arregloFechas = [];
 
         for ($i = 0; $i < $cantidadFechas; $i++) {
             $arregloFechas[] = date('Y-m-d', strtotime('-' . $i . ' days'));
         }
 
-        $this->crearPedidosConPlatillos($empleadoIdsRestaurante1, $platillosRestaurante1, $fechaHaceSieteDias, 0, 10, $mesasR1);
+        // $this->crearPedidosConPlatillos($empleadoIdsRestaurante1, $platillosRestaurante1, $fechaHaceSieteDias, 0, 10, $mesasR1);
         $this->crearPedidosConPlatillos($empleadoIdsRestaurante1, $platillosRestaurante1, $fechaHaceSieteDias, 0, 1, $mesasR1, 1);
         $this->crearPedidosConPlatillos($empleadoIdsRestaurante1, $platillosRestaurante1, $fechaHaceSieteDias, 0, 1, $mesasR1, 2);
         $this->crearPedidosConPlatillos($empleadoIdsRestaurante1, $platillosRestaurante1, $fechaHaceSieteDias, 0, 1, $mesasR1, 2);

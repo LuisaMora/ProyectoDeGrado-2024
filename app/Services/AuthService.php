@@ -93,7 +93,7 @@ class AuthService
         // Implement password reset logic here
     }
 
-    private function getDatosPersonales($userId, $tipoUsuario)
+    public function getDatosPersonales($userId, $tipoUsuario)
     {
         switch ($tipoUsuario) {
             case 'Propietario':

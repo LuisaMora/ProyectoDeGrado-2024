@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             EstadoPedidoSeeder::class,
             EstadoCuentaSeeder::class,
             PlatilloSeeder::class,
-            // PedidoSeeder::class,
+            PedidoSeeder::class,
         ]); 
     }
 }

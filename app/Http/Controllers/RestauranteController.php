@@ -5,30 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Empleado;
 use App\Models\Propietario;
 use App\Models\Restaurante;
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Repositories\RestauranteRepository;
+use App\Services\AuthService;
 
 class RestauranteController extends Controller
 {
+    public function __construct(private AuthService $authService, private RestauranteRepository $restauranteRepository)
+    {
+    }
     public function show()
     {
-        $usuario = auth()->user();
-        $tipoUsuario = auth()->user()->tipo_usuario;
-        if ($tipoUsuario == 'Propietario') {
-            $idRestaurante = Propietario::select('id_restaurante')
-            ->where('id_usuario', $usuario->id)
-            ->first()->id_restaurante;
-        } elseif ($tipoUsuario == 'Empleado') {
-            $idRestaurante = Empleado::select('id_restaurante')
-            ->where('id_usuario', $usuario->id)
-            ->first()->id_restaurante;
-        } else {
-            return response()->json(['message' => 'No puedes acceder a esta ruta.'], 403);
+        try {
+            $usuario = auth()->user();
+            $idRestauante = $this->authService->getDatosPersonales($usuario->id, $usuario->tipo_usuario)->id_restaurante;
+            $restaurante = $this->restauranteRepository->findRestauranteById($idRestauante);
+            return response()->json(['restaurante' => $restaurante], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode());
         }
-        $restaurante = Restaurante::find($idRestaurante);
-        if ($restaurante == null) {
-            return response()->json(['message' => 'Restaurante no encontrado.'], 404);
-        }
-        return response()->json(['restaurante' => $restaurante], 200);
     }
 }
