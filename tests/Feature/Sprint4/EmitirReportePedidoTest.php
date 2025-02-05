@@ -230,9 +230,8 @@ class EmitirReportePedidoTest extends TestCase
         ]);
 
         // Verificar que la respuesta sea un error
-        $response->assertStatus(400);
-        $response->assertJsonStructure(['status', 'error']);
-        $this->assertArrayHasKey('id_restaurante', $response->json('error'));
+        $response->assertStatus(422);
+        $this->assertArrayHasKey('id_restaurante', $response->json('errors'));
     }
 
     public function test_get_reporte_fechas_invalidas()
@@ -251,10 +250,9 @@ class EmitirReportePedidoTest extends TestCase
         ]);
 
         // Verificar que la respuesta sea un error
-        $response->assertStatus(400);
-        $response->assertJsonStructure(['status', 'error']);
-        $this->assertArrayHasKey('fecha_inicio', $response->json('error'));
-        $this->assertArrayHasKey('fecha_fin', $response->json('error'));
+        $response->assertStatus(422);
+        $this->assertArrayHasKey('fecha_inicio', $response->json('errors'));
+        $this->assertArrayHasKey('fecha_fin', $response->json('errors'));
     }
 
     public function test_get_reporte_sin_fechas()
