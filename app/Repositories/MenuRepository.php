@@ -29,8 +29,12 @@ class MenuRepository
         return Restaurante::find($id_restaurante)->menu;
     }
 
-    public function create(array $data)
+    public function create()
     {
+        $data = [
+            'tema' => 'light-theme',
+            'disponible' => true,
+        ];
         return $this->model->create($data);
     }
 

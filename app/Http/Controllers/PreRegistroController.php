@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ConfirmarRegistroRestauranteRequest;
 use App\Http\Requests\StorePreRegistroRequest;
 use App\Mail\ConfirmacionPreRegistro;
 use App\Mail\RechazoPreRegistro;
@@ -13,6 +14,7 @@ use App\Models\Mesa;
 use App\Models\Propietario;
 use App\Models\Restaurante;
 use App\Models\User;
+use App\Services\FormularioRegistroService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
@@ -20,6 +22,10 @@ use Illuminate\Support\Facades\Mail;
 
 class PreRegistroController extends Controller
 {
+    public function __construct(private FormularioRegistroService $formularioRegistroService)
+    {
+    }
+
     public function index()
     {
        //ordenadoi por fecha de actualizacion
@@ -30,36 +36,21 @@ class PreRegistroController extends Controller
     public function store(StorePreRegistroRequest $request)
     {
         try {
-            $formPreRegistro = new FormularioPreRegistro($request->all());
-
-            $imagen = $request->file('fotografia_propietario');
-            $nombreCarpeta = 'fotografias_propietarios';
-            $urlImagen = ImageHandler::guardarArchivo($imagen, $nombreCarpeta);
-
-            $imagen = $request->file('licencia_funcionamiento');
-            $nombreCarpeta = 'licencias_funcionamiento';
-            $urlPdf = ImageHandler::guardarArchivo($imagen, $nombreCarpeta);
-
-
-            $formPreRegistro->fotografia_propietario = $urlImagen;
-            $formPreRegistro->licencia_funcionamiento = $urlPdf;
-            $formPreRegistro->save();
+            $formPreRegistro = $this->formularioRegistroService->recibirFormulario($request->all());
 
             return response()->json(['status' => 'success', 'data' => $formPreRegistro], 201);
-        } catch (\Throwable $th) {
-            return response()->json(['status' => 'error', 'message' => $th->getMessage()], 500);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
         }
     }
 
-    public function confirmar(Request $request)
+    public function confirmar(ConfirmarRegistroRestauranteRequest $request)
     {
-        $preRegistroId = $request->query('pre_registro_id');
-        $estado = $request->query('estado');
-
         try {
             // No puede confirmar dos veces
             DB::beginTransaction();
-
+            $preRegistroId = $request->query('pre_registro_id');
+            $estado = $request->query('estado');
             // Buscar el formulario de pre-registro
             $formPreRegistro = FormularioPreRegistro::find($preRegistroId);
             if (!$formPreRegistro || $formPreRegistro->estado != 'pendiente') {

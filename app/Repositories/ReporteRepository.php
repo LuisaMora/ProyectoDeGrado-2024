@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Cuenta;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 
 class ReporteRepository
 {
@@ -57,7 +56,6 @@ class ReporteRepository
     {
         $dbDriver = DB::getDriverName();
 
-        // Selecciona la consulta según el tipo de base de datos
         $pedidosQuery = DB::table('cuentas')
             ->join('pedidos', 'pedidos.id_cuenta', '=', 'cuentas.id')
             ->join('empleados', 'empleados.id', '=', 'pedidos.id_empleado')

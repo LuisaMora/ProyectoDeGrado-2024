@@ -60,7 +60,7 @@ class CategoriaService
         $data['imagen'] = $imagen;
         $data['id_menu'] = $restaurante->id_menu;
 
-        return $this->categoriaRepository->createCategoria($data);
+        return $this->categoriaRepository->create($data);
     }
 
     public function updateCategoria($id, $data)

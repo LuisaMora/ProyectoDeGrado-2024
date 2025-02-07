@@ -15,4 +15,9 @@ class RestauranteRepository
     {
         return Restaurante::find($id_restaurante);
     }
+
+    public function create(array $data)
+    {
+        return Restaurante::create($data);
+    }
 }

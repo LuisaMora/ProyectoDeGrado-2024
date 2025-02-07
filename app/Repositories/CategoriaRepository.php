@@ -17,7 +17,7 @@ class CategoriaRepository
         return Categoria::where('estado', true)->find($id);
     }
 
-    public function createCategoria(array $data)
+    public function create(array $data)
     {
         return Categoria::create($data);
     }
