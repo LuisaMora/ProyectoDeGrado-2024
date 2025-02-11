@@ -12,6 +12,7 @@ use App\Repositories\PropietarioRepository;
 use App\Repositories\RestauranteRepository;
 use App\Repositories\UsuarioRepository;
 use App\Utils\ImageHandler;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class FormularioRegistroService
@@ -22,6 +23,16 @@ class FormularioRegistroService
     private RestauranteRepository $restauranteRepository, private MesaRepository $mesaRepository,
     private PropietarioRepository $propietarioRepository,private MenuRepository $menuRepository, private CategoriaRepository $categoriaRepository)
     {
+    }
+    
+    public function getFormularios()
+    {
+        return $this->preRegistroRepository->all();
+    }
+
+    public function getFormulario(int $id)
+    {
+        return $this->preRegistroRepository->find($id);
     }
     
     public function recibirFormulario(array $formulario)
@@ -41,7 +52,7 @@ class FormularioRegistroService
 
     }
 
-    public function validarFormulario(int $preRegistroId, bool $estado): bool
+    public function validarFormulario(int $preRegistroId, string $estado): Model
     {
         try
         {
@@ -52,8 +63,9 @@ class FormularioRegistroService
                 throw new \Exception('El formulario ya fue confirmado o no existe', 400);
             }
             $formPreRegistro = $this->preRegistroRepository->update($preRegistroId, ['estado' => $estado]);
+            $this->preRegistroRepository->rechazarFormularios($formPreRegistro->nit, $formPreRegistro->correo_propietario, $formPreRegistro->cedula_identidad_propietario);
 
-            if ($estado)
+            if ($estado === 'aceptado')
             {
                 $this->aceptarFormulario($formPreRegistro);
             }
@@ -61,28 +73,30 @@ class FormularioRegistroService
             {
                 $this->rechazarFormulario($formPreRegistro);
             }
-            return true;
+            return $formPreRegistro;
         }
         catch (\Exception $e)
         {
-            return false;
+            DB::rollBack();
+            throw $e;
         }
     }
 
-    public function aceptarFormulario(array $formulario)
+    public function aceptarFormulario($formulario)
     {
-        $formulario['password'] = bcrypt('12345678');
-        $formulario['apellido_materno'] = $formulario['apellido_materno_propietario'];
-        $formulario['nombre'] = $formulario['nombre_propietario'];
-        $formulario['apellido_paterno'] = $formulario['apellido_paterno_propietario'];
-        $formulario['nickname'] = str_replace(' ', '', $formulario['nombre_restaurante']) . $formulario['nit'];
-        $formulario['tipo_usuario'] = 'Propietario';
-        $formulario['foto_perfil'] = $formulario['fotografia_propietario'];
-        $usuario = $this->usuarioRepository->create($formulario);
-        
+        $formulario->password = bcrypt('12345678');
+        $formulario->apellido_materno = $formulario->apellido_materno_propietario;
+        $formulario->nombre = $formulario->nombre_propietario;
+        $formulario->apellido_paterno = $formulario->apellido_paterno_propietario;
+        $formulario->nickname = str_replace(' ', '', $formulario->nombre_restaurante) . $formulario->nit;
+        $formulario->tipo_usuario = 'Propietario';
+        $formulario->foto_perfil = $formulario->fotografia_propietario;
+        $formulario->correo = $formulario->correo_propietario;
+        $usuario = $this->usuarioRepository->create($formulario->toArray());
         $menu = $this->menuRepository->create();
+        // print_r($menu);
         $categoria = $this->categoriaRepository->create(['nombre' => 'Otros', 'imagen' => 'default_dir', 'id_menu' => $menu->id]);
-        
+        // print_r($categoria);
         $restaurante = [
             'nombre' => str_replace(' ', '', $formulario['nombre_restaurante']),
             'nit' => $formulario['nit'],
@@ -106,16 +120,18 @@ class FormularioRegistroService
             'departamento' => $formulario['departamento']
         ];
 
-
-
+        $this->propietarioRepository->create($propietario);
+        $this->crearMesas($formulario['numero_mesas'], $restaurante->id);
 
         $this->emailService->sendEmail($formulario['correo_propietario'], new ConfirmacionPreRegistro($usuario, $restaurante));
         
         $this->emailService->sendEmail($formulario['correo_restaurante'], new ConfirmacionPreRegistro($usuario, $restaurante));
         DB::commit();
+
+        return true;
     }
 
-    public function rechazarFormulario(array $formulario)
+    public function rechazarFormulario($formulario)
     {
         $mensaje  = $formulario['motivo_rechazo'];
         $this->emailService->sendEmail($formulario['correo_propietario'], new RechazoPreRegistro($formulario, $mensaje));

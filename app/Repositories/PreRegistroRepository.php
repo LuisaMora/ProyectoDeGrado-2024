@@ -46,4 +46,13 @@ class PreRegistroRepository
         }
         return false;
     }
+
+    public function rechazarFormularios($nit, $correo, $ci)
+    {
+        return $this->model->where(function ($query) use ($ci, $correo, $nit) {
+            $query->where('cedula_identidad_propietario', $ci)
+                ->orWhere('correo_propietario', $correo)
+                ->orWhere('nit', $nit);
+        })->where('estado', '!=', 'aceptado')->update(['estado' => 'rechazado']);
+    }
 }
