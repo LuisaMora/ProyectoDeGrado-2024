@@ -38,7 +38,7 @@ class MenuRepository
         return $this->model->create($data);
     }
 
-    public function update($id, array $data)
+    public function update($id, $data)
     {
         $menu = $this->model->find($id);
         if ($menu) {

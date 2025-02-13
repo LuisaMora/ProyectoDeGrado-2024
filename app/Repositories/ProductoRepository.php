@@ -27,15 +27,19 @@ class ProductoRepository
         return Platillo::with('categoria')->where('disponible', true)->find($id);
     }
 
-    public function getProductosMenu($idMenu)
-    {
-        return  Platillo::with('categoria')
+    public function getProductosMenu($idMenu, $filtrarPorDisponibilidad)
+{
+    $query = Platillo::with('categoria')
         ->where('id_menu', $idMenu)
-        ->where('disponible', true)
-        ->where('plato_disponible_menu', true)
-        ->orderBy('nombre')
-        ->get();
+        ->where('disponible', true);
+
+    if ($filtrarPorDisponibilidad) {
+        $query->where('plato_disponible_menu', true);
     }
+
+    return $query->orderBy('nombre')->get();
+}
+
 
     public function createProducto($data)
     {

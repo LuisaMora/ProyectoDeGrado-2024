@@ -14,9 +14,8 @@ class ReporteController extends Controller
 
     public function getReporte(ReporteRequest $request)
     {
-        $data = $this->reporteService->getReporte($request
-        );
-
+        $data = $this->reporteService->getReporte($request);
+        
         return response()->json($data, 200);
     }
 }

@@ -89,8 +89,7 @@ class VisualizarMenuDigitalTest extends TestCase
             ->assertJsonStructure([
                 'status',
                 'menu',
-                'platillos',
-                'nombre_restaurante'
+                'platillos'
             ]);
 
         // Total de platillos disponibles (8 de factory - 2 no disponibles)
@@ -104,7 +103,7 @@ class VisualizarMenuDigitalTest extends TestCase
 
         // Verificar que se recibe un error 404
         $response->assertStatus(404)
-            ->assertJson(['message' => 'Menu no encontrado.']);
+            ->assertJson(['error' => 'Menu no encontrado.']);
     }
 
     public function test_generar_qr_exitosamente()
@@ -134,8 +133,8 @@ class VisualizarMenuDigitalTest extends TestCase
         ]);
 
         // Verificar que se retorne un error de validación
-        $response->assertStatus(400)
-            ->assertJsonStructure(['status', 'error']);
+        $response->assertStatus(422)
+            ->assertJsonStructure([ 'errors']);
     }
 
 

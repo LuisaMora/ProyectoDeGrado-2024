@@ -29,6 +29,10 @@ class MesaRepository
         return Mesa::where('id_restaurante', $idRestaurante)->pluck('id');
     }
 
+    public function getMesasByIdRest(int $idRestaurante){
+        return Mesa::select('id','id_restaurante','nombre')->where('id_restaurante', $idRestaurante)->get();
+    }
+
     public function crearMesa(array $data)
     {
         return Mesa::create($data);

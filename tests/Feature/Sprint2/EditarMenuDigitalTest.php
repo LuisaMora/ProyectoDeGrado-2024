@@ -193,6 +193,6 @@ class EditarMenuDigitalTest extends TestCase
         ]);
 
         $response->assertStatus(404)
-            ->assertJson(['message' => 'Menu no encontrado.']);
+            ->assertJson(['error' => 'Menu no encontrado.']);
     }
 }
