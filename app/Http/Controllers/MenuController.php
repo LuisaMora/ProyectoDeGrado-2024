@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GenerateQrRequest;
 use App\Http\Requests\StoreMenuRequest;
 use App\Services\MenuService;
-use Illuminate\Http\Request;
 use Exception;
 
 class MenuController extends Controller

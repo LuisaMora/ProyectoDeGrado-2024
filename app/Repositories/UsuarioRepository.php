@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class UsuarioRepository
 {
@@ -39,7 +40,7 @@ class UsuarioRepository
         return $user;
     }
 
-    public function create(array $data)
+    public function create($data): User
     {
         return $this->model->create($data);
     }

@@ -15,7 +15,7 @@ class PreRegistroRepository
 
     public function all()
     {
-        return $this->model->all();
+        return $this->model->orderBy('updated_at', 'desc')->get();;
     }
 
     public function find($id)

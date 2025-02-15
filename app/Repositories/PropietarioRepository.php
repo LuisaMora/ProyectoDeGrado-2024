@@ -25,7 +25,7 @@ class PropietarioRepository
         return $this->model->find($id);
     }
 
-    public function findByUserId($id_usuario)
+    public function findByUserId($id_usuario): Propietario
     {
         return $this->model->select('id', 'id_administrador', 'ci', 'fecha_registro', 'pais', 'departamento', 'id_restaurante')
         ->where('id_usuario', $id_usuario)->first();

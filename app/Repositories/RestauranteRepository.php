@@ -11,7 +11,7 @@ class RestauranteRepository
         return Restaurante::where('id', $id_restaurante)->value('id_menu');
     }
 
-    public function findRestauranteById($id_restaurante)
+    public static function findRestauranteById($id_restaurante)
     {
         return Restaurante::find($id_restaurante);
     }

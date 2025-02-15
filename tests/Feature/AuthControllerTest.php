@@ -118,7 +118,6 @@ class AuthControllerTest extends TestCase
             'usuario' => 'test_user_1',
             'password' => '12345678',
         ]);
-        $response->dump();
         $response->assertStatus(401)
             ->assertJsonStructure([
                 'message',

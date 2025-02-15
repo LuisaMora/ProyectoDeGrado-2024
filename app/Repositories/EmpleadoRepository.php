@@ -31,9 +31,19 @@ class EmpleadoRepository
         ->where('id_usuario', $id_usuario)->first();
     }
 
-    public function create(array $data)
+    public function create($data, int $idUsuario, int $idPropietario, int $idRestaurante): Empleado
     {
-        return $this->model->create($data);
+
+        return $this->model->create([
+            'id_usuario' => $idUsuario,
+            'id_rol' => $data->id_rol,
+            'id_propietario' => $idPropietario,
+            'fecha_nacimiento' => $data->fecha_nacimiento,
+            'fecha_contratacion' => $data->fecha_contratacion,
+            'ci' => $data->ci,
+            'direccion' => $data->direccion,
+            'id_restaurante' => $idRestaurante,
+        ]);
     }
 
     public function update($id, array $data)

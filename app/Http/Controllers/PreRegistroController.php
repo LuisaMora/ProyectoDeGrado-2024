@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ConfirmarRegistroRestauranteRequest;
 use App\Http\Requests\StorePreRegistroRequest;
-use App\Models\FormularioPreRegistro;
 use App\Services\FormularioRegistroService;
 use Illuminate\Database\QueryException;
 
@@ -18,7 +17,7 @@ class PreRegistroController extends Controller
     public function index()
     {
        //ordenadoi por fecha de actualizacion
-        $formPreRegistros = FormularioPreRegistro::orderBy('updated_at', 'desc')->get();
+        $formPreRegistros = $this->formularioRegistroService->getFormularios();
         return response()->json(['status' => 'success', 'data' => $formPreRegistros], 200);
     }
 

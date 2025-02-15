@@ -4,11 +4,14 @@ namespace App\Services;
 
 use App\Mail\AltaUsuario;
 use App\Mail\BajaUsuario;
+use App\Mail\RegistroEmpleado;
+use App\Models\Empleado;
 use App\Repositories\EmpleadoRepository;
 use App\Repositories\PropietarioRepository;
 use App\Repositories\UsuarioRepository;
 use App\Services\MenuService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -35,6 +38,31 @@ class UserService
     public function createUser(array $data)
     {
         // Logic to create a user
+    }
+
+    public function crearEmpleado( $request): Empleado
+    {
+        return DB::transaction(function () use ($request) {
+            // Crear usuario
+            $request->merge([
+                'password' => Hash::make('12345678'),
+                'tipo_usuario' => 'Empleado',
+            ]);
+            $usuario = $this->usuarioRepository->create($request->all());
+            // Obtener propietario y restaurante
+            $propietario = $this->propietarioRepository->findByUserId(auth()->user()->id);
+            if (!$propietario) {
+                throw new \Exception('Propietario no encontrado', 404);
+            }
+
+            $restaurante = \App\Repositories\RestauranteRepository::findRestauranteById($propietario->id_restaurante);
+            // Crear empleado
+            $empleado = $this->empleadoRepository->create($request, $usuario->id, $propietario->id, $propietario->id_restaurante);
+
+            // Enviar correo
+            $this->emailService->sendEmail($usuario->correo, new RegistroEmpleado($usuario, $restaurante));
+            return $empleado;
+        });
     }
 
     public function getUserById(int | null $id)
