@@ -19,7 +19,6 @@ class PedidoService
         if ($tipoEmpleado == 1) {
             // Mesero: obtiene pedidos agrupados por mesa
             $pedidosPorMesa = $this->pedidoRepository->obtenerPedidosPorMesero($idEmpleado, $idRestaurante);
-            // return $pedidosPorMesa;
             return $this->transformarDatosPedido($pedidosPorMesa);
         }
 
@@ -31,45 +30,39 @@ class PedidoService
         throw new \Exception("No tienes permisos para ver los pedidos.");
     }
 
-    private function transformarDatosPedido($pedidosPorMesa) {
+    private function transformarDatosPedido($pedidosPorMesa)
+    {
         $resultados = [];
-    
         foreach ($pedidosPorMesa as $idMesa => $pedidos) {
-            // Obtener los datos de la cuenta
             $primero = $pedidos->first(); // Tomar el primer pedido para obtener los datos de la cuenta y la mesa
-    
-            // Crear la estructura para cada mesa
+            $cuenta = $primero->cuenta;
+            $mesa = $cuenta->mesa;
             $pedidosMesa = [
-                'id_cuenta' => $primero->cuenta->id,
-                'monto_total' => $primero->cuenta->monto_total, // Asumiendo que esta propiedad está disponible
-                'nombreMesa' => $primero->cuenta->mesa->nombre, // Asumiendo que la relación está disponible
-                'estado_cuenta' => $primero->cuenta->estado,
-                'pedidos' => [] // Inicializar el arreglo de pedidos
-            ];
-    
-            // Iterar sobre los pedidos y transformar a la estructura deseada
-            foreach ($pedidos as $pedido) {
-                $pedidosMesa['pedidos'][] = [
-                    'id_pedido' => $pedido->id,
-                    'estado' => $pedido->estado->nombre, // Suponiendo que tienes una relación con estado
-                    'platos' => [], // Inicializar el arreglo de platos
-                    'monto' => $pedido->monto,
-                ];
-    
-                // Agregar los platos al pedido
-                foreach ($pedido->platos as $plato) {
-                    $pedidosMesa['pedidos'][count($pedidosMesa['pedidos']) - 1]['platos'][] = [
-                        'nombre' => $plato->nombre, // Suponiendo que esta propiedad existe
-                        'precio_fijado' => $plato->pivot->precio_fijado, // Asegúrate de que el precio_fijado esté en la tabla pivot
-                        'cantidad' => $plato->pivot->cantidad, // Asegúrate de que la cantidad esté en la tabla pivot
-                        'detalle' => $plato->detalle // Asumiendo que tienes un detalle del plato
+                'id_cuenta' => $cuenta->id,
+                'monto_total' => $cuenta->monto_total,
+                'nombreMesa' => $mesa->nombre,
+                'estado_cuenta' => $cuenta->estado,
+                'pedidos' => $pedidos->map(function ($pedido) {
+                    return [
+                        'id_pedido' => $pedido->id,
+                        'estado' => $pedido->estado->nombre,
+                        'monto' => $pedido->monto,
+                        'platos' => $pedido->platos->map(function ($plato) {
+                            return [
+                                'nombre' => $plato->nombre,
+                                'precio_fijado' => $plato->pivot->precio_fijado,
+                                'cantidad' => $plato->pivot->cantidad,
+                                'detalle' => $plato->detalle,
+                            ];
+                        })->toArray(),
                     ];
-                }
-            }
-    
-            $resultados[] = $pedidosMesa; // Agregar el objeto de mesa al resultado final
+                })->toArray(),
+            ];
+
+            $resultados[] = $pedidosMesa;
         }
-    
-        return $resultados; // Retornar la estructura transformada
+
+        return $resultados;
     }
+    
 }
