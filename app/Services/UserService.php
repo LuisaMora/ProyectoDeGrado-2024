@@ -137,4 +137,9 @@ class UserService
         }
         return $usuarios;
     }
+
+    public function getTipoEmpleado(){
+        return $this->usuarioRepository->getTipoEmpleado();
+
+    }
 }

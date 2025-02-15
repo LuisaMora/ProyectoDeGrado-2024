@@ -40,6 +40,11 @@ class UsuarioRepository
         return $user;
     }
 
+    public function getTipoEmpleado(): int
+    {
+        return $this->model->find(auth()->user()->id)->getTipoEmpleado();
+    }
+
     public function create($data): User
     {
         return $this->model->create($data);

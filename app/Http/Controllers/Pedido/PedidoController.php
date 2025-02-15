@@ -12,51 +12,27 @@ use App\Utils\NotificacionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Services\PedidoService;
+use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 
 class PedidoController extends Controller
 {
     private $notificacionHandler;
-    public function __construct()
+    public function __construct(private PedidoService $pedidoService, private UserService $userService)
     {
         $this->notificacionHandler = new NotificacionHandler();
     }
-    public function index($idEmpleado, $idRestaurante)
+    public function index(int $idEmpleado, int $idRestaurante): JsonResponse
     {
-        $tipoEmpleado = User::find(auth()->user()->id)->getTipoEmpleado();
-        if ($tipoEmpleado == 1) {
-            $pedidosPorMesa = Pedido::with([
-                'cuenta.mesa', 
-                'platos', // Ahora puedes acceder a precio_fijado directamente en la relación
-                'estado'
-            ])
-            ->whereDate('fecha_hora_pedido', now())
-            ->where('id_empleado', $idEmpleado)
-            ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
-                $query->where('id_restaurante', $idRestaurante);
-            })
-            ->whereHas('cuenta', function ($query) {
-                $query->where('estado', '!=', 'Pagada');
-            })
-            ->get()
-            ->groupBy('cuenta.mesa.id'); // Agrupar pedidos por ID de mesa
-        $pedidos = $this->transformarDatosPedido($pedidosPorMesa);
-        } else if ($tipoEmpleado == 3) {
-            $pedidos = Pedido::with(['cuenta.mesa', 'platos', 'estado'])
-                ->whereDate('fecha_hora_pedido', now())
-                ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
-                    $query->where('id_restaurante', $idRestaurante);
-                })
-                ->whereHas('cuenta', function ($query) {
-                    $query->where('estado', '!=', 'Pagada');
-                })
-                ->get();
-        } else {
-            return response()->json(['status' => 'error', 'error' => 'No tienes permisos para ver los pedidos.'], 403);
+        try {
+            $tipoEmpleado = $this->userService->getTipoEmpleado();
+            $pedidos = $this->pedidoService->obtenerPedidos($idEmpleado, $idRestaurante, $tipoEmpleado);
+            return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'error' => $e->getMessage()], 403);
         }
-        return response()->json(['status' => 'success', 'pedidos' => $pedidos], 200);
     }
-
-
 
     function showPlatillos($idPedido, $idRestaurante)
     {
