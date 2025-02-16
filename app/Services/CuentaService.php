@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\CuentaRepository;
-use Illuminate\Database\Eloquent\Collection;
 
 class CuentaService
 {
@@ -14,15 +13,25 @@ class CuentaService
         $this->cuentaRepository = $cuentaRepository;
     }
 
-    public function getCuentasByRestaurante(int $idRestaurante)
+    public function getCuentasByRestaurante(string $idRestaurante, bool $activo = true)
     {
-        $cuentas = $this->cuentaRepository->getCuentasActivas($idRestaurante);
+        $cuentas = $this->cuentaRepository->getCuentas($idRestaurante, $activo);
 
         if ($cuentas->isEmpty()) {
             throw new \Exception('No hay cuentas disponibles.');
         }
 
         return $this->procesarDatos($cuentas->toArray());
+    }
+
+    public function show(string $idCuenta)
+    {
+        $cuenta = $this->cuentaRepository->getConsumoCuenta($idCuenta);
+        if (!$cuenta) {
+            throw new \Exception("No se encontró una cuenta con el ID proporcionado.", 404);
+        }
+
+        return $this->procesarDatos([$cuenta]);
     }
 
     public function updateCuenta($idCuenta, array $data)

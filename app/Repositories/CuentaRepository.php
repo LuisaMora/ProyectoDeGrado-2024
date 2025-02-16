@@ -20,19 +20,35 @@ class CuentaRepository
         return $this->model->all();
     }
 
-    public function getCuentasActivas(int $idRestaurante): Collection
+    public function getCuentas(int $idRestaurante, bool $activo): Collection
     {
+        $cuenta = Cuenta::with(['mesa', 'pedidos' => function ($query) {
+            $query->whereDate('fecha_hora_pedido', now())
+                ->with(['platos' => function ($query) {
+                    $query->select('platillos.id', 'platillos.nombre', 'plato_pedido.precio_fijado', 'plato_pedido.cantidad');
+                }]);
+        }])
+        ->whereHas('mesa', function ($query) use ($idRestaurante) {
+            $query->where('id_restaurante', $idRestaurante);
+        });
+        if($activo){
+            $cuenta->where('estado', '!=', 'Pagada');
+        }else{
+            $cuenta->where('estado', '=', 'Pagada');
+        }
+        $cuenta = $cuenta->get();
+        return $cuenta;
+
+        // return $cuenta;
+    }
+ 
+    public function getConsumoCuenta(string $idCuenta){
         return Cuenta::with(['mesa', 'pedidos' => function ($query) {
-                $query->whereDate('fecha_hora_pedido', now())
-                    ->with(['platos' => function ($query) {
-                        $query->select('platillos.id', 'platillos.nombre', 'plato_pedido.precio_fijado', 'plato_pedido.cantidad');
-                    }]);
-            }])
-            ->whereHas('mesa', function ($query) use ($idRestaurante) {
-                $query->where('id_restaurante', $idRestaurante);
-            })
-            ->where('estado', '!=', 'Pagada')
-            ->get();
+            $query->whereDate('fecha_hora_pedido', now())
+                ->with(['platos' => function ($query) {
+                    $query->select('platillos.id', 'platillos.nombre', 'plato_pedido.precio_fijado', 'plato_pedido.cantidad');
+                }]);
+        }])->find($idCuenta);
     }
 
     public function findById($id)

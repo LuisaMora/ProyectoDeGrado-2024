@@ -282,7 +282,7 @@ class VisualizarCuentasEnCajaTest extends TestCase
         $response->assertStatus(404)
             ->assertJson([
                 'status' => 'error',
-                'error' => 'Cuenta no encontrada.'
+                'message' => 'No se encontró una cuenta con el ID proporcionado.'
             ]);
     }
 
