@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Cuenta;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class CuentaRepository
@@ -17,6 +18,21 @@ class CuentaRepository
     public function getAll()
     {
         return $this->model->all();
+    }
+
+    public function getCuentasActivas(int $idRestaurante): Collection
+    {
+        return Cuenta::with(['mesa', 'pedidos' => function ($query) {
+                $query->whereDate('fecha_hora_pedido', now())
+                    ->with(['platos' => function ($query) {
+                        $query->select('platillos.id', 'platillos.nombre', 'plato_pedido.precio_fijado', 'plato_pedido.cantidad');
+                    }]);
+            }])
+            ->whereHas('mesa', function ($query) use ($idRestaurante) {
+                $query->where('id_restaurante', $idRestaurante);
+            })
+            ->where('estado', '!=', 'Pagada')
+            ->get();
     }
 
     public function findById($id)

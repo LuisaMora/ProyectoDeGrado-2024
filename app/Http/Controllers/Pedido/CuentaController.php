@@ -5,31 +5,24 @@ namespace App\Http\Controllers\Pedido;
 use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
 use App\Models\Pedido;
+use App\Services\CuentaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CuentaController extends Controller
 {
-    public function index($idRestaurante){
-        $cuentas = Cuenta::with(['mesa', 'pedidos' => function ($query) {
-            $query->whereDate('fecha_hora_pedido', now())
-                ->with(['platos' => function ($query) {
-                    // Aquí seleccionamos los campos que necesitamos de la tabla pivot 'plato_pedido', 
-                    // incluyendo 'precio_fijado' en lugar del precio actual de la tabla 'platillos'
-                    $query->select('platillos.id', 'platillos.nombre', 'plato_pedido.precio_fijado', 'plato_pedido.cantidad');
-                }]);
-        }])->whereHas('mesa', function ($query) use ($idRestaurante) {
-            $query->where('id_restaurante', $idRestaurante);
-        })->where('estado', '!=', 'Pagada')
-        ->get();
+    public function __construct(private CuentaService $cuentaService)
+    {
+    }
 
-        if ($cuentas->isEmpty()) {
-            return response()->json(['status' => 'error', 'error' => 'No hay cuentas disponibles.'], 404);
+    public function index($id_restaurante)
+    {
+        try {
+            $cuentas = $this->cuentaService->getCuentasByRestaurante($id_restaurante);
+            return response()->json(['status' => 'success', 'cuentas' => $cuentas], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
-        // return response()->json(['status' => 'success', 'cuentas' => $cuentas], 200);
-
-        $cuentasProcesadas = $this->procesarDatos($cuentas->toArray());
-        return response()->json(['status' => 'success', 'cuentas' => $cuentasProcesadas], 200);
     }
 
     public function store(Request $request, $idCuenta)
