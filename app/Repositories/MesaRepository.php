@@ -37,4 +37,9 @@ class MesaRepository
     {
         return Mesa::create($data);
     }
+
+    public function obtenerNombreMesa($idMesa)
+    {
+        return Mesa::where('id', $idMesa)->first()->nombre;
+    }
 }

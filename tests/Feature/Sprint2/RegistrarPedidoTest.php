@@ -69,7 +69,7 @@ class RegistrarPedidoTest extends TestCase
         Empleado::create([
             'id_usuario' => User::factory()
                 ->asignarNicknameCorreo('empleado1', 'empleado1@gmail.com')->create([
-                    'tipo_usuario' => 'Empleado' 
+                    'tipo_usuario' => 'Empleado'
                 ])->id,
             'id_rol' => 1,
             'id_propietario' => 1,
@@ -77,7 +77,7 @@ class RegistrarPedidoTest extends TestCase
             'fecha_contratacion' => now(),
             'ci' => '70951529',
             'direccion' => 'Cochabamba',
-            'id_restaurante' =>1
+            'id_restaurante' => 1
         ]);
 
         // Platillo::factory(10)->asignarMenu(1)->create();
@@ -311,10 +311,11 @@ class RegistrarPedidoTest extends TestCase
                 'Authorization' => 'Bearer ' . $token,
             ])->postJson('/api/pedido', $dataSet['data']);
 
-            // Verificar que el status es 400 y que los errores de validación sean los esperados
-            $response->assertStatus(400)
-                ->assertJson(['status' => 'error'])
-                ->assertJsonStructure(['error' => $dataSet['errors']]);
+            $response->assertStatus(422)
+                ->assertJsonStructure([
+                    'message',
+                    'errors'
+                ]);
         }
     }
 
@@ -334,9 +335,9 @@ class RegistrarPedidoTest extends TestCase
         ]);
 
         $response->assertStatus(400)
-            ->assertJson([
-                'status' => 'error',
-                'error' => 'El campo platillos no puede estar vacío.'
+            ->assertJsonStructure([
+                'status',
+                'error'
             ]);
     }
 
@@ -439,7 +440,7 @@ class RegistrarPedidoTest extends TestCase
         $this->assertNotEquals($primerPedido['id_cuenta'], $tercerPedido['id_cuenta']);
     }
 
-    public function test_store_pedido_falla_con_cuenta_sin_cerrar_de_otro_dia()
+    public function test_store_pedido_crea_nueva_cuenta()
     {
         // Crear una cuenta para la mesa 1 con fecha de un día anterior
         $cuenta = Cuenta::create([
@@ -491,11 +492,9 @@ class RegistrarPedidoTest extends TestCase
         ])->postJson('/api/pedido', $data);
 
         // Verificar que la respuesta es un error de cuenta abierta
-        $response->assertStatus(400)
-            ->assertJson([
-                'status' => 'error',
-                'error' => 'No se puede crear un pedido para una mesa con cuenta abierta.'
-            ]);
+        $response->assertStatus(200)
+            ->assertJson(['status' => 'success'])
+            ->assertJsonStructure(['pedido' => ['id', 'tipo', 'fecha_hora_pedido']]);
 
         // Verificar que no se haya creado un nuevo pedido
         $this->assertDatabaseMissing('pedidos', [

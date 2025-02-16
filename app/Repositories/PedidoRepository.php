@@ -34,4 +34,9 @@ class PedidoRepository
             })
             ->get();
     }
+
+    public function crearPedido($datosPedido): Pedido
+    {
+        return Pedido::create($datosPedido);
+    }
 }

@@ -87,7 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/notificaciones', 'App\Http\Controllers\NotificacionController@obtenerNotificaciones');
         Route::get('/notificaciones/cantidad', 'App\Http\Controllers\NotificacionController@obtenerNotificacionesCantidad');
         Route::put('/notificaciones/leidas', 'App\Http\Controllers\NotificacionController@marcarComoLeida');
-        Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
+        // Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');
         
         Route::post('/actualizar/datos-empleado', 'App\Http\Controllers\Auth\UserDetailsController@updateUserDetails')
         ->defaults('esPropietario', false);
@@ -103,8 +103,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('empleado:cocinero')->group(function () {
-       Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
+    //    Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
        Route::put('/plato-pedido/estado', 'App\Http\Controllers\Pedido\CambiarEstadoController@update');
+    });
+
+    Route::middleware('empleado:cocinero,mesero')->group(function () {
+        //    Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
+        Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');    
     });
     
     Route::middleware('propietarioOempleado')->group(function () {
