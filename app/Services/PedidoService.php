@@ -38,6 +38,17 @@ class PedidoService
         throw new \Exception("No tienes permisos para ver los pedidos.");
     }
 
+    public function obtenerPlatillosDePedido($idPedido, $idRestaurante)
+    {
+        $pedido = $this->pedidoRepository->obtenerPlatillosDePedido($idPedido, $idRestaurante);
+
+        if (!$pedido) {
+            throw new \Exception("El pedido no existe.", 404);
+        }
+
+        return ['platos' => $pedido->platos, 'idPedido' => $idPedido];
+    }
+
     public function crearPedido($request)
     {
         DB::beginTransaction();

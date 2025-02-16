@@ -21,6 +21,17 @@ class PedidoRepository
             ->get()
             ->groupBy('cuenta.mesa.id'); // Agrupar pedidos por mesa
     }
+    
+    public function obtenerPlatillosDePedido($idPedido, $idRestaurante)
+    {
+        return Pedido::with('platos')
+            ->whereDate('fecha_hora_pedido', now())
+            ->where('id', $idPedido)
+            ->whereHas('cuenta.mesa', function ($query) use ($idRestaurante) {
+                $query->where('id_restaurante', $idRestaurante);
+            })
+            ->first();
+    }
 
     public function obtenerPedidosPorCocinero(int $idRestaurante): Collection
     {

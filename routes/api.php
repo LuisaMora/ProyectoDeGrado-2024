@@ -108,7 +108,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('empleado:cocinero,mesero')->group(function () {
-        //    Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
+        Route::get('/pedido/platos/{idPedido}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@showPlatillos');
         Route::get('/pedidos/{idEmpleado}/{idRestaurante}', 'App\Http\Controllers\Pedido\PedidoController@index');    
     });
     
