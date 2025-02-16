@@ -25,13 +25,25 @@ class CuentaService
         return $this->procesarDatos($cuentas->toArray());
     }
 
+    public function updateCuenta($idCuenta, array $data)
+    {
+        $cuenta = $this->cuentaRepository->findById($idCuenta);
+        if (!$cuenta) {
+            throw  new \Exception("No se encontró una cuenta con el ID proporcionado.", 404);
+        }
+
+        $cuentaActualizada = $this->cuentaRepository->update($cuenta->id, [
+            'nombre_razon_social' => $data['razon_social'],
+            'nit' => $data['nit']
+        ]);
+
+        return $cuentaActualizada;
+    }
+
     private function procesarDatos($cuentas)
     {
-        $resultados = [];
-
-        foreach ($cuentas as $cuenta) {
-            // Inicializamos una nueva cuenta
-            $nuevaCuenta = [
+        return array_map(function ($cuenta) {
+            return [
                 'id' => $cuenta['id'],
                 'id_mesa' => $cuenta['id_mesa'],
                 'nombre_mesa' => $cuenta['mesa']['nombre'],
@@ -39,28 +51,16 @@ class CuentaService
                 'nombre_razon_social' => $cuenta['nombre_razon_social'],
                 'monto_total' => $cuenta['monto_total'],
                 'nit' => $cuenta['nit'],
-                'platos' => [] // Aquí guardaremos los platos de todos los pedidos
-            ];
-
-            // Iteramos sobre cada pedido de la cuenta
-            foreach ($cuenta['pedidos'] as $pedido) {
-                // Iteramos sobre los platos de cada pedido y los agregamos a la cuenta
-                foreach ($pedido['platos'] as $plato) {
-                    $nuevaCuenta['platos'][] = [
+                'platos' => collect($cuenta['pedidos'])
+                    ->flatMap(fn($pedido) => collect($pedido['platos'])->map(fn($plato) => [
                         'id' => $plato['id'],
                         'nombre' => $plato['nombre'],
-                        'precio' => $plato['precio_fijado'], // Usamos el precio guardado en 'plato_pedido'
+                        'precio' => $plato['precio_fijado'],
                         'id_pedido' => $plato['pivot']['id_pedido'],
                         'id_platillo' => $plato['pivot']['id_platillo'],
                         'cantidad' => $plato['pivot']['cantidad']
-                    ];
-                }
-            }
-
-            // Agregamos la nueva cuenta transformada al resultado final
-            $resultados[] = $nuevaCuenta;
-        }
-
-        return $resultados;
+                    ]))->values()->all()
+            ];
+        }, $cuentas);
     }
 }

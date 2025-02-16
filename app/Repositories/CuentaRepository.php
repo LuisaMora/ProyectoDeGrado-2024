@@ -37,7 +37,7 @@ class CuentaRepository
 
     public function findById($id)
     {
-        return $this->model->find($id);
+        return Cuenta::find($id);
     }
 
     public function obtenerOCrearCuenta(Request $data)

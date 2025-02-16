@@ -240,7 +240,7 @@ class RegistrarDatosCuentaTest extends TestCase
         $response->assertStatus(404)
             ->assertJson([
                 'status' => 'error',
-                'error' => 'No se encontró una cuenta con el ID proporcionado.',
+                'message' => 'No se encontró una cuenta con el ID proporcionado.',
             ]);
     }
 
@@ -259,10 +259,10 @@ class RegistrarDatosCuentaTest extends TestCase
         ]);
 
         // Verificar que la respuesta retorna un error 400
-        $response->assertStatus(400)
+        $response->assertStatus(422)
             ->assertJsonStructure([
-                'status',
-                'error'
+                'message',
+                'errors'
             ]);
     }
 }
