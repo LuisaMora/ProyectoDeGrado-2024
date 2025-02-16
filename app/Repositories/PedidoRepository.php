@@ -50,4 +50,6 @@ class PedidoRepository
     {
         return Pedido::create($datosPedido);
     }
+
+    // public function verificarPe
 }

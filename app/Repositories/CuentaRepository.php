@@ -28,21 +28,30 @@ class CuentaRepository
                     $query->select('platillos.id', 'platillos.nombre', 'plato_pedido.precio_fijado', 'plato_pedido.cantidad');
                 }]);
         }])
-        ->whereHas('mesa', function ($query) use ($idRestaurante) {
-            $query->where('id_restaurante', $idRestaurante);
-        });
-        if($activo){
+            ->whereHas('mesa', function ($query) use ($idRestaurante) {
+                $query->where('id_restaurante', $idRestaurante);
+            });
+        if ($activo) {
             $cuenta->where('estado', '!=', 'Pagada');
-        }else{
+        } else {
             $cuenta->where('estado', '=', 'Pagada');
         }
         $cuenta = $cuenta->get();
         return $cuenta;
-
-        // return $cuenta;
     }
- 
-    public function getConsumoCuenta(string $idCuenta){
+
+    public function cuentaEstaCerrada($idCuenta)
+    {
+        $estadoServido = 4;
+        $pedidosNoServidos = Cuenta::with(['pedidos' => function ($query) use ($estadoServido) {
+            $query->where('id_estado', '!=', $estadoServido);
+        }])->find($idCuenta)?->pedidos;
+
+        return $pedidosNoServidos ?: collect();
+    }
+
+    public function getConsumoCuenta(string $idCuenta)
+    {
         return Cuenta::with(['mesa', 'pedidos' => function ($query) {
             $query->whereDate('fecha_hora_pedido', now())
                 ->with(['platos' => function ($query) {

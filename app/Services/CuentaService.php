@@ -6,11 +6,8 @@ use App\Repositories\CuentaRepository;
 
 class CuentaService
 {
-    protected $cuentaRepository;
-
-    public function __construct(CuentaRepository $cuentaRepository)
+    public function __construct(private CuentaRepository $cuentaRepository)
     {
-        $this->cuentaRepository = $cuentaRepository;
     }
 
     public function getCuentasByRestaurante(string $idRestaurante, bool $activo = true)
@@ -32,6 +29,19 @@ class CuentaService
         }
 
         return $this->procesarDatos([$cuenta]);
+    }
+
+    public function close($idCuenta)
+    {
+        $pedidosNoServidos = $this->cuentaRepository->cuentaEstaCerrada($idCuenta);
+        if (!$pedidosNoServidos->isEmpty()) {
+           throw new \Exception('Hay pedidos sin servir.', 400);
+        }
+        $cuenta = $this->cuentaRepository->update($idCuenta, ['estado' => 'Pagada']);
+        if($cuenta == null) {
+            throw new \Exception( "Cuenta no encontrada.", 404);
+        }
+        return $cuenta;
     }
 
     public function updateCuenta($idCuenta, array $data)

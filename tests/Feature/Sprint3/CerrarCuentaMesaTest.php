@@ -204,7 +204,7 @@ class CerrarCuentaMesaTest extends TestCase
         $response->assertStatus(400)
             ->assertJson([
                 'status' => 'error',
-                'error' => 'Hay pedidos sin servir.'
+                'message' => 'Hay pedidos sin servir.'
             ]);
     }
 
@@ -256,7 +256,7 @@ class CerrarCuentaMesaTest extends TestCase
         $response->assertStatus(404)
             ->assertJson([
                 'status' => 'error',
-                'error' => 'Cuenta no encontrada.'
+                'message' => 'Cuenta no encontrada.'
             ]);
     }
 }

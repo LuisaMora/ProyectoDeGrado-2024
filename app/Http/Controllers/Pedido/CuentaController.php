@@ -4,15 +4,11 @@ namespace App\Http\Controllers\Pedido;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCuentaRequest;
-use App\Models\Cuenta;
-use App\Models\Pedido;
 use App\Services\CuentaService;
 
 class CuentaController extends Controller
 {
-    public function __construct(private CuentaService $cuentaService)
-    {
-    }
+    public function __construct(private CuentaService $cuentaService) {}
 
     public function index($id_restaurante)
     {
@@ -42,25 +38,16 @@ class CuentaController extends Controller
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
         }
-        
     }
 
     public function close($idCuenta)
     {
-        $estadoServido = 4;
-        $pedidosNoServidos = Pedido::where('id_estado','!=', $estadoServido)
-                                    ->where('id_cuenta',$idCuenta)->get();
-        if ($pedidosNoServidos->count() > 0) {
-            return response()->json(['status' => 'error', 'error' => 'Hay pedidos sin servir.'], 400);
+        try {
+            $cuenta = $this->cuentaService->close($idCuenta);
+            return response()->json(['status' => 'success', 'message' => 'Cuenta cerrada con éxito.', 'cuenta' => $cuenta], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
         }
-        $cuenta = Cuenta::find($idCuenta);
-        if (!$cuenta) {
-            return response()->json(['status' => 'error', 'error' => 'Cuenta no encontrada.'], 404);
-        }
-        $cuenta->estado = 'Pagada';
-        $cuenta->save();
-
-        return response()->json(['status' => 'success', 'message' => 'Cuenta cerrada con éxito.', 'cuenta' => $cuenta], 200);
     }
 
     public function showCerradas($idRestaurante)
@@ -71,6 +58,5 @@ class CuentaController extends Controller
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
         }
-
     }
 }
