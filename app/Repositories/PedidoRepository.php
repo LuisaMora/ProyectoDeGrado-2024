@@ -51,5 +51,13 @@ class PedidoRepository
         return Pedido::create($datosPedido);
     }
 
-    // public function verificarPe
+    public function update($id, array $data)
+    {
+        $pedido = Pedido::find($id);
+        if ($pedido) {
+            $pedido->update($data);
+            return $pedido;
+        }
+        return null;
+    }
 }

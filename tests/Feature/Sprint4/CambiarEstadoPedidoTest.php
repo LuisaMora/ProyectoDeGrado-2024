@@ -247,7 +247,7 @@ class CambiarEstadoPedidoTest extends TestCase
             // Faltante id_estado
         ]);
 
-        $response->assertStatus(400)
-            ->assertJson(['status' => 'error']);
+        $response->assertStatus(422)
+            ->assertJson(['message' => 'Datos inválidos']);
     }
 }

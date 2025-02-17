@@ -49,6 +49,17 @@ class PedidoService
         return ['platos' => $pedido->platos, 'idPedido' => $idPedido];
     }
 
+    public function cambiarEstadoPedido(int $idPedido, int $idEstado, $idRestaurante)
+    {
+        $pedido = $this->pedidoRepository->update($idPedido, ["id_estado" => $idEstado]);
+        if ($pedido == null) {
+            throw new \Exception("Platos no encontrados", 404);
+        }
+        $nombreMesa = $pedido->cuenta->mesa->nombre;
+        $this->notificacionHandler->enviarNotificacion($pedido, $idEstado, $idRestaurante, $nombreMesa, $pedido->id_empleado);
+        return $pedido;
+    }
+
     public function crearPedido($request)
     {
         DB::beginTransaction();
