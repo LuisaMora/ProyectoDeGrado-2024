@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('restaurantes', function (Blueprint $table) {
             $table->id(); // Columna autoincrementable para la clave primaria
-            $table->unsignedBigInteger('id_menu')->nullable();
             $table->string('nombre', 100);
             $table->bigInteger('nit')->unique();
             $table->decimal('latitud', 9, 6);
@@ -23,9 +22,6 @@ return new class extends Migration
             $table->string('licencia_funcionamiento', 100);
             $table->string('tipo_establecimiento', 100);
             $table->timestamps();
-
-            // Clave foránea
-            $table->foreign('id_menu')->references('id')->on('menus')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 

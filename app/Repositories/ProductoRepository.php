@@ -3,15 +3,12 @@
 namespace App\Repositories;
 
 use App\Models\Platillo;
-use App\Models\Restaurante;
 
 class ProductoRepository
 {
-    public function getProductosByRestaurante($idRestaurante, $soloDisponibles = false)
+    public function getProductosByIdMenu( $idMenu, $soloDisponibles = false)
     {
-        $menuId = Restaurante::where('id', $idRestaurante)->value('id_menu');
-
-        $query = Platillo::with('categoria')->where('id_menu', $menuId);
+        $query = Platillo::with('categoria')->where('id_menu', $idMenu);
 
         if ($soloDisponibles) {
             $query->where('disponible', true)->where('plato_disponible_menu', true);

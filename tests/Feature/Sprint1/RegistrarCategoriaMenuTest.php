@@ -111,7 +111,7 @@ class RegistrarCategoriaMenuTest extends TestCase
 
         $response->assertStatus(404)
             ->assertJsonFragment([
-                'message' => 'Restaurante no encontrado',
+                'message' => 'Menu no encontrado',
             ]);
     }
 

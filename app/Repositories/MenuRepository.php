@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Menu;
-use App\Models\Restaurante;
 
 class MenuRepository
 {
@@ -26,7 +25,7 @@ class MenuRepository
 
     public function getMenuByRestaurantId(string $id_restaurante)
     {
-        return Restaurante::find($id_restaurante)->menu;
+        return Menu::where('id_restaurante',$id_restaurante)->first();
     }
 
     public function create()

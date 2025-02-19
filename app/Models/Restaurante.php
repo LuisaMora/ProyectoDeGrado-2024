@@ -20,7 +20,6 @@ class Restaurante extends Model
 
     // Campos asignables en masa
     protected $fillable = [
-        'id_menu',
         'nombre',
         'nit',
         'latitud',
@@ -31,15 +30,16 @@ class Restaurante extends Model
         'tipo_establecimiento'
     ];
 
-    // Relación con la tabla 'menus'
-    public function menu()
-    {
-        return $this->belongsTo(Menu::class, 'id_menu');
-    }
 
     // Relación con la tabla 'mesas'
     public function mesas()
     {
         return $this->hasMany(Mesa::class, 'id_restaurante');
     }
+
+    public function menu()
+{
+    return $this->hasOne(Menu::class, 'id_restaurante');
+}
+
 }

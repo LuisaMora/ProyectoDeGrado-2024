@@ -128,7 +128,7 @@ class MenuService
 
     public function getMenuProducts($idRestaurante = 0, $filtrarPorDisponibilidad = true, $idMenu = 0)
     {
-        $idMenu =  $idMenu == 0 ? $this->restauranteRepository->findRestauranteById($idRestaurante)->id_menu : $idMenu;
+        $idMenu =  $idMenu == 0 ? $this->menuRepository->getMenuByRestaurantId($idRestaurante)->id : $idMenu;
         if (!$idMenu) {
             throw new \Exception('Menu no encontrado.', 404);
         }

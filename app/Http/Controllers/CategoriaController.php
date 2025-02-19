@@ -32,7 +32,7 @@ class CategoriaController extends Controller
             $categoria = $this->categoriaService->createCategoria($request->all());
             return response()->json(['status' => 'success', 'categoria' => $categoria], 201);
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode()<600 && $e->getCode()>199 ?$e->getCode(): 500);
         }
     }
 

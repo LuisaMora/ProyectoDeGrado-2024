@@ -20,7 +20,7 @@ class MenuController extends Controller
     {
         try {
             $menu = $this->menuService->getMenuByRestaurantId($idRestaurante);
-            $platillos = $this -> menuService -> getMenuProducts($idRestaurante, false);
+            $platillos = $this -> menuService -> getMenuProducts(filtrarPorDisponibilidad:false, idMenu:$menu->id);
             return response()->json(['status' => 'success', 'menu' => $menu, 'platillos' => $platillos], 200);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 500);

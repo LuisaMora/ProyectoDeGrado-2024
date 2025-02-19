@@ -4,22 +4,23 @@ namespace App\Services;
 
 use App\Repositories\ProductoRepository;
 use App\Models\Restaurante;
+use App\Repositories\MenuRepository;
 use App\Utils\ImageHandler;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class ProductoService
 {
     protected $productoRepository;
 
-    public function __construct(ProductoRepository $productoRepository)
+    public function __construct(ProductoRepository $productoRepository, private MenuRepository $menuRepository)
     {
         $this->productoRepository = $productoRepository;
     }
 
     public function getProductosByRestaurante($id_restaurante, $soloDisponibles = false)
     {
-        return $this->productoRepository->getProductosByRestaurante($id_restaurante, $soloDisponibles);
+        $menu = $this->menuRepository->getMenuByRestaurantId($id_restaurante);
+        return $this->productoRepository->getProductosByIdMenu($id_restaurante, $menu->id, $soloDisponibles);
     }
 
     public function getProductoById($id)

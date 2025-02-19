@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\PropietarioRepository;
-use Exception;
 
 class PropietarioService
 {

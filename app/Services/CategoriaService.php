@@ -3,30 +3,30 @@
 namespace App\Services;
 
 use App\Repositories\CategoriaRepository;
-use App\Repositories\RestauranteRepository;
+use App\Repositories\MenuRepository;
 use App\Utils\ImageHandler;
 
 class CategoriaService
 {
     protected $categoriaRepository;
-    protected $restauranteRepository;
+    protected $menuRepository;
 
     public function __construct(
         CategoriaRepository $categoriaRepository,
-        RestauranteRepository $restauranteRepository
+        MenuRepository $menuRepository
     ) {
         $this->categoriaRepository = $categoriaRepository;
-        $this->restauranteRepository = $restauranteRepository;
+        $this->menuRepository = $menuRepository;
     }
 
     public function getCategoriasByRestaurante($id_restaurante)
     {
-        $id_menu = $this->restauranteRepository->getMenuIdByRestauranteId($id_restaurante);
+        $menu = $this->menuRepository->getMenuByRestaurantId($id_restaurante.'');
 
-        if (!$id_menu) {
+        if (!$menu) {
             throw new \Exception('Menu no encontrado para el restaurante.', 404);
         }
-
+        $id_menu = $menu->id;
         $categorias = $this->categoriaRepository->getCategoriasByMenuId($id_menu);
 
         if ($categorias->isEmpty()) {
@@ -49,16 +49,16 @@ class CategoriaService
 
     public function createCategoria($data)
     {
-        $restaurante = $this->restauranteRepository->findRestauranteById($data['id_restaurante']);
+        $menu = $this->menuRepository->getMenuByRestaurantId($data['id_restaurante']);
 
-        if (!$restaurante) {
-            throw new \Exception('Restaurante no encontrado', 404);
+        if (!$menu) {
+            throw new \Exception('Menu no encontrado', 404);
         }
 
         $imagen = ImageHandler::guardarArchivo($data['imagen'], 'categorias');
 
         $data['imagen'] = $imagen;
-        $data['id_menu'] = $restaurante->id_menu;
+        $data['id_menu'] = $menu->id;
 
         return $this->categoriaRepository->create($data);
     }

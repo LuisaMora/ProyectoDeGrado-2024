@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Repositories\MesaRepository;
 use App\Repositories\ReporteRepository;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 
 class ReporteService
