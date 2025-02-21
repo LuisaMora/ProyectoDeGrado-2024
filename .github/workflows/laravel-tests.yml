@@ -1,11 +1,10 @@
 name: Run Laravel Tests
 
-on: [push, pull_request]  # Se ejecuta en cada push o pull request
+on: [push, pull_request]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest  # Servidor donde se ejecuta el job
-
+  setup:
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout código
         uses: actions/checkout@v3
@@ -34,13 +33,23 @@ jobs:
       - name: 🚀 Ejecutar migraciones
         run: php artisan migrate --force
 
-      - name: 🧪 Ejecutar pruebas por etapas
-        run: |
-          echo "Running tests for S1..."
-          php artisan test --testsuite Feature --filter 'S1'
+  sprint1:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏁 Ejecutar pruebas de Sprint 1 (S1)
+        run: php artisan test --testsuite Feature --filter 'S1'
 
-          echo "Running tests for S2..."
-          php artisan test --testsuite Feature --filter 'S2'
+  sprint2:
+    needs: sprint1
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏁 Ejecutar pruebas de Sprint 2 (S2)
+        run: php artisan test --testsuite Feature --filter 'S2'
 
-          echo "Running tests for S3..."
-          php artisan test --testsuite Feature --filter 'S3'
+  sprint3:
+    needs: sprint2
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏁 Ejecutar pruebas de Sprint 3 (S3)
+        run: php artisan test --testsuite Feature --filter 'S3'
