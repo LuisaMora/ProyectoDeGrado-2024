@@ -1,0 +1,46 @@
+name: Run Laravel Tests
+
+on: [push, pull_request]  # Se ejecuta en cada push o pull request
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Servidor donde se ejecuta el job
+
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: 📦 Instalar dependencias
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: 🔧 Configurar entorno
+        run: cp .env.example .env
+
+      - name: 🔑 Generar clave de la aplicación
+        run: php artisan key:generate
+
+      - name: 🗄️ Configurar base de datos SQLite
+        run: |
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=/tmp/database.sqlite" >> .env
+          touch /tmp/database.sqlite
+
+      - name: 🚀 Ejecutar migraciones
+        run: php artisan migrate --force
+
+      - name: 🧪 Ejecutar pruebas por etapas
+        run: |
+          echo "Running tests for S1..."
+          php artisan test --testsuite Feature --filter 'S1'
+
+          echo "Running tests for S2..."
+          php artisan test --testsuite Feature --filter 'S2'
+
+          echo "Running tests for S3..."
+          php artisan test --testsuite Feature --filter 'S3'
