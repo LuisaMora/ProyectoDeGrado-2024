@@ -15,7 +15,7 @@ class EmpleadoRepository
 
     public function getAllFrom($id_propietario)
     {
-        return $this->model->where('id_propietario', $id_propietario)
+        return Empleado::with('usuario')->where('id_propietario', $id_propietario)
         ->orderBy('created_at', 'desc')
         ->get();
     }

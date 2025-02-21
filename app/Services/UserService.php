@@ -129,7 +129,7 @@ class UserService
                 $usuarios = $this->propietarioRepository->all();
                 break;
             case 'empleado':
-                $id_propietario = auth()->user()->id;
+                $id_propietario = $this->propietarioRepository->findByUserId( auth()->user()->id)->id;
                 $usuarios = $this->empleadoRepository->getAllFrom($id_propietario);
                 break;
             default:
