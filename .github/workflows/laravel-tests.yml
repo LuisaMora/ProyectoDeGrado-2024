@@ -33,10 +33,27 @@ jobs:
       - name: 🚀 Ejecutar migraciones
         run: php artisan migrate --force
 
+      - name: 📂 Guardar archivos para siguientes jobs
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-files
+          path: .  # Guarda todo el código y archivos generados
+
   sprint1:
     needs: setup
     runs-on: ubuntu-latest
     steps:
+      - name: 📥 Descargar archivos del setup
+        uses: actions/download-artifact@v3
+        with:
+          name: app-files
+          path: .  # Restaura los archivos
+
+      - name: ⚙️ Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
       - name: 🏁 Ejecutar pruebas de Sprint 1 (S1)
         run: php artisan test --testsuite Feature --filter 'S1'
 
@@ -44,6 +61,17 @@ jobs:
     needs: sprint1
     runs-on: ubuntu-latest
     steps:
+      - name: 📥 Descargar archivos del setup
+        uses: actions/download-artifact@v3
+        with:
+          name: app-files
+          path: .
+
+      - name: ⚙️ Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
       - name: 🏁 Ejecutar pruebas de Sprint 2 (S2)
         run: php artisan test --testsuite Feature --filter 'S2'
 
@@ -51,5 +79,16 @@ jobs:
     needs: sprint2
     runs-on: ubuntu-latest
     steps:
+      - name: 📥 Descargar archivos del setup
+        uses: actions/download-artifact@v3
+        with:
+          name: app-files
+          path: .
+
+      - name: ⚙️ Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
       - name: 🏁 Ejecutar pruebas de Sprint 3 (S3)
         run: php artisan test --testsuite Feature --filter 'S3'
