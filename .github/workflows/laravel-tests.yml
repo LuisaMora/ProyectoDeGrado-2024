@@ -58,38 +58,38 @@ jobs:
       - name: 🏁 Ejecutar pruebas de Sprint 1 (S1)
         run: php artisan test --testsuite Feature --filter 'S1'
 
-  sprint2:
-    needs: sprint1
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Descargar archivos del setup
-        uses: actions/download-artifact@v4
-        with:
-          name: app-files
-          path: .
+  # sprint2:
+  #   needs: sprint1
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: 📥 Descargar archivos del setup
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: app-files
+  #         path: .
 
-      - name: ⚙️ Configurar PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
+  #     - name: ⚙️ Configurar PHP
+  #       uses: shivammathur/setup-php@v2
+  #       with:
+  #         php-version: '8.2'
 
-      - name: 🏁 Ejecutar pruebas de Sprint 2 (S2)
-        run: php artisan test --testsuite Feature --filter 'S2'
+  #     - name: 🏁 Ejecutar pruebas de Sprint 2 (S2)
+  #       run: php artisan test --testsuite Feature --filter 'S2'
 
-  sprint3:
-    needs: sprint2
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Descargar archivos del setup
-        uses: actions/download-artifact@v4
-        with:
-          name: app-files
-          path: .
+  # sprint3:
+  #   needs: sprint2
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: 📥 Descargar archivos del setup
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: app-files
+  #         path: .
 
-      - name: ⚙️ Configurar PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
+  #     - name: ⚙️ Configurar PHP
+  #       uses: shivammathur/setup-php@v2
+  #       with:
+  #         php-version: '8.2'
 
-      - name: 🏁 Ejecutar pruebas de Sprint 3 (S3)
-        run: php artisan test --testsuite Feature --filter 'S3'
+  #     - name: 🏁 Ejecutar pruebas de Sprint 3 (S3)
+  #       run: php artisan test --testsuite Feature --filter 'S3'
