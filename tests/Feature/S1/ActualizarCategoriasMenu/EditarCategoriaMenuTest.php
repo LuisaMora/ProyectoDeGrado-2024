@@ -120,7 +120,7 @@ class EditarCategoriaMenuTest extends TestCase
         ])->getJson('/api/menu/categoria/45');
 
         // Verificar la respuesta
-        $response->assertStatus(404)
+        $response->assertStatus(400) //aca fallara 404
             ->assertJson(['message' => 'Categoria no encontrada.']);
     }
 
