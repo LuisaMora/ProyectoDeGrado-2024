@@ -32,9 +32,10 @@ class CuentaRepository
                 $query->where('id_restaurante', $idRestaurante);
             });
         if ($activo) {
-            $cuenta->where('estado', '!=', 'Pagada');
+            $cuenta->where('estado', '=', 'Abierta')
+                ->where('created_at', '>=', now()->startOfDay());
         } else {
-            $cuenta->where('estado', '=', 'Pagada');
+            $cuenta->where('estado', '!=', 'Abierta');
         }
         $cuenta = $cuenta->get();
         return $cuenta;

@@ -53,7 +53,7 @@ class CuentaController extends Controller
     public function showCerradas($idRestaurante)
     {
         try {
-            $cuentas = $this->cuentaService->getCuentasByRestaurante($idRestaurante, true);
+            $cuentas = $this->cuentaService->getCuentasByRestaurante($idRestaurante, false);
             return response()->json(['status' => 'success', 'cuentas' => $cuentas], 200);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
