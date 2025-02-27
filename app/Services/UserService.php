@@ -10,6 +10,7 @@ use App\Repositories\EmpleadoRepository;
 use App\Repositories\PropietarioRepository;
 use App\Repositories\UsuarioRepository;
 use App\Services\MenuService;
+use App\Utils\ImageHandler;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -78,6 +79,11 @@ class UserService
     public function updateUser(array $data)
     {
         $id = auth()->user()->id;
+        $fotoPerfil = $data['foto_perfil']; 
+        if ($fotoPerfil) {
+            ImageHandler::eliminarArchivos([$fotoPerfil]);
+            $data['foto_perfil'] = ImageHandler::guardarArchivo($fotoPerfil, 'fotografias_propietarios');
+        }
         $usuario = $this->usuarioRepository->update($id, $data);
         return $usuario ? $usuario : throw new \Exception('Usuario no encontrado', 404);
     }

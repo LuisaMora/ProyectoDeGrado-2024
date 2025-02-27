@@ -39,7 +39,7 @@ class UserDetailsController extends Controller
                     ['status' => 'success', 'data' => $usuario,
                      'message' => 'Datos actualizados correctamente'], 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], $e->getCode()<600 && $e->getCode()>199 ?$e->getCode(): 500);
         }
     }
 }
