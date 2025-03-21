@@ -78,10 +78,12 @@ class UserService
 
     public function updateUser(array $data)
     {
-        $id = auth()->user()->id;
+        $usuario = auth()->user();
+        $id = $usuario->id;
+        $fotoPerfil = $usuario->foto_perfil;
         if (!empty($data['foto_perfil'])) {
-            $fotoPerfil = $data['foto_perfil'];
             ImageHandler::eliminarArchivos([$fotoPerfil]);
+            $fotoPerfil = $data['foto_perfil'];
             $data['foto_perfil'] = ImageHandler::guardarArchivo($fotoPerfil, 'fotografias_propietarios');
         }
         $usuario = $this->usuarioRepository->update($id, $data);
