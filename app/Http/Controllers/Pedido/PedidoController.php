@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pedido;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePedidoRequest;
+use App\Models\User;
 use App\Services\PedidoService;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
@@ -36,10 +37,15 @@ class PedidoController extends Controller
         
     }
 
-    public function store(StorePedidoRequest $request)
+    public function store(StorePedidoRequest $request): JsonResponse
     {
         try {
-            $resultado = $this->pedidoService->crearPedido($request);
+            $user = auth()->user();
+            if ($user instanceof User) {
+                $tipo = $user->getTipoEmpleado();
+                $porDefecto = $tipo === 1 ? false : true;//Si es mesero no es por defecto
+                $resultado = $this->pedidoService->crearPedido($request, $porDefecto);
+            }
         return response()->json($resultado, $resultado['status'] === 'success' ? 200 : 400);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'error' => $e->getMessage()], $e->getCode());

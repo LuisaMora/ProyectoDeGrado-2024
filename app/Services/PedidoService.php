@@ -60,7 +60,7 @@ class PedidoService
         return $pedido;
     }
 
-    public function crearPedido($request)
+    public function crearPedido($request, $porDefecto)
     {
         DB::beginTransaction();
         try {
@@ -68,8 +68,7 @@ class PedidoService
             if (empty($platillos_decode)) {
                 throw new \Exception('El campo platillos no puede estar vacío.', 400);
             }
-
-            $cuenta = $this->cuentaRepository->obtenerOCrearCuenta($request);
+            $cuenta = $porDefecto?$this->cuentaRepository->crearCuenta($request) :$this->cuentaRepository->obtenerOCrearCuenta($request);
             if (!$cuenta) {
                 throw new \Exception('No se puede crear un pedido para una mesa con cuenta abierta.', 400);
             }

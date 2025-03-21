@@ -87,12 +87,15 @@ class CuentaRepository
             }
         }
         // Crear una nueva cuenta porque no existe o la anterior ya se cerró
+        return $this->crearCuenta($data);
+    }
+
+    public function crearCuenta(Request $data){
         $cuentaNueva = new Cuenta;
         $cuentaNueva->id_mesa = $data->id_mesa;
         $cuentaNueva->monto_total = 0;
         $cuentaNueva->id_restaurante = $data->id_restaurante;
         $cuentaNueva->save();
-
         return $cuentaNueva;
     }
 
