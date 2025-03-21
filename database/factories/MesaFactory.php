@@ -10,16 +10,14 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class MesaFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    protected static $numeroMesa = 1;
-    
-     public function registrar_a_restaurante($restaurante_id)
+    protected static $numeroMesa = 0;
+
+    public function registrar_a_restaurante($restaurante_id)
     {
-        return$this->state([
+        // Reiniciar la numeración de mesas para cada restaurante
+        static::$numeroMesa = 0;
+
+        return $this->state([
             'id_restaurante' => $restaurante_id,
         ]);
     }

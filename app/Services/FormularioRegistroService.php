@@ -142,7 +142,8 @@ class FormularioRegistroService
     }
 
     private function crearMesas(int $numeroMesas, int $idRestaurante){
-        $nroMesa = 1;
+        // Crea la mesa con una mesa por defecto  que seria la primera mesa
+        $nroMesa = 0;
         for ($i = 0; $i < $numeroMesas; $i++) {
             $this->mesaRepository->crearMesa([
                 'nombre' => 'Mesa '.$nroMesa,
