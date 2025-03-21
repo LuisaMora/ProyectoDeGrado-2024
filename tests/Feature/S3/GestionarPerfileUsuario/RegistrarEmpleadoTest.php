@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\S3;
+namespace Tests\Feature\S3\GestionarPerfileUsuario;
 
 use App\Mail\RegistroEmpleado;
 use Illuminate\Foundation\Testing\RefreshDatabase;

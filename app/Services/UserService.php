@@ -79,8 +79,8 @@ class UserService
     public function updateUser(array $data)
     {
         $id = auth()->user()->id;
-        $fotoPerfil = $data['foto_perfil']; 
-        if ($fotoPerfil) {
+        if (!empty($data['foto_perfil'])) {
+            $fotoPerfil = $data['foto_perfil'];
             ImageHandler::eliminarArchivos([$fotoPerfil]);
             $data['foto_perfil'] = ImageHandler::guardarArchivo($fotoPerfil, 'fotografias_propietarios');
         }
