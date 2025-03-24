@@ -36,6 +36,8 @@ class CuentaRepository
                 ->where('created_at', '>=', now()->startOfDay());
         } else {
             $cuenta->where('estado', '!=', 'Abierta');
+            //orden el mas reciente adelante
+            $cuenta->orderBy('updated_at', 'desc');
         }
         $cuenta = $cuenta->get();
         return $cuenta;
