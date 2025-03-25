@@ -31,7 +31,6 @@ class PedidoSeeder extends Seeder
         for ($i = 0; $i < $cantidadFechas; $i++) {
             $arregloFechas[] = date('Y-m-d', strtotime('-' . $i . ' days'));
         }
-
         $this->crearPedidosConPlatillos($empleadoIdsRestaurante1, $platillosRestaurante1, $fechaHaceSieteDias, 0, 10, $mesasR1);
         $this->crearPedidosConPlatillos($empleadoIdsRestaurante1, $platillosRestaurante1, $fechaHaceSieteDias, 0, 1, $mesasR1, 1);
         $this->crearPedidosConPlatillos($empleadoIdsRestaurante1, $platillosRestaurante1, $fechaHaceSieteDias, 0, 1, $mesasR1, 2);

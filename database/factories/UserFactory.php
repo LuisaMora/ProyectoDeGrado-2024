@@ -38,7 +38,7 @@ class UserFactory extends Factory
             'nickname' => $this->faker->unique()->userName(),
             'foto_perfil' => '/storage/imagenes/usuarios/default.png',
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('Furiosa12345678'),
+            'password' => static::$password ??= Hash::make('12345678'),
             'remember_token' => Str::random(10),
             'correo' => fake()->unique()->safeEmail(),
             'tipo_usuario' => 'Propietario'

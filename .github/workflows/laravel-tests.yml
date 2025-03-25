@@ -1,0 +1,95 @@
+name: Run Laravel Tests
+
+on: [push, pull_request]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4  # Usamos la última versión
+
+      - name: ⚙️ Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: 📦 Instalar dependencias
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: 🔧 Configurar entorno
+        run: cp .env.example .env
+
+      - name: 🔑 Generar clave de la aplicación
+        run: php artisan key:generate
+
+      - name: 🗄️ Configurar base de datos SQLite
+        run: |
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=/tmp/database.sqlite" >> .env
+          touch /tmp/database.sqlite
+
+      - name: 🚀 Ejecutar migraciones
+        run: php artisan migrate --force
+
+      - name: 📂 Guardar archivos para siguientes jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-files
+          path: .  # Guarda todo el código y archivos generados
+          compression-level: 0  # Evita problemas de compresión
+
+  sprint1:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Descargar archivos del setup
+        uses: actions/download-artifact@v4
+        with:
+          name: app-files
+          path: .  # Restaura los archivos
+
+      - name: ⚙️ Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: 🏁 Ejecutar pruebas de Sprint 1 (S1)
+        run: php artisan test --testsuite Feature --filter 'S1'
+
+  sprint2:
+    needs: sprint1
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Descargar archivos del setup
+        uses: actions/download-artifact@v4
+        with:
+          name: app-files
+          path: .
+
+      - name: ⚙️ Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: 🏁 Ejecutar pruebas de Sprint 2 (S2)
+        run: php artisan test --testsuite Feature --filter 'S2'
+
+  sprint3:
+    needs: sprint2
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Descargar archivos del setup
+        uses: actions/download-artifact@v4
+        with:
+          name: app-files
+          path: .
+
+      - name: ⚙️ Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: 🏁 Ejecutar pruebas de Sprint 3 (S3)
+        run: php artisan test --testsuite Feature --filter 'S3'

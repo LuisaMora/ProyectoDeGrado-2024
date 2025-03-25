@@ -21,10 +21,6 @@ class Cuenta extends Model
     {
         return $this->hasMany(Pedido::class, 'id_cuenta');
     }
-    public function estadoCuentas()
-    {
-        return $this->hasMany(EstadoCuenta::class, 'id_cuenta');
-    }
 
     public function mesa()
     {
