@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id(); // Columna autoincrementable para la clave primaria
+            $table->unsignedBigInteger('id_restaurante')->nullable();
             $table->string('portada', 100)->default('');
             $table->string('tema')->default('light-theme');
             $table->string('qr', 100)->default('');
             $table->boolean('disponible')->default(true);
             $table->timestamps();
+
+            $table->foreign('id_restaurante')->references('id')->on('restaurantes')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 

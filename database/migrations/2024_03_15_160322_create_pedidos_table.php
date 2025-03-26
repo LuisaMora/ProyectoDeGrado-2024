@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_cuenta')->nullable();
             $table->enum('tipo', ['local', 'llevar'])->default('local');
-            $table->unsignedBigInteger('id_estado');
+            $table->unsignedBigInteger('id_estado')->default(1);
             $table->unsignedBigInteger('id_empleado')->nullable();
             $table->dateTime('fecha_hora_pedido')->nullable();
             $table->decimal('monto', 8, 2)->nullable();

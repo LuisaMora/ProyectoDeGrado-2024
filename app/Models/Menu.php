@@ -13,18 +13,16 @@ class Menu extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'id_restaurante',
         'portada',
         'tema',
         'qr',
         'disponible',
     ];
-    public function platillos()
-    {
-        return $this->hasMany(Platillo::class, 'id_menu');
-    }
+
 
     public function restaurante()
     {
-        return $this->hasOne(Restaurante::class, 'id_menu');
+        return $this->belongsTo(Restaurante::class, 'id_restaurante');
     }
 }

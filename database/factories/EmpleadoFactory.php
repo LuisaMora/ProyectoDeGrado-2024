@@ -18,10 +18,11 @@ class EmpleadoFactory extends Factory
 
     //  private $id_propietario;
 
-     public function asignarPropietario($id){
+     public function asignarPropietario($id, $idRestaurante){
         // $this->id_propietario = $id;
         return $this->state( [
             'id_propietario' => $id,
+            'id_restaurante' => $idRestaurante
         ]); 
      }  
 
@@ -36,7 +37,7 @@ class EmpleadoFactory extends Factory
             'fecha_contratacion' => $this->faker->date(),
             'ci' => $this->faker->numberBetween(1000000, 9999999),
             'direccion' => $this->faker->address(),
-            'id_restaurante' => 1
+            
         ];
     }
 }

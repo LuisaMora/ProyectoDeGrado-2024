@@ -13,6 +13,7 @@ class Administrador extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'id_usuario',
         'token',
     ];
 

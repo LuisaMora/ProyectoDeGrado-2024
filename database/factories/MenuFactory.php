@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Restaurante;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,5 +22,12 @@ class MenuFactory extends Factory
             'tema' => 'light-theme',
             'qr' => '',
         ];
+    }
+
+    public function registrar_a_restaurante($restaurante_id)
+    {
+        return$this->state([
+            'id_restaurante' => $restaurante_id,
+        ]);
     }
 }

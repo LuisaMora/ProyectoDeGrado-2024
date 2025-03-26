@@ -13,9 +13,9 @@ class EmpleadoSeeder extends Seeder
      */
     public function run(): void
     {
-        Empleado::factory(10)->asignarPropietario(1)->create();
-        Empleado::factory(10)->asignarPropietario(2)->create();
-        Empleado::factory(10)->asignarPropietario(3)->create();
+        Empleado::factory(10)->asignarPropietario(1,1)->create();
+        Empleado::factory(10)->asignarPropietario(2,2)->create();
+        Empleado::factory(10)->asignarPropietario(3,3)->create();
         //Set empleado que id_propietario = 1 y id_tipo_empleado = 1 nikcname = 'mesero'
         $empleado = Empleado::where('id_propietario', 1)->where('id_rol', 1)->first();
         $usuario = $empleado->User;

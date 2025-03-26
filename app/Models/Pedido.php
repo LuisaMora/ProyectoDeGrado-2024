@@ -11,7 +11,7 @@ class Pedido extends Model
     protected $fillable = [
         'id_cuenta',
         'tipo',
-        'id_estado' => 1,// por defecto en espera
+        'id_estado',// por defecto en espera
         'id_empleado',
         'fecha_hora_pedido',
         'monto',
